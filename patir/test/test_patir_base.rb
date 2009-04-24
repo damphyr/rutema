@@ -3,14 +3,12 @@ require 'test/unit'
 require 'patir/base.rb'
 
 class TestBase<Test::Unit::TestCase
+  TEMP_LOG="temp.log"
   def teardown
     #clean up 
-    File.delete("temp.log") if File.exists?("temp.log")
+    File.delete(TEMP_LOG) if File.exists?(TEMP_LOG)
   end
-  #simple match test
-  def test_drb_service
-    assert_equal("druby://service.host:7000",Patir.drb_service("service.host",7000))
-  end
+  
   #This is not actually testing anything meaningfull but can be expanded when we learn more about 
   #the logger
   def test_setup_logger
@@ -20,6 +18,7 @@ class TestBase<Test::Unit::TestCase
     assert_not_nil(logger)
     logger=Patir.setup_logger("temp.log",:silent)
     assert_not_nil(logger)
+    assert(File.exists?(TEMP_LOG), "Log file not created")
     logger.close
   end
   

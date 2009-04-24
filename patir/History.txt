@@ -1,3 +1,8 @@
+==0.6.3
+* Repository restructured (git is used internally so the svn repository matches now the master branch)
+* Cleanup. Some obsolete code was removed
+* Unit tests clarified
+
 ==0.6.2
 * RubyCommand and ShellCommand are now more robust handling StandardError exceptions.
 ==0.6.1

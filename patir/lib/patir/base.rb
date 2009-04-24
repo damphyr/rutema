@@ -6,16 +6,12 @@ module Patir
   module Version
     MAJOR=0
     MINOR=6
-    TINY=2
+    TINY=3
     STRING=[ MAJOR, MINOR, TINY ].join( "." )  	
   end
   #Error thrown usually in initialize methods when missing required parameters
   #from the initialization hash.
   class ParameterException<RuntimeError
-  end
-  #creates a drb service URL from an ip and a port number
-  def self.drb_service ip,port
-    return "druby://#{ip}:#{port}"
   end
   
   class PatirLoggerFormatter<Logger::Formatter

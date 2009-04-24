@@ -274,12 +274,14 @@ module Patir
       bstep.reset
       #set the extended attributes
       bstep.number=@steps.size
+      exit_strategy = :fail_on_error unless [:flunk_on_error,:fail_on_warning,:flunk_on_warning].include?(exit_strategy)
       bstep.strategy=exit_strategy
       #add it to the lot
       @steps<<bstep
       #add it to status as well
       @state.step=bstep
       notify(:sequence_status=>@state)
+      return bstep
     end
 
     #Resets the status. This will set :not_executed status, 

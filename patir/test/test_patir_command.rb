@@ -132,7 +132,9 @@ class TestCommandSequence<Test::Unit::TestCase
   def test_flunk_on_error
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)
-    assert_nothing_raised{seq.add_step(@echo,:flunk_on_error)}
+    check_step=nil
+    assert_nothing_raised{check_step=seq.add_step(@echo,:flunk_on_error)}
+    assert_equal(:flunk_on_error,check_step.strategy)
     assert_nothing_raised{seq.add_step(@error,:flunk_on_error)}
     assert_nothing_raised{seq.add_step(@void,:flunk_on_error)}
     assert(:not_executed==seq.state.step_state(0)[:status])
@@ -150,7 +152,9 @@ class TestCommandSequence<Test::Unit::TestCase
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)
     assert_nothing_raised{seq.add_step(@echo)}
-    assert_nothing_raised{seq.add_step(@error,:fail_on_error)}
+    check_step=nil
+    assert_nothing_raised{check_step=seq.add_step(@error,:fail_on_error)}
+    assert_equal(:fail_on_error,check_step.strategy)
     assert_nothing_raised{seq.add_step(@void)}
     assert(:not_executed==seq.state.step_state(0)[:status])
     assert(:not_executed==seq.state.step_state(1)[:status])
@@ -167,7 +171,9 @@ class TestCommandSequence<Test::Unit::TestCase
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)
     assert_nothing_raised{seq.add_step(@echo)}
-    assert_nothing_raised{seq.add_step(@warning,:flunk_on_warning)}
+    check_step=nil
+    assert_nothing_raised{check_step=seq.add_step(@error,:flunk_on_warning)}
+    assert_equal(:flunk_on_warning,check_step.strategy)
     assert_nothing_raised{seq.add_step(@void)}
     assert(:not_executed==seq.state.step_state(0)[:status])
     assert(:not_executed==seq.state.step_state(1)[:status])
@@ -184,7 +190,9 @@ class TestCommandSequence<Test::Unit::TestCase
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)
     assert_nothing_raised{seq.add_step(@echo)}
-    assert_nothing_raised{seq.add_step(@warning,:fail_on_warning)}
+    check_step=nil
+    assert_nothing_raised{check_step=seq.add_step(@warning,:fail_on_warning)}
+    assert_equal(:fail_on_warning,check_step.strategy)
     assert_nothing_raised{seq.add_step(@void)}
     assert(:not_executed==seq.state.step_state(0)[:status])
     assert(:not_executed==seq.state.step_state(1)[:status])
@@ -198,7 +206,7 @@ class TestCommandSequence<Test::Unit::TestCase
   end
 end
 
-class TestRubyCommad<Test::Unit::TestCase
+class TestRubyCommand<Test::Unit::TestCase
   include Patir
   def test_normal_ruby
     cmd=RubyCommand.new("test"){sleep 1}
