@@ -1,0 +1,11 @@
+require 'rubygems'
+gem 'activerecord','=2.1.1'
+require 'active_record'
+gem 'patir','>=0.5.8'
+require 'patir/configuration'
+require 'patir/command'
+require 'patir/base'
+
+require 'ruport/acts_as_reportable'
+require 'mailfactory'
+require 'highline'

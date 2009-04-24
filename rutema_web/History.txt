@@ -1,0 +1,26 @@
+=== 0.9.5 / 2008-11-28
+* Overlooked conditional in Statistics index action fixed
+=== 0.9.4 / 2008-11-28
+* Configuration file column added to run overview
+* More code to check for old OpenStruct instances of context
+* statistics graphs
+* rutemaweb now depends on gruff (and consequently on RMagick/ImageMagick) for the generation of graphs - It will work without but if you want the pretty colors you need gruff.
+=== 0.9.3 / 2008-11-07
+* Fixed bug in display of run list (context incorrectly used)
+=== 0.9.2 / 2008-11-05
+* failure rate added in scenario overview
+* context information added to run overview
+=== 0.9.1 / 2008-10-16
+* relaxed gem version rules for rutema versions
+=== 0.9.0 / 2008-10-06
+* Updated design (actually designed something that is half-way usable)
+* Left panel lists latest runs with status
+* Scenario list now shows title and description
+* Lists are now paginated
+* requires rutema 1.0.0
+* Moved up to ActiveRecord 2.1.1 and Ramaze 2008.06
+
+=== 0.8.0 / 2008-07-03
+* rutemaweb gets it's own gem!
+* Test case presentation now vertical with new ruport formatter.
+* Folding of output and error for test case details

@@ -1,0 +1,11 @@
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+lib/rutema/elements/win32.rb
+lib/rutema/elements/general.rb
+test/test_sqlcmd.rb
+test/test_vsdbcmd.rb
+test/test_get_url.rb
+test/test_standard.rb
+test/data/sample.sql

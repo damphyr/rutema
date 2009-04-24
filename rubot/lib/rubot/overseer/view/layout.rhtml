@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" href="/css/style.css" type="text/css" />
+	<script src="/js/folding.js" type="text/javascript"></script>
+	<title><%=@title%></title>
+    <%= @script %>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">Overseer</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+				</div>
+				<div id="toplinks" class="smallgraytext">
+				</div>
+			</div>
+			<div id="menu">
+				<div align="right" class="smallwhitetext" style="padding:9px;">
+					<a href="/">Home</a> | <a href="/cfg">Configuration</a> | <a href="/requests">Build Requests</a>
+				</div>
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;"></div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext"><%= @content_title%></span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify"><%=@content%></div>
+			</div>
+			<div id="leftpanel">
+				<div align="justify" class="graypanel">
+					<%=@panel_content%>
+				</div>
+			</div>
+			<div id="footer" class="smallgraytext">
+				<a href="/">Home</a> | <a href="http://patir.rubyforge.org/rubot">about rubot</a> | 
+				&copy; 2008 <a href="http://www.braveworld.net/riva" target="_blank">Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Nesting rutema scenarios</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Nesting rutema scenarios</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+						<h2>The <em>include_scenario</em> element</h2>
+						
+						<p>rutema added the include_scenario element in the base parser of version 0.9.0<br>
+							Using it, you can nest scenarios and reuse reoccuring step sequences in all parsers derived from <a href="http://patir.rubyforge.org/rutema/rdoc/classes/Rutema/BaseXMLParser.html">BaseXMLParser</a> (this includes <a href="http://patir.rubyforge.org/rutema/rdoc/classes/Rutema/ExtensibleXMLParser.html">ExtensibleXMLParser</a> and <a href="http://patir.rubyforge.org/rutema/rdoc/classes/Rutema/MinimalXMLParser.html">MinimalXMLParser</a>).
+						</p>
+						<p>
+							<code> &lt;include_scenario file="path/to/include.scenario" /&gt; </code>
+							</p><p>
+							The file to be included should contain just the <em>scenario</em> element (with it's subelements):<br>
+							<br>
+							<code>&lt;scenario&gt;...&lt;/scenario&gt;</code>
+							</p>
+							<p>
+								<a href="http://patir.rubyforge.org/svn/rutema/trunk/rutema/test/distro_test/specs/T005.spec">T005.spec</a> shows how a sample<a href="http://patir.rubyforge.org/svn/rutema/trunk/rutema/test/distro_test/specs/include.scenario">include.scenario</a> is included.
+						</p>
+				</div>
+			</div>
+				<div id="leftpanel">
+					<div align="justify" class="graypanel">
+						<span class="bodytext">Home</span><br />
+						<a href="index.html" class="smallgraytext">More...</a><br /><br />
+						<span class="bodytext">Documentation</span><br />
+						<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+					</div>
+				</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

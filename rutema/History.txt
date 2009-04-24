@@ -1,0 +1,135 @@
+== 1.0.5 / 2008-12-
+* A failure of the check test now passes all test stati (as not_executed). This will not skew statistics that show the trends on test numbers
+* Setup and teardown are no longer executed for check tests
+* fixed bug in element_prompt where a negative answer would not set an error
+== 1.0.4 / 2008-11-7
+* Added functionality that allows ignoring the result of a step. The step is considered always successful
+== 1.0.3 / 2008-10-28
+* The name of the configuration file is added in the context information - can be used to group results together in cases where there are multiple configurations
+* Context is now stored as a Hash
+* EmailReporter now displays a footer as defined in it's configuration
+== 1.0.2 / 2008-10-23
+* Bugfix in ActiveRecordReporter: \000 sequences produce exceptions when inserting.
+* Output and error from commands is now more strictly sanitized.
+== 1.0.1 / 2008-10-13
+* rutema_upgrader - Bug: update not performed - fixed
+== 1.0.0 / 2008-10-06
+* DB schema change: title and description added to scenario table
+* footer parameter for the email reporter
+* Specification titles included in the text reports
+* When parsing multiple specifications a duplicate name will now generate a parser error
+* rutema_updater upgrades existing databases, check http://patir.rubyforge.org/rutema/update_090_to_100.html
+* rutemah scrapped
+* rutemax logs it's version always
+* activerecord 2.1.1 is now in use
+
+== 0.9.3 / 2008-09-10
+* Sorted result summaries in the text and the email reporter
+* ActiveRecordReporter registration logging
+== 0.9.2 / 2008-09-10
+* Fixed major blunder with test reporting
+* Added text reporter for consistent text summaries
+* More tests
+* Fixed check test behaviour (was not running even when specified in the configuration)
+* Fixed bungled emailing when using multiple addresses in the config
+== 0.9.1 / 2008-09-09
+* Modularisation of element parsing methods introduced. 
+* MinimalXMLParser refactored as example.
+* Extra element parser modules available in the rutema_elements gem
+* Cleaned up EmailReporter. Unit tests with Mocha, text report has a better layout
+== 0.9.0 / 2008-09-08
+* Ability to nest scenarios added to the base parser
+* Documentation at http://patir.rubyforge.org/rutema/tool_configuration.html
+
+== 0.8.0 / 2008-07-03
+* Split rutemaweb into own gem
+* Refactored reporters
+* Re-enabled the --step commandline facility of rutemax allowing step-by-step execution and fixed the StepRunner implementation
+
+== 0.7.1 / 2008-06-12
+* Added the ruport_formatter.rb file to the manifest (and consequently to the gem)
+* Locked down the active record and ramaze versions to avoid the String#start_with? alias bug from active support 2.1.0 and the Ramaze.start! change 
+== 0.7.0 / 2008-05-16
+* Support for tools, paths and context information in the configuration solidified (http://patir.rubyforge.org/rutema/tool_configuration.html for more)
+* Changes in the configuration for Historian and ActiveRecordReporter. Check the distro_test samples
+* database connection code consolidated in db.rb
+* Added support for jdbc/h2 to work with jRuby
+* AR-reporter configuration expanded to support different adapters. Consistent with the Historian db configuration
+* rutema unit tests now run under jRuby
+* rutemah runs under jRuby
+
+== 0.6.5 / 2008-04-15
+* Updated rutemaweb controller to work with ramaze 0.3.9.1
+== 0.6.4 / 2008-03-30
+* Bugfix: duration SQL type adjusted in the model to return proper values.
+* Bugfix: name=step_type for TestStep so that name is assigned a value in the model step
+* Locked the Ramaze version to 0.3.5 until we find out why the new version breaks us
+== 0.6.3 / 2008-03-26
+* Bugfix: specifying a .spec filename on the commandline did not work - Path expanded before changing directory.
+* Bugfix: running an attended .spec on it's own was not possible - attended mode is now set for single runs.
+* Cleaned up the Runner's log output
+== 0.6.2 / 2008-03-12
+* Parsers derived from Rutema::SpecificationParser now receive the system configuration so that conventions like tools, paths and context can be used in element_ methods (this functionality fell through the cracks with the change in parser implementation)
+* rutemaweb now has proper commandline help and connects properly to the database
+== 0.6.1 / 2008-02-28
+* ExtensibleXMLParser made more tolerant (no exceptions when an element cannot be handled)
+* Bug: Typo in the class name used in the exceptions fixed
+* Bugfix: ActiveRecord connection throws an exception that prevented Historian from establishing a new one. Fixed
+* More unit tests
+== 0.6.0 / 2008-02-27
+* Added Rutema::ExtensibleXMLParser - this parser simplifies parser creation immensely. Check the documentation for details
+* "Howto create a parser v0.5.0" officially the fastest deprecation of a document ever. http://patir.rubyforge.org/rutema/parser.html is the new black.
+* Corrected some english spelling mistakes (hey, we're not native speakers)
+* Fixed an issue with AR cached connections that interfered with unit tests 
+
+== 0.5.0 / 2008-02-26
+* activerecord reporter is now loaded by default (no need to require it in the configuration file)
+* bugfix: step names correctly written in the database
+* The web frontend now uses Ramaze
+* using patir-0.5.3 because of the chdir bugfixes
+* rutema can now test itself! rutemax and rutemah return meaningful exit codes. So there, we do eat our own dogfood
+* lots more documentation on usage and how to build a parser
+
+== 0.4.3 / 2008-02-25
+* fixed bug in rutemax when the activerecord reporter is used, where the database was not created relative to the configuration entry
+* fixed bug in rutemah where the report was not printed (doh!)
+* added active record reporter configuration and rutemah configuration to distro test 
+== 0.4.2 / 2007-12-05
+* rutemah code cleaned up
+* Bugfix: MinimalXMLParser now handles relative paths in command elements correctly
+* distro_test added to the gem
+* Distro test documented, documentation pages updated
+== 0.4.1 / 2007-12-04
+* Documented MinimalXMLParser
+* More debug logs
+* Fixed bug in attribute checking for command steps in the minimal parser
+* Fixed bug in specification parsing in the Coordinator (no specs were returned)
+* Fixed bug in the implementation of <prompt> in the minimal parser (attended was not set)
+* Fixed bug in evaluation of attended status for steps
+* Fixed bug where runner would complain that attened scenarios cannot be run in unattended mode when choosing to run only attended tests
+* Added Version module to better handle versioning
+== 0.4 / 2007-07-05
+* rutemaweb, a web interface for the db contents added
+	* uses WEBRick, Camping and Ruport
+	* offers views on all runs in the System, detailed scenario views and scenario-over-time views
+* Runner now rescues all failures in scenarios
+* Bugfix in setting status of attended scenario in unattended mode
+* Better ruport usage in the historian
+* rutemah added to the gem and manifest
+* rutemax help message complete with commands
+* split the AR reporter and the model
+* expanded the unit tests
+
+== 0.3 / 2007-05-30
+* Reporter implementations moved to own file
+* Reporter interface changed (Runner stati now passed directly as a name indexed Hash, specifications passed as well)
+* ActiveRecordReporter with SQLite DB added
+* rutemah (the Historian) added in tools. The Historian reads from ActiveRecordReporter databases
+== 0.2 / 2007-05-21
+* bin/ files included in gem
+* rutemax: missing configuration file is now checked before passed to the system
+== 0.1 / 2007-05-21
+* A running system!
+	* Basic XML parser with echo, command and prompt
+	* email reporting
+	* rutemax application

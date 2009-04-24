@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Rutema XML Format</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Rutema XML Format</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					<h2>Basic Schema</h2>
+					<p>
+					The basic schema understood by Rutema::BaseXMLParser is the following:		
+		<pre>
+&lt;specification name="" version="">
+  &lt;description>
+  &lt;/description>
+  &lt;scenario>
+    ...
+  &lt;/scenario>
+&lt;/specification>
+		</pre>
+		</p><p>
+					The &lt;scenario&gt; element is a composite element that can contain any simple element. The parser converts all subelements of scenario into Rutema::Step instances whose <em>step_type</em> is the element name i.e. &lt;pause&gt; will create a Rutema::Step instance with <em>step_type=="pause"</em>.<br>
+					You can also arbitrarily add attributes to the specification and scenario elements and they will show up as attributes of the corresponding classes.
+		</p>
+		<p>Rutema::BaseXMLParser does not produce runnable Rutema::Scenario instances, since it does not assign any commands to the steps.</p>
+		<h2>A minimal implementation</h2>
+		<p>
+		As an example of how a Rutema parser can be implemented, you can look at Rutema::MinimalXMLParser. This parser allows for a mini-DSL of three elements:
+		<pre>
+&lt;command cmd="a command line" [working_directory="working directory for the command"]/>
+&lt;echo text="hello testing world"/>
+&lt;echo>
+A different echo version. 'text' can be defined as an attribute. 
+If not, it is assigned the contents of the element.
+&lt;/echo>
+&lt;prompt text="A yes or no answer. Continue?"/>
+		</pre>
+		</p><p>
+		The parser's implementation is a single case statement in which, according to step type, the required attributes are checked and then the appropriate Command instance is assigned to the Step. An example:
+		<pre>
+case step.step_type
+when "command"
+  raise ParserError,"missing required attribute cmd in #{step}"
+  wd=step.working_directory if step.has_working_directory?
+  step.cmd=ShellCommand.new(:cmd=>step.cmd,:working_directory=>wd)
+</pre>
+		</p>
+		<p><strong>command</strong>, <strong>echo</strong> and <strong>prompt</strong> steps are "runnable" steps, that means that when a Rutema::Scenario containing such steps is passed to the Rutema::Runner, then the associated commands will execute.</p>
+				</div>
+			</div>
+				<div id="leftpanel">
+					<div align="justify" class="graypanel">
+						<span class="bodytext">Home</span><br />
+						<a href="index.html" class="smallgraytext">More...</a><br /><br />
+						<span class="bodytext">Documentation</span><br />
+						<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+					</div>
+				</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

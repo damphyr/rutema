@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Rutema Usage: Distro Test</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Rutema Usage: Distro Test</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					Version>=0.4.2
+					<h2>Distro Test: Test as an Example</h2>
+					<p>
+						Distro Test is a system test for testing rutemax functionality with the MinimalXMLParser.<br/>
+						All relevant files are included with the rutema gem - you will find them in test/distro_test in the gem installation directory.<br/>
+						It's also the minimum configuration that is possible for a usable rutema system so it makes a good example to go through for usage.<br/>
+					</p>
+					<h3>The parser</h3>
+					<p>
+						The MinimalXMLParser defines the following elements:
+						<ul>
+							<li>echo - prints text on stdout</li>
+							<li>command - executes a shell command</li>
+							<li>prompt - asks the user a yes/no question</li>
+						</ul>
+						<h4>Attended vs. Unattended</h4>
+					</p>
+					<p>
+						prompt elements require user input.<br/> 
+						Tests that include such elements cannot be executed automatically, a tester needs to <strong>attend</strong> to the execution. These tests are subsequently called attended. You can also call them manual tests.
+						Tests that can be executed without user intervention are called unattended or automatic tests.<br/>
+						rutemax by default attempts to run in unattended mode.
+					</p>
+					<h3>The configuration</h3>
+					The configuration integrates the different parts of rutema. In the configuration you define which parser, tool and reporting addons to use as well as which tests to include for running.<br/>
+					The minimum you need to define is the parser and tests:
+				<pre>
+configuration.parser={:class=>Rutema::MinimalXMLParser}
+configuration.tests=[
+"../specs/T001.spec",
+"../specs/T002.spec",
+"../specs/T003.spec",
+"../specs/T004.spec"
+]
+</pre>
+					The above is the complete configuration for the distro test. It's interesting to talk about the things this configuration will <strong>not</strong> do:
+					<ul>
+						<li>It will not write the results in a database</li>
+						<li>It uses no notification plugins so no emails will be sent etc.</li>
+					</ul>
+					Entries for tools and paths are dictated by the parser implementation, that is to say the DSL we have created for the project. In this case the parser is really minimal, so no extra tools or paths are needed.<br/>
+					Also note that the configuration file is valid Ruby code. It can be written  
+				<pre>
+require 'rake'
+configuration.parser={:class=>Rutema::MinimalXMLParser}
+configuration.tests=FileList["../specs/*.spec"]
+</pre>
+					The above will include all .spec files for execution, while the original configuration explicitly included only 4 files. 
+				</p>
+				<h3>The specifications</h3>
+				<p>
+					Described in <a href="xml_format.html">Rutema XML Format</a> the specifications follow a general XML schema. The actual final schema is parser and project specific - we strongly advise against using the MinimalXMLParser for anything more than a handful of test cases.
+				</p>
+				<h3>Reporting</h3>
+				<p>
+					Reports and notifications are handled by Rutema:Reporter derived plugins.<br/> 
+					rutema's strength is in providing you with a history of all the test runs, complete with output and execution times. To accomplish this some kind of repository is needed in which to save the test results.
+					The ActiveRecordReporter uses ActiveRecord (obvious isn't it?) to save the test results in an SQLite database.<br/>
+					The configuration for our example using this reporter is:
+					<pre>
+configuration.parser={:class=>Rutema::MinimalXMLParser}
+configuration.reporter={:class=>Rutema::ActiveRecordReporter, :dbfile=>"sample.db"}
+configuration.tests=[
+"../specs/T001.spec",
+"../specs/T002.spec",
+"../specs/T003.spec",
+"../specs/T004.spec"
+]
+</pre>
+						Configuration entries for plugins are defined as hashes. The necessary keys are also defined and validated by the plugin class.
+					</p>
+					<h3>Running the examples</h3>
+					The distro test files are included in the test directory of the gem.<br/>
+					Assuming the rutema gem is in <em>rutema_gem_dir</em> you can do the following:
+					<ul>
+						<li>rutemax -c rutema_gem_dir/test/distro_test/config/minimal.rutema<code> #this runs all unattended tests defined in the configuration</code></li>
+						<li>rutemax -c rutema_gem_dir/test/distro_test/config/minimal.rutema attended<code> #this runs all attended tests defined in the configuration</code></li>
+						<li>rutemax -c rutema_gem_dir/test/distro_test/config/minimal.rutema all<code> #this runs all tests defined in the configuration</code></li>
+						<li>rutemax -c rutema_gem_dir/test/distro_test/config/database.rutema<code> #this runs unattended tests defined in the configuration and saves them in the database</code></li>
+						<li>rutemah -c rutema_gem_dir/test/distro_test/config/database.rutemah all<code> #this prints a list of all runs in the database</code></li>
+						<li>rutemaweb  rutema_gem_dir/test/distro_test/config/sample.db<code> #this starts a mini web server on port 7000 that allows you to browse the test database</code></li>
+					</ul>
+				</div>
+			</div>
+			<div id="leftpanel">
+				<div align="justify" class="graypanel">
+					<span class="bodytext">Home</span><br />
+					<a href="index.html" class="smallgraytext">More...</a><br /><br />
+					<span class="bodytext">Documentation</span><br />
+					<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+				</div>
+			</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+#on the worker "sample_worker" build with the sequence "sample_sequence"
+#Passing an Array will cause the rule to trigger the first available worker
+#
+#on ["worker1","worker2"] {}
+#
+#Rule validation will check if definition files for workers and sequence are available
+on "sample_worker" do 
+ #a pattern that will match filenames
+ match :pattern=>"*"
+ with_sequence "sample_sequence"
+end

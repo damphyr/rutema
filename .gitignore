@@ -1,0 +1,11 @@
+# Lines starting with '#' are considered comments.
+# Ignore any named file
+.DS_Store
+*.db
+temp/*
+tmp/*
+log/*
+# except foo.html which is maintained by hand.
+#!foo.html
+# Ignore objects and archives.
+#*.[oa]

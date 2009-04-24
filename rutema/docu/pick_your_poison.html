@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Rutema: a library, a tool, a method</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Pick your poison</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					<h2>Rutema: a library, a tool, a method</h2>
+						<h2>The ideas</h2>
+						<p>The gist of Rutema is the expression of a test in a machine readable format. This becomes the Rutema <strong>test specification</strong>.<br>
+							The test specification can be parsed and executed by a program/computer with little or no user intervention. Even if user input is required, the input method/sequence should be the same in every repetition of a test.<br>
+							The term <strong>attended</strong> is used for tests that require user intervention, with <strong>unattended</strong> used for tests that can be run automatically.<br>
+						</p>
+						<p>
+							Having machine readable tests allows us to handle test results and output in a consistent way, leaving archiving and reporting to the framework.<br/>
+							The actual value of rutema becomes apparent when examining test results over time. It allows us to ask questions like:
+							<ul>
+								<li>Does a testcase fail intermittently?</li>
+								<li>Which testcase fail most often when changes occur?</li>
+								<li>When was the last time a testcase was executed and against which version?</li>
+							</ul>
+						</p>
+						<h2>XML Specifications: An Implementation</h2>
+						<p>
+							Let's define an example of a test for a system. <br>
+							This system is an embedded software running on a small processor and controlled by a PC.<br>
+							The project engineers have a very nice tool, scriptable, that allows them to peer into the memory state of the embedded device and debug. The tool has proved invaluable in testing as well.<br>
+						</p>
+						<p>
+							We want to test that the system starts correctly. In human readable form:<br>
+							"Flash the device firmware. Reboot the device. Verify that after 5 seconds that the 'Run' state has been reached and the ErrorList is empty."<br>
+							Breaking down the test steps, lets see what must be done:
+							<ol>
+								<li>Flash the firmware: Find the latest build and flash the firmware using the flash utility</li>
+								<li>Reboot the device: Press the button or use the remote boot utility</li>
+								<li>Wait 5 seconds</li>
+								<li>Load the DebugTool and verify that the state=="Run" and ErrorList is empty</li>
+							</ol>
+						</p>
+						This specification expressed in XML:
+<pre >
+&lt;specification id="id">
+  &lt;title>Startup&lt;/title>
+  &lt;description>The device starts without problems. 
+Expected is that 5 seconds after a reset that the 'Run' state has been reached and the ErrorList is empty.
+  &lt;/description>
+  &lt;scenario>
+    &lt;command cmd="path/to/utility/flash /path/to/build/image"/>
+    &lt;command cmd="path/to/utility/reset DevicePort"/>
+    &lt;wait timeout="5"/>
+    &lt;command cmd="path/to/debug/tool startup.script"/>
+  &lt;/scenario>
+&lt;/specification>
+</pre>
+						The Rutema significant portion of the specification is the scenario element, that defines the exact steps required in the test, from start to end. The only requiremet here is that the commands return a meaningful exit code so that we can determine success or failure.<br>
+						<h2>Making it easy for the specification writers</h2>
+						The scenario above works, but is not flexible enough: commands need to be in the path (flash, reset, DebugTool) or fully specified and all that <em> &lt;command cmd=""/&gt; </em>is a bit counterintuitive.
+						How about:
+<pre>
+&lt;scenario>
+  &lt;flash image="/path/to/build/image"/>
+  &lt;reset/>
+  &lt;wait timeout="5"/>
+  &lt;debugtool script="startup.script"/>
+&lt;/scenario>
+</pre>
+						It's a small DSL, specific for the project.<br>
+						Such a DSL has several advantages:<br>
+						<ul>
+							<li>Specifications are easier to write, read and understand since the "DSL" uses the language used by the project. </li>
+							<li>Complexity is reduced (several <em>command</em> elements can be replaced by a single DSL element) and this reduces the possibility of errors</li>
+							<li>Errors are easily localised within specific operations (getting a "flash of 'path/to/image' failed" message is a lot more informative then "command /one/very/long/path/to/flash/utility with/a/lot/of/repetitive/parameters and an image/path/equally/as/long failed")</li>
+							<li>Last but not least, if you decide to move all those tools to a different location, you don't have to edit every single spec</li>
+						</ul>
+						Rutema provides you with a very simple way to extend it's basic XML parser and provide such a DSL for your project with a powerful configuration system that minimizes the impact of reorganization.
+				</div>
+			</div>
+				<div id="leftpanel">
+					<div align="justify" class="graypanel">
+						<span class="bodytext">Home</span><br />
+						<a href="index.html" class="smallgraytext">More...</a><br /><br />
+						<span class="bodytext">Documentation</span><br />
+						<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+					</div>
+				</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

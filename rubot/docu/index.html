@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Rubot</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rubot</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="../rutema/index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Rubot</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					<p>Rubot is a distributed build management system for the support of Continuous Integration. It aims to automate the execution of builds and handle reporting and archiving of build artifacts.
+					</p>
+					<p>
+						It started as a Ruby implementation of the ideas behind BuildBot and broadly follows it's architecture.</p>
+						<h3>Why another CI system?</h3>
+					<p>
+						There are a few reasons why Rubot is being developed. At the time where the system started, <a href="http://buildbot.net/trac">BuildBot</a> could only be hosted on *nix systems and the Rubot team had to live with Windows servers.<br/>
+						No other CI system seems to be able to handle a highly heterogeneous build system (initially Rubot was developed to handle the build requirements for a project that used VS6.0, VS2003, a dmake build wth an embedded compiler, an MSBuild for a C# tool and various Ruby support applications) - at least that was the case at the time we took the decision to create Rubot.
+						</p><p>
+						Last, but not least, <a href="../rutem/index">rutema</a> was already in production and coincidentally used a similar (if scaled down) architecture that allowed us to reuse a lot of the code (some of it now lives in the <a href="../index.html">patir</a> project).<br/>
+						Once Rubot reaches release status expect modules that will offer rutema integration out of the box.
+					</p>
+				</div>
+			</div>
+			<div id="leftpanel">
+				<div align="justify" class="graypanel">
+				</div>
+			</div>
+			<div id="footer" class="smallgraytext">
+				<a href="#">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

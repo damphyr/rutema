@@ -1,0 +1,2 @@
+#You have access to the request triggering the sequence through the 'request' variable
+shell "echo #{request.request_id}"

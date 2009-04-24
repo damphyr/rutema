@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Rutema Configuration</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Passing Information through Configuration</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					Version>=0.7.0
+					<h2>Tools, paths and context</h2>
+					<p>
+					rutema allows you to pass configuration information to the parser and the reporters following a few conventions along the way.
+					The configuration object passed to the parser and the reporters offers three members:
+					configuration.tools, configuration.paths and configuration.context
+					<h3>Tools</h3>
+					The <em>configuration.tool</em> directive allows you to pass information about the various tools/executables to be used by the parser.</p><p>
+					<code>
+configuration.tool={:name=>"cooltool",<br>:path=>"/opt/bin/cooltool",<br>:configuration=>{:coolness=>"high"}<br>}
+</code>
+					</p>
+					In the parser configuration.tools.cooltool will return the<br> <em>{:name=>"cooltool",<br>:path=>"/opt/bin/cooltool",<br>:configuration=>{:coolness=>"high"}}</em> Hash.<br>
+					<p>
+					Consider the following example:<br>
+					Several test cases are executed against a test server. In these specifications a database element is responsible for resetting the database with the appropriate data for the test.
+					</p><p>
+					One possible implementation is</p><p>
+					<code>
+					&lt;database script="test_data.sql" server="db001"/&gt;
+					</code></p>
+					<p>
+					where the database in <em>db001</em> is filled with the data from <em>test_data.sql</em>.</p><p>
+					This is a simple approach, as the parser has all the information (the what,where and how) included in the definition of the step.<br>
+					The test specification though is bound to the db001 server, meaning we need a copy with the server name changed if we decide to run the tests against a different server.<br>
+					Additionaly adding extra information (like user and password for DB access) makes the step definitions even more unwieldy and increases the ammount of work needed to maintain the spec.<br>
+					</p><p>
+					The <em>where and how</em> of the test executions should be managed in the configuration, so that a complete set of tests can be transfered to a different physical infrastructure just by changing the configuration.<br>
+					So in this example the element should be even simpler</p><p>
+					<code>
+					&lt;database script="test_data.sql"/&gt;
+					</code></p><p>
+					and the parser can use a tool configuration to create the execution environment:
+					</p><p>
+					<code>
+					configuration.tool={:name=>"database_update",<br>
+					 :configuration=>{:server=>"db001",:user=>"db_user",:password=>"foo"}<br>
+					}
+					</code>
+					</p>
+					<h3>Paths</h3>
+					<p>
+					The <em>configuration.path</em> directive allows you to pass information about paths to be used by the parser.
+					<pre>
+configuration.path={:name=>"sources",:path=>"/path/to/sources"}
+</pre>
+					In the parser configuration.paths.sources will return "/path/to/sources". Only :name and :path are used.
+					</p>
+					<h3>Context</h3>
+					<p>
+					The <em>configuration.context</em> directive allows you to pass general information to the parser and the reporters. It's intended purpose is to allow you to define things like versions, author and tester names, possible filenames for use with reporters etc.<br>
+					Keep in mind that the configuration file is Ruby code: the values assigned do not necessarily have to be static.</p><p>
+					For example, the current build version can be deduced in the configuration by code and assigned to a context key ensuring that your reports will include the correct version with every execution.
+					</p><p>
+					<code>
+configuration.context={:key1=>"value1",:key2=>some_method()}
+</code></p><p>
+					In the parser/reporter configuration.context.key1 will return "value1"
+					</p>
+				</div>
+			</div>
+			<div id="leftpanel">
+					<div align="justify" class="graypanel">
+						<span class="bodytext">Home</span><br />
+						<a href="index.html" class="smallgraytext">More...</a><br /><br />
+						<span class="bodytext">Documentation</span><br />
+						<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+					</div>
+				</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

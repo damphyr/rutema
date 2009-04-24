@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Upgrading to rutema v1.0.0</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Upgrading to rutema v1.0.0</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					Between the 0.9.3 and the 1.0.0 releases of rutema there has been a change in the database schema.<br>
+					This change adds more information to the scenario entries, capturing the titles and descriptions associated with them.<br>
+					The rutema 1.0.0 gem includes rutema_upgrader, a small utility that will perform the migration.
+					Simply call <code>rutema_upgrader config_file.rutema</code> to perform the migration.
+					<p>
+					The migration adds the columns 'title' and 'description' to the scenarios table. The script uses the configuration to parse all specifications and add the appropriate title and description values. It looks for the ActiveRecordReporter configuration to determine which database to migrate.</p>
+				</div>
+			</div>
+				<div id="leftpanel">
+					<div align="justify" class="graypanel">
+						<span class="bodytext">Home</span><br />
+						<a href="index.html" class="smallgraytext">More...</a><br /><br />
+						<span class="bodytext">Documentation</span><br />
+						<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+					</div>
+				</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> |	&copy; 2007 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>

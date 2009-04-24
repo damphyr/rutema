@@ -1,0 +1,26 @@
+#  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
+# -*- ruby -*-
+$:.unshift File.join(File.dirname(__FILE__),"lib")
+require 'rutemaweb/main'
+require 'rubygems'
+require 'hoe'
+
+Hoe.new('rutemaweb', "#{RutemaWeb::Version::STRING}") do |p|
+  p.rubyforge_name = 'patir'
+  p.author = "Vassilis Rizopoulos"
+  p.email = "riva@braveworld.net"
+  p.summary = 'rutemaweb is the web frontend for rutema'
+  p.description = p.paragraphs_of('README.txt', 1..5).join("\n\n")
+  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+  p.extra_deps<<['patir',">=0.6.0"]
+  p.extra_deps<<['rutema',">=1.0.0"]
+  p.extra_deps<<['activerecord','=2.1.1']
+  p.extra_deps<<['ruport']
+  p.extra_deps<<['ramaze','=2008.06']
+  p.extra_deps<<['erubis']
+  p.extra_deps<<['acts_as_reportable']
+  p.extra_deps<<['gruff','0.3.4']
+  p.spec_extras={:executables=>["rutemaweb"],
+    :default_executable=>"rutemaweb"}
+end

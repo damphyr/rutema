@@ -1,0 +1,18 @@
+# -*- ruby -*-
+$:.unshift File.join(File.dirname(__FILE__),"lib")
+require 'rubygems'
+require 'hoe'
+require 'patir/base'
+
+Hoe.new('patir', Patir::Version::STRING) do |p|
+  p.author = "Vassilis Rizopoulos"
+  p.email = "riva@braveworld.net"
+  p.summary = 'patir (Project Automation Tools in Ruby) provides libraries for use in automation tools'
+  p.description = p.paragraphs_of('README.txt', 2..5).join("\n\n")
+  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+  p.rubyforge_name="patir"
+  p.extra_deps<<['systemu']
+end
+
+# vim: syntax=Ruby

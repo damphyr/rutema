@@ -1,0 +1,10 @@
+configuration.parser={:class=>Rutema::MinimalXMLParser}
+configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:database=>"h2"}}
+configuration.tests=[
+"../specs/T001.spec",
+"../specs/T002.spec",
+"../specs/T003.spec",
+"../specs/T004.spec",
+"../specs/T005.spec",
+"../specs/T006.spec"
+]

@@ -1,0 +1,14 @@
+#The parser to use
+configuration.parser={:class=>Rutema::MinimalXMLParser}
+#Use the AR-Reporter. 
+#In case of reporters the whole Hash is passed to the reporter initializer, so any keys are dependent on the reporter to use
+#Check the appropriate RDoc entries
+configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:database=>"sample.db"}}
+configuration.tests=[
+"../specs/T001.spec",
+"../specs/T002.spec",
+"../specs/T003.spec",
+"../specs/T004.spec",
+"../specs/T005.spec",
+"../specs/T006.spec"
+]

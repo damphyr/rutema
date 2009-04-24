@@ -1,0 +1,27 @@
+#  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
+# -*- ruby -*-
+$:.unshift File.join(File.dirname(__FILE__),"lib")
+$:.unshift File.join(File.dirname(__FILE__),"ext")
+require 'rubygems'
+require 'hoe'
+require 'rutema/system'
+
+Hoe.new('rutema', "#{Rutema::Version::STRING}") do |p|
+  p.rubyforge_name = 'patir'
+  p.author = "Vassilis Rizopoulos"
+  p.email = "riva@braveworld.net"
+  p.summary = 'rutema is a test execution and management framework for heterogeneous testing environments'
+  p.description = p.paragraphs_of('README.txt', 1..5).join("\n\n")
+  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+  p.extra_deps<<['patir',">=0.6.0"]
+  p.extra_deps<<['highline']
+  p.extra_deps<<['mailfactory']
+  p.extra_deps<<['activerecord','=2.1.1']
+  p.extra_deps<<['ruport','>=1.6.1']
+  p.extra_deps<<['acts_as_reportable','>=1.1.1']
+  p.spec_extras={:executables=>["rutemax","rutema_upgrader"],
+    :default_executable=>"rutemax"}
+end
+
+# vim: syntax=Ruby

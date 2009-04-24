@@ -1,0 +1,25 @@
+# -*- ruby -*-
+$:.unshift File.join(File.dirname(__FILE__),"lib")
+require 'rubygems'
+require 'hoe'
+require 'rubot/version'
+
+Hoe.new('rubot', Rubot::Version::STRING) do |p|
+  p.author = "Vassilis Rizopoulos"
+  p.email = "riva@braveworld.net"
+  p.summary = 'rubot (the Ruby Bot) is a distributed build management system'
+  p.description = p.paragraphs_of('README.txt', 2..5).join("\n\n")
+  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
+  p.rubyforge_name="patir"
+  p.extra_deps<<['patir',">=0.6.0"]
+  p.extra_deps<<["ramaze"]
+  p.extra_deps<<["erubis"]
+  p.extra_deps<<["sqlite3-ruby"]
+  p.extra_deps<<["ruport"]
+  p.extra_deps<<["acts_as_reportable"]
+  p.spec_extras={:executables=>["rubot"],
+     :default_executable=>"rubot"}
+end
+
+# vim: syntax=Ruby

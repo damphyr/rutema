@@ -1,0 +1,18 @@
+require 'fileutils'
+require 'rubygems'
+require 'rubot/main'
+include Rubot
+parse_command_line
+command=ARGV.shift
+case command
+when "help"
+  Rubot.help
+when "overseer"
+  Rubot.start_overseer(@base_dir,@log_to_file)
+when "worker"
+  Rubot.start_worker(@base_dir,@log_to_file)
+when "setup"
+  Rubot.setup_overseer(@base_dir)
+else
+  Rubot.offer_help
+end

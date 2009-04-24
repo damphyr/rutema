@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta name="author" content="Vassilis Rizopoulos" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF8" />
+	<link rel="stylesheet" href="style.css" type="text/css" />
+	<title>Installing rutema</title>
+</head>
+<body>
+	<div id="page" align="center">
+		<div id="content" style="width:800px">
+			<div id="logo">
+				<div style="margin-top:70px" class="whitetitle">rutema</div>
+			</div>
+			<div id="topheader">
+				<div align="left" class="bodytext">
+					<br />
+				</div>
+			</div>
+			<div id="menu">
+			</div>
+			<div id="submenu">
+				<div align="right" class="smallgraytext" style="padding:9px;">
+					<a href="../index.html">patir</a> | <a href="index.html">rutema</a> | <a href="rdoc/index.html">rdoc</a>
+				</div>
+			</div>
+			<div id="contenttext">
+				<div style="padding:10px">
+					<span class="titletext">Installing rutema</span>
+				</div>
+				<div class="bodytext" style="padding:12px;" align="justify">
+					Version>=1.0.0
+					<h2>Installation</h2>
+					<p>
+						rutema's installation is simpler when using the gems. Still there are some dependencies that are not automatically included as they present some difficulties (mostly under windows).
+					</p>
+					<h3>rutema</h3>
+					<p>
+						Start by installing rutema using the gem facilities:<br><br>
+						<code>sudo gem i rutema</code><br><br>
+						If you are going to use the ActiveRecordReporter (and you will want to use it - much of rutema's value comes from archiving test results) you will need sqlite3:<br><br>
+						<code>sudo gem i sqlite3-ruby --version="1.2.2"</code><br><br>
+						Windows users should make sure to have the sqlite3 dll in <em>windows/system32</em>. Installing the latest version of sqlite3-ruby on windows is not straightforward as there is no precompiled win32 gem. At the time of writing the latest precompiled sqlite3-ruby version is 1.2.2<br><br>
+						This takes care of the base rutema system, allowing you to create and run tests, archive the results and produce email and text reports.
+					</p>
+					<p>
+						<code>rutemax -v</code> will tell you the version of rutema you have installed
+					</p>
+					<h3>rutemaweb</h3>
+					<p>
+						The rutemaweb gem offers a simple web GUI implemented with Ramaze for test result visualisation:<br><br>
+						<code>sudo gem i rutemaweb</code><br><br>
+						On windows, make sure that the win32-console gem is installed (gem i win32-console) otherwise Ramaze will exit with an error.
+					</p>
+					<p><code>rutemaweb -v</code> will tell you the version of rutemaweb you have installed</p>
+					<h3>rutema elements</h3>
+					<p>
+						<a href="rutema_elements">rutema elements</a> is a collection of element parsing implementations that simplifies parser development based on <a href="rdoc/index.html">Rutema::BaseXMLParser</a><br>
+						<code>sudo gem i rutema_elements</code> will install it in your system.<br>
+						<p>Some implementations target Windows tools (like sqlcmd or mstest) but the code is in pure Ruby with no platform dependencies.</p>
+					</p>
+				</div>
+			</div>
+			<div id="leftpanel">
+				<div align="justify" class="graypanel">
+					<span class="bodytext">Home</span><br />
+					<a href="index.html" class="smallgraytext">More...</a><br /><br />
+					<span class="bodytext">Documentation</span><br />
+					<a href="docu.html" class="smallgraytext">More...</a><br /><br />
+				</div>
+			</div>
+			<div id="footer" class="smallgraytext">
+				<a href="index.html">Home</a> | <a href="../contact.html">Contact</a> | &copy; 2008 Vassilis Rizopoulos</a> 
+			</div>
+		</div>
+	</div>
+</body>
+</html>
