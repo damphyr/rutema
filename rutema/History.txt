@@ -2,6 +2,7 @@
 * A failure of the check test now passes all test stati (as not_executed). This will not skew statistics that show the trends on test numbers
 * Setup and teardown are no longer executed for check tests
 * fixed bug in element_prompt where a negative answer would not set an error
+* TextReporter now shows the failed tests first, followed by tests with warnings, not executed tests and finally the successes. This gives a better overview of the important bits
 == 1.0.4 / 2008-11-7
 * Added functionality that allows ignoring the result of a step. The step is considered always successful
 == 1.0.3 / 2008-10-28

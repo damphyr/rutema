@@ -13,6 +13,8 @@ module Rutema
   #
   #:port - the port to use (defaults to 25)
   #
+  #:domain - the domain the mail is coming from
+  #
   #:sender - the sender of the email (defaults to rutema@domain)
   #
   #:recipients - an array of strings with the recipients of the report emails
