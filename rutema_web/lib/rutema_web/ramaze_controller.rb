@@ -1,8 +1,8 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutemaweb/gems'
-require 'rutemaweb/ruport_formatter.rb'
-require 'rutemaweb/model'
+require 'rutema_web/gems'
+require 'rutema_web/ruport_formatter.rb'
+require 'rutema_web/model'
 require 'rutema/system'
 
 module Rutema

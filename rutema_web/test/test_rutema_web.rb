@@ -1,7 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
 require 'ostruct'
-require 'rutemaweb/ramaze_controller'
+require 'rutema_web/ramaze_controller'
 require 'rubygems'
 require 'mocha'
 

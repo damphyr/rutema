@@ -1,6 +1,6 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutemaweb/gems'
-require 'rutemaweb/ramaze_controller'
+require 'rutema_web/gems'
+require 'rutema_web/ramaze_controller'
 
 #This is the web frontend for Rutema databases.
 #

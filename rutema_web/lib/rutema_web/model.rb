@@ -1,6 +1,6 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutemaweb/gems'
+require 'rutema_web/gems'
 
 
 module Rutema
