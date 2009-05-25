@@ -1,4 +1,5 @@
-== 1.0.5 / 2008-12-
+== 1.0.5 / 2009-05-25
+* Updated gem dependencies to use activerecorde 2.3.2
 * A failure of the check test now passes all test stati (as not_executed). This will not skew statistics that show the trends on test numbers
 * Setup and teardown are no longer executed for check tests
 * fixed bug in element_prompt where a negative answer would not set an error
