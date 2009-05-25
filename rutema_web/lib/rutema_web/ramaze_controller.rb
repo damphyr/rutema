@@ -365,7 +365,7 @@ module Rutema
       map '/statistics'
       engine :Erubis
       layout :layout
-      deny_layout :graph
+      #deny_layout :graph
       view_root(File.expand_path(File.join(File.dirname(__FILE__),"view")))
       def index
         @title="Rutema"

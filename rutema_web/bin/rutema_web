@@ -1,9 +1,9 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 begin
-  require 'rutemaweb/main'
+  require 'rutema_web/main'
 rescue LoadError
   require 'rubygems'
-  require 'rutemaweb/main'
+  require 'rutema_web/main'
 end
 
 RutemaWeb.start_ramaze
