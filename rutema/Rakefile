@@ -17,7 +17,7 @@ Hoe.new('rutema', "#{Rutema::Version::STRING}") do |p|
   p.extra_deps<<['patir',">=0.6.0"]
   p.extra_deps<<['highline']
   p.extra_deps<<['mailfactory']
-  p.extra_deps<<['activerecord','=2.1.1']
+  p.extra_deps<<['activerecord','=2.3.2']
   p.extra_deps<<['ruport','>=1.6.1']
   p.extra_deps<<['acts_as_reportable','>=1.1.1']
   p.spec_extras={:executables=>["rutemax","rutema_upgrader"],
