@@ -2,32 +2,32 @@ require 'rubygems'
 require 'rake'
 
 $stdout.puts("Generating RDoc")
-Dir.chdir("../patir/trunk") {system("rake docs")}
-Dir.chdir("../rutema/trunk/rutema") {system("rake docs")}
-Dir.chdir("../rutema/trunk/rutemaweb") {system("rake docs")}
-Dir.chdir("../rutema/trunk/rutema_elements") {system("rake docs")}
-Dir.chdir("../rubot/trunk") {system("rake docs")}
+Dir.chdir("../patir/") {system("rake docs")}
+Dir.chdir("../rutema/rutema") {system("rake docs")}
+Dir.chdir("../rutema/rutemaweb") {system("rake docs")}
+Dir.chdir("../rutema/rutema_elements") {system("rake docs")}
+Dir.chdir("../rubot/") {system("rake docs")}
 
 $stdout.puts("Generating filelists")
-patir_docs=Rake::FileList['../patir/trunk/docu/**/*.html',
-  '../patir/trunk/docu/**/*.jpg',
-  '../patir/trunk/docu/**/*.png',
-  '../patir/trunk/docu/**/*.gif',
-  '../patir/trunk/docu/**/*.css'
+patir_docs=Rake::FileList['../patir/docu/**/*.html',
+  '../patir/docu/**/*.jpg',
+  '../patir/docu/**/*.png',
+  '../patir/docu/**/*.gif',
+  '../patir/docu/**/*.css'
 ]
 
-rutema_docs=Rake::FileList['../rutema/trunk/rutema/docu/**/*.html',
-  '../rutema/trunk/rutema/docu/**/*.gif',
-  '../rutema/trunk/rutema/docu/**/*.jpg',
-  '../rutema/trunk/rutema/docu/**/*.png',
-  '../rutema/trunk/rutema/docu/**/*.css'
+rutema_docs=Rake::FileList['../rutema/rutema/docu/**/*.html',
+  '../rutema/rutema/docu/**/*.gif',
+  '../rutema/rutema/docu/**/*.jpg',
+  '../rutema/rutema/docu/**/*.png',
+  '../rutema/rutema/docu/**/*.css'
 ]
 
-rubot_docs=Rake::FileList['../rubot/trunk/docu/**/*.html',
-  '../rubot/trunk/docu/**/*.jpg',
-  '../rubot/trunk/docu/**/*.png',
-  '../patir/trunk/docu/**/*.gif',
-  '../rubot/trunk/docu/**/*.css'
+rubot_docs=Rake::FileList['../rubot/docu/**/*.html',
+  '../rubot/docu/**/*.jpg',
+  '../rubot/docu/**/*.png',
+  '../patir/docu/**/*.gif',
+  '../rubot/docu/**/*.css'
 ]
 
 $stdout.puts("Removing previous artefacts")
@@ -43,8 +43,8 @@ cp(rutema_docs,"rubyforge_site/rutema",:verbose=>false)
 cp(rubot_docs,"rubyforge_site/rubot",:verbose=>false)
 
 $stdout.puts("Copying RDoc")
-FileList["../patir/trunk/doc/**/*"].each do |file|
-  target=File.dirname(File.join("rubyforge_site/rdoc",file.gsub("../patir/trunk/doc/","")))
+FileList["../patir/doc/**/*"].each do |file|
+  target=File.dirname(File.join("rubyforge_site/rdoc",file.gsub("../patir/doc/","")))
   if File.stat(file).directory?
   else
     mkdir_p(target,:verbose=>false)
@@ -52,8 +52,8 @@ FileList["../patir/trunk/doc/**/*"].each do |file|
   end
 end
 
-FileList["../rutema/trunk/rutema/doc/**/*"].each do |file|
-  target=File.dirname(File.join("rubyforge_site/rutema/rdoc",file.gsub("../rutema/trunk/rutema/doc/","")))
+FileList["../rutema/rutema/doc/**/*"].each do |file|
+  target=File.dirname(File.join("rubyforge_site/rutema/rdoc",file.gsub("../rutema/rutema/doc/","")))
   if File.stat(file).directory?
   else
     mkdir_p(target,:verbose=>false)
@@ -61,8 +61,8 @@ FileList["../rutema/trunk/rutema/doc/**/*"].each do |file|
   end
 end
 
-FileList["../rutema/trunk/rutemaweb/doc/**/*"].each do |file|
-  target=File.dirname(File.join("rubyforge_site/rutemaweb/rdoc",file.gsub("../rutema/trunk/rutemaweb/doc/","")))
+FileList["../rutema/rutemaweb/doc/**/*"].each do |file|
+  target=File.dirname(File.join("rubyforge_site/rutemaweb/rdoc",file.gsub("../rutema/rutemaweb/doc/","")))
   if File.stat(file).directory?
   else
     mkdir_p(target,:verbose=>false)
@@ -70,8 +70,8 @@ FileList["../rutema/trunk/rutemaweb/doc/**/*"].each do |file|
   end
 end
 
-FileList["../rutema/trunk/rutema_elements/doc/**/*"].each do |file|
-  target=File.dirname(File.join("rubyforge_site/rutema_elements/rdoc",file.gsub("../rutema/trunk/rutema_elements/doc/","")))
+FileList["../rutema/rutema_elements/doc/**/*"].each do |file|
+  target=File.dirname(File.join("rubyforge_site/rutema_elements/rdoc",file.gsub("../rutema/rutema_elements/doc/","")))
   if File.stat(file).directory?
   else
     mkdir_p(target,:verbose=>false)
@@ -79,8 +79,8 @@ FileList["../rutema/trunk/rutema_elements/doc/**/*"].each do |file|
   end
 end
 
-FileList["../rubot/trunk/doc/**/*"].each do |file|
-  target=File.dirname(File.join("rubyforge_site/rubot/rdoc",file.gsub("../rubot/trunk/doc/","")))
+FileList["../rubot/doc/**/*"].each do |file|
+  target=File.dirname(File.join("rubyforge_site/rubot/rdoc",file.gsub("../rubot/doc/","")))
   if File.stat(file).directory?
   else
     mkdir_p(target,:verbose=>false)
