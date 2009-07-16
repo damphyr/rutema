@@ -4,7 +4,8 @@ require 'rubygems'
 require 'hoe'
 require 'rubot/version'
 
-Hoe.new('rubot', Rubot::Version::STRING) do |p|
+Hoe.spec('rubot') do |p|
+  p.version=Rubot::Version::STRING
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"
   p.summary = 'rubot (the Ruby Bot) is a distributed build management system'
