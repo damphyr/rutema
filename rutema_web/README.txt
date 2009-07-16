@@ -1,7 +1,7 @@
-rutemaweb http://patir.rubyforge.org/rutema
+rutema_web http://patir.rubyforge.org/rutema
 
 == DESCRIPTION:
-rutemaweb is the web frontend for rutema. 
+rutema_web is the web frontend for rutema. 
 
 It can be used as a viewer for database files created with the rutema ActiveRecord reporter.
 It also provides you with some basic statistics about the tests in your database in the form of 
@@ -10,25 +10,25 @@ diagrams of debatable aesthetics but undoubtable value!
 == FEATURES/PROBLEMS:
 
 == SYNOPSIS:
-rutemaweb [results.db] and browse to http://localhost:7000 for the glorious view
+rutema_web [results.db] and browse to http://localhost:7000 for the glorious view
 
 == REQUIREMENTS:
 * patir (http://patir.rubyforge.org)
+* rutema (http://patir.rubyforge.org/rutema)
 * activerecord (http://ar.rubyonrails.com/)
 * sqlite3 (http://rubyforge.org/projects/sqlite-ruby/)
-* ramaze (http://www.ramaze.net/)
+* sinatra (http://www.sinatrarb.com/)
 * ruport (http://rubyreports.org/)
 * acts_as_reportable
-* erubis
 * gruff/RMagick (optional, but needed if you want to see the statistics graphs)
 
 == INSTALL:
-* sudo gem install rutemaweb
+* sudo gem install rutema_web
 
 == LICENSE:
 (The Ruby License)
 
-rutema is copyright (c) 2007 Vassilis Rizopoulos
+rutema is copyright (c) 2007 - 2009 Vassilis Rizopoulos
 
 You can redistribute it and/or modify it under either the terms of the GPL
 (see COPYING.txt file), or the conditions below:
