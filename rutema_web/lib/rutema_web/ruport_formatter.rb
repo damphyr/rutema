@@ -1,6 +1,5 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema_web/gems'
-
+require 'ruport/acts_as_reportable'
 module Rutema
   module UI
     # Formats the test scenario data into a vertical folding structure
@@ -24,7 +23,7 @@ module Rutema
         output << "<table class=\"vtable\"><colgroup><col width=\"100\"><col></colgroup>\n"
         output << "<tr><td>#{data['status']}</td><td colspan=\"2\"><h3>#{data['number']} - #{data['name']}</h3></td></tr>"
         output << "<tr><td>duration:</td><td>#{data['duration']}</td></tr>\n"
-        %w(output error).each { |k| output << "<tr><td colspan=\"2\"><div onclick=\"toggleContentFolding(this)\">#{k} - click me<pre style=\"display:none;\">#{data.get(k)}</pre></div></td></tr>\n" if data.get(k).size > 0 }
+        %w(output error).each { |k| output << "<tr><td colspan=\"2\"><div class=\"scenario_#{k}\"><pre>#{data.get(k)}</pre></div></td></tr>\n" if data.get(k).size > 0 }
         output << "</table>\n"
       end
     end

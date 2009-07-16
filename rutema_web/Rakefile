@@ -5,7 +5,8 @@ require 'rutema_web/main'
 require 'rubygems'
 require 'hoe'
 
-Hoe.new('rutema_web', "#{RutemaWeb::Version::STRING}") do |p|
+Hoe.spec('rutema_web') do |p|
+  p.version=RutemaWeb::Version::STRING
   p.rubyforge_name = 'patir'
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"
@@ -16,10 +17,9 @@ Hoe.new('rutema_web', "#{RutemaWeb::Version::STRING}") do |p|
   p.extra_deps<<['patir',">=0.6.0"]
   p.extra_deps<<['rutema',"=1.0.5"]
   p.extra_deps<<['activerecord','=2.3.2']
-  p.extra_deps<<['ruport']
-  p.extra_deps<<['ramaze','=2009.05']
-  p.extra_deps<<['erubis']
-  p.extra_deps<<['acts_as_reportable']
+  p.extra_deps<<['sinatra','=0.9.2']
+  p.extra_deps<<['ruport','1.6.1']
+  p.extra_deps<<['acts_as_reportable','=1.1.1']
   p.extra_deps<<['gruff','0.3.4']
   p.spec_extras={:executables=>["rutema_web"],
     :default_executable=>"rutema_web"}

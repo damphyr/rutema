@@ -1,14 +1,16 @@
-function toggleContentFolding( callingElement )
-{
-	var elem, vis;
-	//var par = callingElement.parentNode;
-	var par = callingElement
-	for (i = par.childNodes.length - 1; i >= 0; i--) {
-		if (par.childNodes[i].nodeType == 1) {
-			elem = par.childNodes[i];
-			break;
-		}
-	}
-	vis = elem.style;
-	vis.display = (vis.display==''||vis.display=='block')?'none':'block';
-}
+function toggleFolding(){
+	$(".scenario_output").hide();
+	$(".scenario_error").hide();
+	$(".scenario_output").parents("td").prepend("<a class=\"output_link\" href='' title='read the output log'>output</a>");
+	$(".scenario_error").parents("td").prepend("<a class=\"error_link\" href='' title='read the error log'>errors</a>");
+	$("a.output_link").click(function(event){
+		$(this).parents("td").children(".scenario_output").toggle();
+		// Stop the link click from doing its normal thing
+		event.preventDefault();
+	});
+	$("a.error_link").click(function(event){
+		$(this).parents("td").children(".scenario_error").toggle();
+		// Stop the link click from doing its normal thing
+		event.preventDefault();
+	});
+};
