@@ -5,7 +5,8 @@ require 'rutema/elements/general'
 require 'rubygems'
 require 'hoe'
 
-Hoe.new('rutema_elements', "#{Rutema::Elements::Version::STRING}") do |p|
+Hoe.spec('rutema_elements') do |p|
+  p.version=Rutema::Elements::Version::STRING
   p.rubyforge_name = 'patir'
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"

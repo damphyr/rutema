@@ -30,7 +30,7 @@ Check the RDocs for information on how to configure plus examples of usage for e
 == LICENSE:
 (The Ruby License)
 
-rutema_elements is copyright (c) 2008 Vassilis Rizopoulos
+rutema_elements is copyright (c) 2008 - 2009 Vassilis Rizopoulos
 
 You can redistribute it and/or modify it under either the terms of the GPL
 (see COPYING.txt file), or the conditions below:
