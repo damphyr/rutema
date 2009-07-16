@@ -32,7 +32,7 @@ See http://patir.rubyforge.org/rutema/distro_test.html for an introductory examp
 == LICENSE:
 (The Ruby License)
 
-rutema is copyright (c) 2007 Vassilis Rizopoulos
+rutema is copyright (c) 2007 - 2009 Vassilis Rizopoulos
 
 You can redistribute it and/or modify it under either the terms of the GPL
 (see COPYING.txt file), or the conditions below:
