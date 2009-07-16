@@ -1,5 +1,4 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
-require 'rubygems'
 require 'rutema/system'
 require 'patir/base'
 

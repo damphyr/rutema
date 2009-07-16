@@ -1,6 +1,7 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema/gems'
+require 'active_record'
+require 'ruport/acts_as_reportable'
 #this fixes the AR Logger hack that annoys me sooooo much
 class Logger
   private

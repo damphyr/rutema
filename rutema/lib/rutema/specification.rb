@@ -1,7 +1,6 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rutema/reporters/standard_reporters'
-require 'rutema/gems'
 
 module Rutema
   #This module adds functionality that allows us to 

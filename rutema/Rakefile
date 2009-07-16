@@ -6,7 +6,8 @@ require 'rubygems'
 require 'hoe'
 require 'rutema/system'
 
-Hoe.new('rutema', "#{Rutema::Version::STRING}") do |p|
+Hoe.spec('rutema') do |p|
+  p.version=Rutema::Version::STRING
   p.rubyforge_name = 'patir'
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"
@@ -18,8 +19,8 @@ Hoe.new('rutema', "#{Rutema::Version::STRING}") do |p|
   p.extra_deps<<['highline']
   p.extra_deps<<['mailfactory']
   p.extra_deps<<['activerecord','=2.3.2']
-  p.extra_deps<<['ruport','>=1.6.1']
-  p.extra_deps<<['acts_as_reportable','>=1.1.1']
+  p.extra_deps<<['ruport','=1.6.1']
+  p.extra_deps<<['acts_as_reportable','=1.1.1']
   p.spec_extras={:executables=>["rutemax","rutema_upgrader"],
     :default_executable=>"rutemax"}
 end

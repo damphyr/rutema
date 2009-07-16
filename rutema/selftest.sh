@@ -1,2 +1,2 @@
 #!/bin/sh
-rutemax -c test/rutema.rutema all
+ruby -rubygems -I lib/ bin/rutemax -c test/rutema.rutema all

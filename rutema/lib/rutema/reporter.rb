@@ -1,7 +1,6 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rutema/specification'
-require 'rutema/gems'
 
 module Rutema
   #Reporter is meant as a base class for reporter classes.

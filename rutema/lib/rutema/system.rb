@@ -1,10 +1,12 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rexml/document'
+require 'patir/configuration'
+require 'patir/command'
+require 'patir/base'
 require 'rutema/specification'
 require 'rutema/configuration'
 require 'rutema/reporters/standard_reporters'
-require 'rutema/gems'
 
 module Rutema
   #This module defines the version numbers for the library

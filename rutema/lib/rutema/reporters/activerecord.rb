@@ -4,7 +4,6 @@ require 'yaml'
 require 'rutema/reporter'
 require 'rutema/model'
 require 'rutema/db'
-require 'rutema/gems'
 
 module Rutema
   #The ActiveRecordReporter will store the results of a test run in a database using ActiveRecord.

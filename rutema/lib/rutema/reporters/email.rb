@@ -4,7 +4,7 @@ require 'net/smtp'
 require 'rutema/reporter'
 require 'rutema/specification'
 require 'rutema/reporters/text'
-require 'rutema/gems'
+require 'mailfactory'
 
 module Rutema
   #The following configuration keys are used by EmailReporter:
