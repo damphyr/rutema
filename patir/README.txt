@@ -1,5 +1,4 @@
-patir
-http://patir.rubyforge.org
+patir - http://patir.rubyforge.org
 by riva (Vassilis Rizopoulos)
 == DESCRIPTION:
   

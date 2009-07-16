@@ -4,7 +4,8 @@ require 'rubygems'
 require 'hoe'
 require 'patir/base'
 
-Hoe.new('patir', Patir::Version::STRING) do |p|
+Hoe.spec('patir') do |p|
+  p.version = Patir::Version::STRING
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"
   p.summary = 'patir (Project Automation Tools in Ruby) provides libraries for use in automation tools'
