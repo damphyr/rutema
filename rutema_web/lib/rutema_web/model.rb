@@ -1,12 +1,11 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema_web/gems'
-
-
+require 'active_record'
+require 'ruport/acts_as_reportable'
+require 'rutema/model'
 module Rutema
-
   module Model
-    #Extensions of Run to accomodate specific view requirements for rutemaweb
+    #Extensions of Rutema::Model::Run to accomodate specific view requirements for rutema_web
     class Run <ActiveRecord::Base
       # The view wants to display runs grouped into pages, 
       # where each page shows page_size runs at a time. 
@@ -43,12 +42,13 @@ module Rutema
       def number_of_tests
          self.scenarios.select{|sc| sc.is_test? }.size
       end
+      #the number of the configuration file used to run the test
       def config_file
         return nil if self.context.is_a?(OpenStruct)
         return context[:config_file]
       end
     end
-    
+    #Extensions of Rutema::Model::Scenario to accomodate specific view requirements for rutema_web
     class Scenario <ActiveRecord::Base
       # The view wants to display scenarios grouped into pages, 
       # where each page shows page_size scenarios at a time. 

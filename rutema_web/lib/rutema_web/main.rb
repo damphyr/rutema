@@ -1,25 +1,23 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema_web/gems'
-require 'rutema_web/ramaze_controller'
-
+require 'rutema_web/sinatra'
+require 'rutema/db'
+require 'optparse'
 #This is the web frontend for Rutema databases.
-#
 module RutemaWeb
   #This module defines the version numbers for the library
   module Version
-    MAJOR=0
-    MINOR=9
-    TINY=5
+    MAJOR=1
+    MINOR=0
+    TINY=0
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
-  #Starts Ramaze
-  def self.start_ramaze
+  #Starts App
+  def self.start
     logger=Patir.setup_logger
     db_file=parse_command_line(ARGV)
     db_file=File.expand_path(db_file)
     Rutema.connect_to_ar(db_file,logger)  
-    Rutema::UI.ramaze_settings
-    Ramaze.start :force=>true
+    RutemaWeb::UI::SinatraApp.run!
   end
   #Parses the command line arguments
   def self.parse_command_line args
