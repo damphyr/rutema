@@ -1,10 +1,14 @@
 # Lines starting with '#' are considered comments.
 # Ignore any named file
+LAYOUT
 .DS_Store
 *.db
-temp/*
-tmp/*
-log/*
+.idea
+.svn/
+temp/
+tmp/
+log/
+pkg/
 # except foo.html which is maintained by hand.
 #!foo.html
 # Ignore objects and archives.
