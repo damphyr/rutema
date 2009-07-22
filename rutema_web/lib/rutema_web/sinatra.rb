@@ -150,7 +150,7 @@ module RutemaWeb
     
       private
       #returns a jpg blob
-      def runs_graph_jpg successful,failed,labels
+      def runs_graph_jpg successful,failed,not_executed,labels
         graph=Gruff::StackedBar.new(640)
         graph.theme = {
           :colors => %w(green red yellow blue),
@@ -160,6 +160,7 @@ module RutemaWeb
         graph.x_axis_label="#{successful.size} runs"
         graph.data("successful",successful)
         graph.data("failed",failed)
+        graph.data("not executed",not_executed)
         graph.labels=labels 
         graph.marker_font_size=12
         return graph.to_blob("PNG")
@@ -281,6 +282,7 @@ module RutemaWeb
         content_type "image/png"
         successful=[]
         failed=[]
+        not_executed=[]
         labels=Hash.new
         runs=Rutema::Model::Run.find(:all)
         #find all runs beloging to this configuration
@@ -292,15 +294,17 @@ module RutemaWeb
         normalizer=runs.size/11 unless runs.size<=11
         runs.each do |r|
           fails=r.number_of_failed
+          no_exec = r.number_of_not_executed
           #the scenarios array includes setup and teardown scripts as well - we want only the actual testcases
           #so we use the added number_of_tests method that filters setup and test scripts
-          successful<<r.number_of_tests-fails
+          successful<<r.number_of_tests-fails-no_exec
           failed<<fails
+          not_executed<<no_exec
           #every Nth label
           labels[counter]="R#{r.id}" if counter%normalizer==0
           counter+=1
         end
-        runs_graph_jpg(successful,failed,labels)
+        runs_graph_jpg(successful,failed,not_executed,labels)
       end
       private
       def runs page

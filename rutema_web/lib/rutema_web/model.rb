@@ -36,7 +36,11 @@ module Rutema
       end
       #number of unsuccessful scenarios (does not count setup or teardown scripts)
       def number_of_failed
-        self.scenarios.select{|sc| !sc.success? && sc.is_test? }.size
+        self.scenarios.select{|sc| !sc.success? && !sc.not_executed? && sc.is_test? }.size
+      end
+      #number of scenarios that did not run (does not count setup or teardown scripts)
+      def number_of_not_executed
+        self.scenarios.select{|sc| sc.not_executed? && sc.is_test? }.size
       end
       #returns the number of actual tests (so, don't take into account setup or teardown tests)
       def number_of_tests
@@ -68,6 +72,12 @@ module Rutema
       end
       def success?
         return self.status=="success"
+      end
+      def not_executed?
+        return self.status=="not_executed"
+      end
+      def fail?
+        return self.status=="error"
       end
     end
   end
