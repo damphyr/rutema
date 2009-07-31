@@ -184,7 +184,6 @@ module RutemaWeb
       include ViewUtilities
       include Settings
       include Statistics
-      include Timeline
       attr_accessor :title,:panel_content,:content_title,:content
       enable :logging
       enable :run
