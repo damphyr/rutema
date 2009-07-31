@@ -147,7 +147,7 @@ module RutemaWeb
       rescue LoadError
         self.gruff_working=false
       end
-    
+     
       private
       #returns a jpg blob
       def runs_graph_jpg successful,failed,not_executed,labels
@@ -184,6 +184,7 @@ module RutemaWeb
       include ViewUtilities
       include Settings
       include Statistics
+      attr_accessor :title,:panel_content,:content_title,:content
       enable :logging
       enable :run
       enable :static
@@ -195,28 +196,14 @@ module RutemaWeb
       @@logger = Patir.setup_logger
       
       get '/' do
-        @title="Rutema"
-        @panel_content=panel_runs
-        @content_title="Welcome to Rutema"
-        @content="<p>This is the rutema web interface.<br/>It allows you to browse the contents of the test results database.</p><p>Currently you can view the results for each separate run, the results for a specific scenario (a complete list of all steps executed in the scenario with standard and error output logs) or the complete execution history of a scenario.</p><p>The panel on the left shows a list of the ten most recent runs.</p>"
+        page_setup "Rutema",panel_runs,"Welcome to Rutema","<p>This is the rutema web interface.<br/>It allows you to browse the contents of the test results database.</p><p>Currently you can view the results for each separate run, the results for a specific scenario (a complete list of all steps executed in the scenario with standard and error output logs) or the complete execution history of a scenario.</p><p>The panel on the left shows a list of the ten most recent runs.</p>"
         erb :layout 
-      end
-    
-      get '/runs/:page' do |page|
-        runs(page)
-        erb :layout
       end
       #Displays the details of a run
       #
       #Routes to /runs if no id is provided
       get '/run/:run_id' do |run_id|
-        @panel_content=nil
-        if !run_id.empty?
-          @panel_content=panel_runs
-          @title="Run #{run_id}"
-          @content_title="Summary of run #{run_id}"
-          @content=single_run(run_id)
-        end
+        page_setup "Run #{run_id}",panel_runs,"Summary of run #{run_id}",single_run(run_id)
         erb :layout
       end
       
@@ -229,6 +216,11 @@ module RutemaWeb
         runs(0)
         erb :layout
       end
+      
+      get '/runs/:page' do |page|
+        runs(page)
+        erb :layout
+      end
       #Displays a paginated list of scenarios
       get '/scenarios/:page' do |page|
         scenarios(page)
@@ -236,13 +228,10 @@ module RutemaWeb
       end
       #Displays the details of a scenario
       get '/scenario/:scenario_id' do |scenario_id|
-        @panel_content=""
-        if !scenario_id.empty?
-          if scenario_id.to_i==0
-            @content=scenario_by_name(scenario_id)
-          else
-            @content=scenario_in_a_run(scenario_id.to_i)
-          end
+        if scenario_id.to_i==0
+          @content=scenario_by_name(scenario_id)
+        else
+          @content=scenario_in_a_run(scenario_id.to_i)
         end
         erb :layout
       end
@@ -256,20 +245,18 @@ module RutemaWeb
         scenarios(0)
         erb :layout
       end
-    
+      
       get '/statistics/?' do
-        @title="Rutema"
-        @panel_content=panel_configurations
-        @content_title="Statistics"
+        page_setup "Rutema",panel_configurations,"Statistics"
         @content="<p>rutema statistics provide reports that present the results on a time axis<br/>At present you can see the ratio of successful vs. failed test cases over time grouped per configuration file.</p>"
         @content<<"statistics reports require the gruff gem which in turn depends on RMagick. gruff does not appear to be available!<br/>rutemaweb will not be able to produce statistics reports" unless Statistics.gruff_working?
         erb :layout
       end
-    
+
       get '/statistics/config_report/:configuration' do |configuration|
-        @title=configuration || "All configurations" 
-        @panel_content=panel_configurations
-        @content_title= configuration || "All configurations"
+        tt=configuration || "All configurations"
+        page_setup(tt,panel_configurations,tt)
+        
         if Statistics.gruff_working?
           @content="<img src=\"/statistics/graph/#{configuration}\"/>"
         else
@@ -277,21 +264,18 @@ module RutemaWeb
         end
         erb :layout
       end
-    
+
       get '/statistics/graph/:configuration' do |configuration|
         content_type "image/png"
         successful=[]
         failed=[]
         not_executed=[]
         labels=Hash.new
-        runs=Rutema::Model::Run.find(:all)
-        #find all runs beloging to this configuration
-        runs=runs.select{|r| r.context[:config_file]==configuration if r.context.is_a?(Hash)} if configuration
+        runs=all_runs_in_configuration(configuration)
         #now extract the data
         counter=0
         #the normalizer thins out the labels on the x axis so that they won't overlap
-        normalizer = 1
-        normalizer=runs.size/11 unless runs.size<=11
+        normalizer = calculate_normalizer(runs.size)
         runs.each do |r|
           fails=r.number_of_failed
           no_exec = r.number_of_not_executed
@@ -306,11 +290,33 @@ module RutemaWeb
         end
         runs_graph_jpg(successful,failed,not_executed,labels)
       end
+      
+      get 'statistics/timeline/:configuration' do |configuration|
+        runs=all_runs_in_configuration(configuration)
+      end
       private
+      #calculates a divider to sparse out the laels in statistics graphs
+      def calculate_normalizer siz
+        #the normalizer thins out the labels on the x axis so that they won't overlap
+        return siz<=11 ? 1 : siz/11
+      end
+      #finds all the runs belonging to a specific configuration
+      def all_runs_in_configuration configuration
+        runs=Rutema::Model::Run.find(:all)
+        #find all runs beloging to this configuration
+        runs.select{|r| r.context[:config_file]==configuration if r.context.is_a?(Hash)} if configuration
+      end
+      #sets the variables used in the layout template
+      def page_setup title,panel_content,content_title,content=""
+        @title=title
+        @panel_content=panel_content
+        @content_title=content_title
+        @content=content
+      end
+      
       def runs page
-        @title="All runs"
-        @content_title="Runs"
-        @content=""
+        page_setup "All runs",nil,"All runs"
+
         dt=[]
         total_pages=(Rutema::Model::Run.count/page_size)+1
         page_number=validated_page_number(page,total_pages)
@@ -325,10 +331,7 @@ module RutemaWeb
       end
     
       def scenarios page
-        @title="All scenarios"
-        @content_title="Scenarios"
-        @content=""
-        @panel_content=panel_runs
+        page_setup "All scenarios",panel_runs,"All scenarios"
         runs=Hash.new
         #find which runs contain each scenario with the same name
         #Ramaze::Log.debug("Getting the runs for each scenario")
@@ -370,8 +373,7 @@ module RutemaWeb
       #Renders the summary of all runs for a single scenario
       def scenario_by_name scenario_id
         ret=""
-        @title="Runs for #{scenario_id}"
-        @content_title="Scenario #{scenario_id} runs"
+        page_setup "Runs for #{scenario_id}",nil,"Scenario #{scenario_id} runs"
         begin
           table=Rutema::Model::Scenario.report_table(:all,:conditions=>["name = :spec_name",{:spec_name=>scenario_id}],
           :order=>"run_id DESC")
@@ -388,8 +390,8 @@ module RutemaWeb
             ret<<table.to_html
           end
         rescue
-          @content_title="Error"
-          @title=@content_title
+          content_title="Error"
+          title=content_title
           #Ramaze::Log.error("Could not retrieve data for the scenario name '#{scenario_id}'")
           #Ramaze::Log.debug("#{$!.message}:\n#{$!.backtrace}")
           ret="<p>could not retrieve data for the given scenario name</p>"
@@ -399,11 +401,9 @@ module RutemaWeb
       #Renders the information for a specific executed scenario
       #giving a detailed list of the steps, with status and output
       def scenario_in_a_run scenario_id
-        @panel_content=panel_runs
+        page_setup "Summary for #{scenario.name} in run #{scenario.run_id}",panel_runs,"Summary for #{scenario.name} in run #{scenario.run_id}"
         begin
           scenario=Rutema::Model::Scenario.find(scenario_id)
-          @content_title="Summary for #{scenario.name} in run #{scenario.run_id}"
-          @title=@content_title
           table=Rutema::Model::Step.report_table(:all,
           :conditions=>["scenario_id = :scenario_id",{:scenario_id=>scenario_id}],
           :order=>"number ASC")
@@ -414,8 +414,8 @@ module RutemaWeb
             ret=table.to_vhtml
           end
         rescue
-          @content_title="Error"
-          @title=@content_title
+          content_title="Error"
+          title=content_title
           #Ramaze::Log.error("Could not find scenario with the id '#{scenario_id}'")
           @@logger.warn("#{$!.message}:\n#{$!.backtrace}")
           ret="<p>Could not find scenario with the given id.</p>"

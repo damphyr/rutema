@@ -10,8 +10,7 @@ body {
 table {
 	font: 0.9em Tahoma, sans-serif;
 	color: #666666;
-	text-align: left;
-	
+	text-align: left;	
 }
 #logo{float:left; background-image:url(/images/tie_logo.gif); width:234px; height:213px;}
 #topheader{float:right; width:566px; height:97px; background-color:#F0F0F0; position:relative}
@@ -102,4 +101,21 @@ table {
 }
 .vtable tr td {
 	text-align: left;
+}
+td.succesfull{
+	background-color:#00FF00;
+}
+td.failed{
+	background-color:#FF0000;
+}
+td.not_executed{
+	background-color:#00FFFF;
+}
+table.timeline{
+	font: 0.9em Tahoma, sans-serif;
+	color: #666666;
+	text-align: center;
+}
+span.timeline{
+	text-align: center;
 }
