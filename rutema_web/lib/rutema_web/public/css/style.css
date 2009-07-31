@@ -102,14 +102,14 @@ table {
 .vtable tr td {
 	text-align: left;
 }
-td.succesfull{
+td.success{
 	background-color:#00FF00;
 }
-td.failed{
+td.error{
 	background-color:#FF0000;
 }
 td.not_executed{
-	background-color:#00FFFF;
+	background-color:#FFFF00;
 }
 table.timeline{
 	font: 0.9em Tahoma, sans-serif;
@@ -118,4 +118,17 @@ table.timeline{
 }
 span.timeline{
 	text-align: center;
+}
+a.timeline{
+	font: 0.5em Tahoma, sans-serif;
+	font-size: 10px;
+	font-weight:bold;
+	color:#000000;
+	text-decoration:none;
+}
+.timeline {
+	font: 0.5em Tahoma, sans-serif;
+	font-size: 10px;
+	font-weight:bold;
+	color:#999999;
 }
