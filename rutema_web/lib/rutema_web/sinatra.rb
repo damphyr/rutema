@@ -179,31 +179,6 @@ module RutemaWeb
         return ret
       end
     end
-    
-    module Timeline
-      #Collects the timeline information from a set of runs.
-      #Essentially this lists the status for all scenarios in each run
-      #filling in not_executed status for any missing entries
-      def timeline_data runs
-#        {:scenario=>{"run_id"=>status}}
-        data=Hash.new
-        runs.each do |run|
-          run.scenarios.each do |scenario|
-            unless scenario.name=~/_setup$/ || scenario.name=~/_teardown$/
-              data[scenario.name]||={}
-              data[scenario.name][run.id]=[scenario.status,scenario.id]
-            end
-          end
-        end
-        #fill in the blanks
-        data.each do |k,v|
-          runs.each do |run|
-            data[k][run.id]=["not_executed",nil] unless data[k][run.id]
-          end
-        end
-        return data
-      end
-    end
    
     class SinatraApp<Sinatra::Base
       include ViewUtilities
@@ -317,27 +292,6 @@ module RutemaWeb
         runs_graph_jpg(successful,failed,not_executed,labels)
       end
       
-      get '/statistics/timeline/:configuration' do |configuration|
-        page_setup "Rutema",nil,"Timeline for #{configuration}"
-        data=timeline_data(all_runs_in_configuration(configuration))
-        @content="<table class=\"timeline\">"
-        data.each do |sc_name,run_data|
-          @content<<"<tr><td>#{sc_name}</td>"
-          run_data.keys.sort.each do |key|
-            sc_data=run_data[key]
-            @content<<"<td class=\"#{sc_data[0]}\">"
-            if sc_data[1]
-              @content<<"<a class=\"timeline\" href=\"/scenario/#{sc_data[1]}\">#{key}</a>"
-            else
-              @content<<"<span class=\"timeline\">#{key}</span>"
-            end
-            @content<<"</td>"
-          end
-          @content<<"</tr>"
-        end
-        @content<<"</table>"
-        erb :layout
-      end
       private
       #calculates a divider to sparse out the laels in statistics graphs
       def calculate_normalizer siz
