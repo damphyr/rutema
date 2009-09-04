@@ -473,7 +473,7 @@ module Rutema
       @logger||=Patir.setup_logger
       @states=Hash.new
       @number_of_runs=0
-      @context=context
+      @context=context || Hash.new
     end
 
     def attended?
