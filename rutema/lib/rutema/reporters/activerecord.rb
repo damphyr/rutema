@@ -41,6 +41,7 @@ module Rutema
         er.error=pe[:error]
         run_entry.parse_errors<<er
       end
+      runner_states.compact!
       runner_states.each do |scenario|
         sc=Model::Scenario.new
         sc.name=scenario.sequence_name

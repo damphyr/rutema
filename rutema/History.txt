@@ -1,6 +1,8 @@
 == 1.0.6 / 2009-09-4
 * The run context is now passed to the runner and subsequently to the TestStep#run method
 	This way you can pass informaton to the command being run (context contains information on the start time of the run, the spec filename as well as any information added in the configuration) 
+* Minor bugfix in the activerecord reporter to avoid crashes due to nil runner states
+* The runner adds the current scenario name to the context passed
 == 1.0.5 / 2009-07-16
 * Updated gem dependencies to use activerecord 2.3.2
 * A failure of the check test now passes all test stati (as not_executed). This will not skew statistics that show the trends on test numbers

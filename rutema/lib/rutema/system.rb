@@ -484,6 +484,7 @@ module Rutema
     #Returns the result of the run as a Patir::CommandSequenceStatus
     def run name,scenario, run_setup=true
       @logger.debug("Starting run for #{name} with #{scenario.inspect}")
+      @context[:scenario_name]=name
       #if setup /teardown is defined we need to execute them before and after
       if @setup && run_setup
         @logger.info("Setup for #{name}")
@@ -510,6 +511,7 @@ module Rutema
         @states["#{name}_teardown"].sequence_id="#{@number_of_runs}t"
       end
       @number_of_runs+=1
+      @context[:scenario_name]=nil
       return @states[name]
     end
     
