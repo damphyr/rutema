@@ -386,9 +386,9 @@ module Rutema
       end
       if @configuration.use_step_by_step
         @logger.info("Using StepRunner")
-        return StepRunner.new(setup,teardown,@logger)
+        return StepRunner.new(@configuration.context,setup,teardown,@logger)
       else
-        return Runner.new(setup,teardown,@logger)
+        return Runner.new(@configuration.context,setup,teardown,@logger)
       end
     end
 
@@ -459,13 +459,13 @@ module Rutema
 
   #Runner executes TestScenario instances and maintains the state of all scenarios run.
   class Runner
-    attr_reader :states,:number_of_runs
+    attr_reader :states,:number_of_runs,:context
     attr_accessor :setup,:teardown
     attr_writer :attended
 
     #setup and teardown are TestScenario instances that will run before and after each call
     #to the scenario.
-    def initialize setup=nil, teardown=nil,logger=nil
+    def initialize context=nil,setup=nil, teardown=nil,logger=nil
       @setup=setup
       @teardown=teardown
       @attended=false
@@ -473,6 +473,7 @@ module Rutema
       @logger||=Patir.setup_logger
       @states=Hash.new
       @number_of_runs=0
+      @context=context
     end
 
     def attended?
@@ -569,7 +570,7 @@ module Rutema
     def run_step step
       @logger.info("Running step #{step.number} - #{step.step_type}")
       if step.has_cmd? && step.cmd.respond_to?(:run)
-        step.cmd.run
+        step.cmd.run(@context)
       else
         @logger.warn("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
       end

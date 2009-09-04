@@ -1,7 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
+require 'rubygems'
 require 'test/unit'
 require 'ostruct'
-require 'rubygems'
 require 'patir/command'
 require 'mocha'
 
@@ -143,9 +143,6 @@ module TestRutema
         assert_equal(1,coord.parse_errors.size)
       end
       puts coord.to_s if $DEBUG
-    end
-
-    def test_report
     end
   end
 
