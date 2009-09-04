@@ -8,7 +8,7 @@ end
 
 class MockCommandWarning
   include Patir::Command
-  def run
+  def run context=nil
     @status=:warning
     return :warning
   end
@@ -16,7 +16,7 @@ end
 
 class MockCommandError
   include Patir::Command
-  def run
+  def run context=nil
     @status=:error
     return :error
   end
@@ -118,6 +118,7 @@ class TestCommandSequence<Test::Unit::TestCase
     @error=MockCommandError.new
     @warning=MockCommandWarning.new
   end
+  
   def test_normal
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)
@@ -129,6 +130,7 @@ class TestCommandSequence<Test::Unit::TestCase
     assert_nothing_raised{seq.run}
     assert(seq.state.success?)
   end
+  
   def test_flunk_on_error
     seq=CommandSequence.new("test")
     assert(seq.steps.empty?)

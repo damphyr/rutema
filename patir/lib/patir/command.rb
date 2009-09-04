@@ -62,7 +62,7 @@ module Patir
     #executes the command and returns the status of the command.
     #
     #overwrite this method in classes that include Command
-    def run
+    def run context=nil
       @status=:success
       return self.status
     end
@@ -125,7 +125,7 @@ module Patir
     end
 
     #Executes the shell command and returns the status
-    def run
+    def run context=nil
       start_time=Time.now
       super
       begin
@@ -206,7 +206,7 @@ module Patir
     #Executes the CommandSequence.
     #
     #Will run all step instances in sequence observing the exit strategies on warning/failures
-    def run
+    def run context=nil
       #set the start time
       @state.start_time=Time.now
       #reset the stop time
@@ -225,7 +225,7 @@ module Patir
         step.status=:running
         notify(:sequence_status=>@state)
         #run it, get the result and notify
-        result=step.run
+        result=step.run(context)
         @state.step=step
         step.status=:running
         notify(:sequence_status=>@state)
@@ -486,7 +486,7 @@ module Patir
       end
     end
     #Runs the associated block
-    def run
+    def run context=nil
       @run=true
       begin
         t1=Time.now
