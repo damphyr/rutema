@@ -1,6 +1,7 @@
 #  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rutema/reporters/standard_reporters'
+require 'patir/command'
 
 module Rutema
   #This module adds functionality that allows us to 
@@ -169,7 +170,7 @@ module Rutema
     end
     
     def name
-      return @attributes[:step_type]
+      return name_with_parameters
     end
     def output
       return "" unless @attributes[:cmd]
@@ -201,11 +202,29 @@ module Rutema
     def reset
       @attributes[:cmd].reset if @attributes[:cmd]
     end
+    def name_with_parameters
+      param=" - #{self.cmd.to_s}" if self.has_cmd?
+      return "#{@attributes[:step_type]}#{param}"
+    end
     def to_s
-      msg="#{self.number} - #{self.step_type} - #{self.status}"
+      param=""
+      param=" - #{self.cmd.to_s}" if self.has_cmd?
+      msg="#{self.number} - #{self.step_type}#{param} - #{self.status}"
       msg<<" in #{self.included_in}" if self.has_included_in?
       return msg
     end
   end
   
+end
+
+class Patir::ShellCommand
+  def to_s
+    return @command
+  end
+end
+
+class Patir::RubyCommand
+  def to_s
+    return @name
+  end
 end

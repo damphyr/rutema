@@ -1,6 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
-
+require 'rubygems'
+require 'rutema/gems'
 module TestRutema
   require 'rutema/specification'
   class DummyCommand
@@ -9,6 +10,9 @@ module TestRutema
       @name="dummy"
       @output="output"
       @error="error"
+    end
+    def to_s
+      return ""
     end
   end
   class Dummy
@@ -19,7 +23,7 @@ module TestRutema
       step=Rutema::TestStep.new("test step",DummyCommand.new())
       assert(!step.attended?, "attended?")
       assert_not_equal("dummy", step.name)
-      assert_equal("step", step.name)
+      assert_equal("step - ", step.name)
       assert_equal("output", step.output)
       assert_equal("error", step.error)
       assert_equal(:not_executed, step.status)

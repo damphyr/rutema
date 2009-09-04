@@ -1,6 +1,8 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
 
 require 'test/unit'
+require 'rubygems'
+require 'rutema/gems'
 #$DEBUG=true
 module TestRutema
   require 'rutema/system'

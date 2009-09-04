@@ -2,6 +2,7 @@ $:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
 require 'ostruct'
 require 'rubygems'
+require 'rutema/gems'
 require 'patir/command'
 require 'mocha'
 

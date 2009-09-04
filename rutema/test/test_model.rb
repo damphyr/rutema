@@ -4,6 +4,7 @@ require 'test/unit'
 require 'rutema/model'
 require 'fileutils'
 require 'rubygems'
+require 'rutema/gems'
 require 'active_record/fixtures'
 
 module TestRutema
