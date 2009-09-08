@@ -195,9 +195,9 @@ module Rutema
     def status= st
       @attributes[:cmd].status=st if @attributes[:cmd]
     end
-    def run
+    def run context=nil
       return not_executed unless @attributes[:cmd]
-      return @attributes[:cmd].run
+      return @attributes[:cmd].run(context)
     end
     def reset
       @attributes[:cmd].reset if @attributes[:cmd]

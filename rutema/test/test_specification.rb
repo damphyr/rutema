@@ -28,6 +28,7 @@ module TestRutema
       assert_equal("error", step.error)
       assert_equal(:not_executed, step.status)
       assert_nothing_raised() { step.run }
+      assert_nothing_raised() { step.run("context") }
       assert_equal(:success, step.status)
       assert_nothing_raised() { step.reset }
       assert_equal(:not_executed, step.status)

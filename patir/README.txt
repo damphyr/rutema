@@ -1,5 +1,5 @@
 patir - http://patir.rubyforge.org
-by riva (Vassilis Rizopoulos)
+
 == DESCRIPTION:
   
 patir provides the libraries common to all the project automation tools included in the Patir project.
