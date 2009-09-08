@@ -222,6 +222,16 @@ class TestRubyCommand<Test::Unit::TestCase
     assert(!cmd.success?, "Successful?!")
     assert_equal(:error, cmd.status)
   end
+  def test_context
+    context="complex"
+    cmd=RubyCommand.new("test"){|c| c.output=c.context}
+    assert_nothing_raised() { cmd.run(context)}
+    assert(cmd.success?, "Not successful.")
+    assert_equal(context, cmd.output)
+    assert_nothing_raised() { cmd.run("other")}
+    assert_equal("other", cmd.output)
+    assert_equal(:success, cmd.status)
+  end
 end
 
 class TestCommandSequenceStatus<Test::Unit::TestCase

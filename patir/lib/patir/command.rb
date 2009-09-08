@@ -475,7 +475,7 @@ module Patir
   #   end
   class RubyCommand
     include Patir::Command
-    attr_reader :cmd,:working_directory
+    attr_reader :cmd,:working_directory,:context
     def initialize name,working_directory=nil,&block
       @name=name
       @working_directory=working_directory||"."
@@ -488,6 +488,7 @@ module Patir
     #Runs the associated block
     def run context=nil
       @run=true
+      @context=context
       begin
         t1=Time.now
         Dir.chdir(@working_directory) do
@@ -501,6 +502,7 @@ module Patir
       ensure
         @exec_time=Time.now-t1
       end
+      @context=nil
       return @status
     end
   end
