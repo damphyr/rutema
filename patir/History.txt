@@ -1,6 +1,8 @@
+==0.6.5 / 2009-09-8
+* context added to RubyCommand instances
+
 ==0.6.4 / 2009-09-4
 * context parameter added to Command#run
-
 ==0.6.3
 * Repository restructured (git is used internally so the svn repository matches now the master branch)
 * Cleanup. Some obsolete code was removed
