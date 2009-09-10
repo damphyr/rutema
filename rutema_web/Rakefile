@@ -14,13 +14,10 @@ Hoe.spec('rutema_web') do |p|
   p.description = p.paragraphs_of('README.txt', 1..5).join("\n\n")
   p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
   p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
-  p.extra_deps<<['patir',">=0.6.0"]
-  p.extra_deps<<['rutema',"=1.0.5"]
-  p.extra_deps<<['activerecord','=2.3.2']
-  p.extra_deps<<['sinatra','=0.9.2']
+  p.extra_deps<<['rutema',"1.0.6"]
+  p.extra_deps<<['sinatra','0.9.2']
   p.extra_deps<<['ruport','1.6.1']
-  p.extra_deps<<['acts_as_reportable','=1.1.1']
-  p.extra_deps<<['gruff','0.3.4']
+  p.extra_deps<<['gruff','0.3.6']
   p.spec_extras={:executables=>["rutema_web"],
     :default_executable=>"rutema_web"}
 end
