@@ -1,5 +1,6 @@
 == 1.0.7 / 2009-09-08
 * Steps now include the commandline (if there) in their name - makes the logs more readable
+* Added a check for nil states to ensure reporters always get valid data
 == 1.0.6 / 2009-09-04
 * The run context is now passed to the runner and subsequently to the TestStep#run method
 	This way you can pass informaton to the command being run (context contains information on the start time of the run, the spec filename as well as any information added in the configuration) 

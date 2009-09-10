@@ -338,7 +338,11 @@ module Rutema
     def report
       #get the states from the runner
       @runner.states.each do |k,v|
-        @test_states[k]=v
+        if v
+          @test_states[k]=v
+        else
+          @logger.warn("State for #{k} is nil")
+        end
       end
       threads=Array.new
       #get the runner stati and the configuration and give it to the reporters
