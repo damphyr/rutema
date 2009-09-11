@@ -78,6 +78,7 @@ module Rutema
         run_entry.scenarios<<sc
       end
       run_entry.save!
+      "activerecord reporter done"
     end
     
     def to_s
