@@ -7,7 +7,6 @@ bin/rutemax
 bin/rutema_upgrader
 distro_test.sh
 lib/rutema/configuration.rb
-lib/rutema/db.rb
 lib/rutema/gems.rb
 lib/rutema/model.rb
 lib/rutema/reporter.rb
@@ -21,7 +20,6 @@ selftest.sh
 test/data/sample09.db
 test/distro_test/config/database.rutema
 test/distro_test/config/full.rutema
-test/distro_test/config/jruby.rutema
 test/distro_test/config/minimal.rutema
 test/distro_test/specs/T001.spec
 test/distro_test/specs/T002.spec
