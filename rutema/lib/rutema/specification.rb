@@ -74,6 +74,10 @@ module Rutema
       @scenario=TestScenario.new(@attributes[:version])
       @requirements||=Array.new
     end
+    
+    def to_s
+      return "#{@attributes[:name]} - #{@attributes[:title]}"
+    end
   end
     
   #A TestScenario is a sequence of TestStep instances.

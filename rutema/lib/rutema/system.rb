@@ -438,7 +438,7 @@ module Rutema
           @logger.info("Parsing check test '#{@configuration.check}'")
           spec=parse_specification(@configuration.check)
           if spec
-            @logger.info("Running check test '#{spec}'")
+            @logger.info("Running check test '#{spec.to_s}'")
             if run_test(spec,false).success?
               specs.each{|s| run_test(s)}
             else
