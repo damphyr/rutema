@@ -3,13 +3,45 @@ $:.unshift File.join(File.dirname(__FILE__),"..","..")
 require 'yaml'
 require 'rutema/reporter'
 require 'rutema/model'
-require 'rutema/db'
 
 module Rutema
+  #Exception occuring when connecting to a database
+  class ConnectionError<RuntimeError
+  end
+  
+  module ActiveRecordConnections
+     #Establishes an ActiveRecord connection
+     def connect_to_active_record cfg,logger
+       conn=connect(cfg,logger)
+       Rutema::Model::Schema.migrate(:up) if perform_migration?(cfg)
+     end
+     private
+     #Establishes an active record connection using the cfg hash
+     #There is only a rudimentary check to ensure the integrity of cfg
+     def connect cfg,logger
+       if cfg[:adapter] && cfg[:database]
+         logger.debug("Connecting to #{cfg[:database]}")
+         return ActiveRecord::Base.establish_connection(cfg)
+       else
+         raise ConnectionError,"Erroneous database configuration. Missing :adapter and/or :database"
+       end
+     end
+     
+     def perform_migration? cfg
+       return true if cfg[:migrate]
+       #special case for sqlite3
+       if cfg[:adapter]=="sqlite3" && !File.exists?(cfg[:database])
+         return true
+       end
+       return false
+     end
+  end
+
   #The ActiveRecordReporter will store the results of a test run in a database using ActiveRecord.
   #
   #The DBMSs supported are dependent on the platform: either SQLite3 (MRI) or h2 (jruby)
   class ActiveRecordReporter
+    include ActiveRecordConnections
     #The required keys in this reporter's configuration are:
     # :db - the database configuration. A Hash with the DB adapter information
     #  :db=>{:database=>"sample.rb"}
@@ -18,12 +50,7 @@ module Rutema
       @logger||=Patir.setup_logger
       database_configuration = definition[:db]
       raise "No database configuration defined, missing :db configuration key." unless database_configuration
-      unless database_configuration[:database]==":memory:"
-        @dbfile=File.expand_path(database_configuration[:database]) 
-      else
-        @dbfile=database_configuration[:database]
-      end
-      Rutema.connect_to_ar(@dbfile,@logger)
+      connect_to_active_record(database_configuration,@logger)
       @logger.info("Reporter #{self.to_s} registered")
     end
     
@@ -90,5 +117,7 @@ module Rutema
       return text.gsub("\000","") if text
       return ""
     end
-  end   
+   
+  end
+  
 end
