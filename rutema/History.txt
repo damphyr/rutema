@@ -1,3 +1,7 @@
+== 1.0.8 / 2009-11-13
+* ActiveRecordReporter now accepts all activerecord adapter parameters - you can now connect to DBs other than sqlite3
+* Reporter delegation now more robust (rutemax will exit gracefully and log if one reporter bombs)
+* The old db connection code was removed. Explicit dependencies to adapters are also absent - you have to now have the appropriate gems for the ActiveRecordReporter to work properly
 == 1.0.7 / 2009-09-11
 * Steps now include the commandline (if there) in their name - makes the logs more readable
 * Added a check for nil states to ensure reporters always get valid data
