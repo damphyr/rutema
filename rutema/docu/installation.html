@@ -38,7 +38,11 @@
 					<p>
 						Start by installing rutema using the gem facilities:<br><br>
 						<code>sudo gem i rutema</code><br><br>
-						If you are going to use the ActiveRecordReporter (and you will want to use it - much of rutema's value comes from archiving test results) you will need sqlite3:<br><br>
+						If you are going to use the ActiveRecordReporter (and you will want to use it - much of rutema's value comes from archiving test results) you will need the corresponding gems (sqlite3, mysql etc.).<br><br>
+						
+						Some things to be aware of:
+						
+						sqlite3 will compile without problems on most platforms (Ubuntu and Mac OS X ) but on windows you will have to fall back to the precompiled binary gem:
 						<code>sudo gem i sqlite3-ruby --version="1.2.2"</code><br><br>
 						Windows users should make sure to have the sqlite3 dll in <em>windows/system32</em>. Installing the latest version of sqlite3-ruby on windows is not straightforward as there is no precompiled win32 gem. At the time of writing the latest precompiled sqlite3-ruby version is 1.2.2<br><br>
 						This takes care of the base rutema system, allowing you to create and run tests, archive the results and produce email and text reports.
@@ -46,13 +50,17 @@
 					<p>
 						<code>rutemax -v</code> will tell you the version of rutema you have installed
 					</p>
-					<h3>rutemaweb</h3>
+					<h3>rutema_web</h3>
 					<p>
-						The rutemaweb gem offers a simple web GUI implemented with Ramaze for test result visualisation:<br><br>
-						<code>sudo gem i rutemaweb</code><br><br>
-						On windows, make sure that the win32-console gem is installed (gem i win32-console) otherwise Ramaze will exit with an error.
+						The rutema_web gem offers a simple web GUI implemented with Sinatra for test result visualisation:<br><br>
+						<code>sudo gem i rutema_web</code><br><br>
 					</p>
-					<p><code>rutemaweb -v</code> will tell you the version of rutemaweb you have installed</p>
+					<p>For the graphs, rutema_web uses gruff, which in turn depends on RMagick. There's whole pages of information on how to install RMagick and ImageMagick. There are some pitfalls: 
+						<ul><li>On windows choose the binary distribution of Rmagick+ImageMagick.</li>
+							<li>On Mac OS X and Linux make sure you reinstall the RMagick gem after every ImageMagick update</li>
+							</ul></p>
+					<p><code>rutema_web -v</code> will tell you the version of rutema_web you have installed.</p>
+					<p>rutema_web replaces the older rutemaweb gem - the name change was done for consistency's sake but it ends up confusing a lot of people - note that if rutemaweb is already installed it will die a horrible death with the newer rutema versions and unfortunately you might be left wondering where the update is.</p>
 					<h3>rutema elements</h3>
 					<p>
 						<a href="rutema_elements">rutema elements</a> is a collection of element parsing implementations that simplifies parser development based on <a href="rdoc/index.html">Rutema::BaseXMLParser</a><br>
