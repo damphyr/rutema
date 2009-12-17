@@ -426,11 +426,6 @@ module RutemaWeb
         return ((failures.to_f/scenarios.size)*100).round
       end
     
-      def time &block
-        t = Time.now
-        yield
-        return Time.now-t
-      end
     end#SinatraApp
   end#UI module
 end
