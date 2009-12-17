@@ -7,6 +7,7 @@ require 'patir/command'
 require 'patir/base'
 require 'rutema_web/model'
 require 'rutema_web/ruport_formatter'
+require 'json'
 
 module RutemaWeb
   module UI
@@ -135,48 +136,19 @@ module RutemaWeb
     end
   
     module Statistics
-      def self.gruff_working= v
-        @@gruff_working= v
-      end
-      def self.gruff_working?
-        return @@gruff_working
-      end
-      begin
-        require 'gruff'
-        self.gruff_working=true
-      rescue LoadError
-        self.gruff_working=false
-      end
-     
       private
-      #returns a jpg blob
-      def runs_graph_jpg successful,failed,not_executed,labels
-        graph=Gruff::StackedBar.new(640)
-        graph.theme = {
-          :colors => %w(green red yellow blue),
-          :marker_color => 'black',
-          :background_colors => %w(white grey)
-        }
-        graph.x_axis_label="#{successful.size} runs"
-        graph.data("successful",successful)
-        graph.data("failed",failed)
-        graph.data("not executed",not_executed)
-        graph.labels=labels 
-        graph.marker_font_size=12
-        return graph.to_blob("PNG")
-      end
       #extract all the configuration names
       def configurations
         runs=Rutema::Model::Run.find(:all)
         return runs.map{|r| r.context[:config_file] if r.context.is_a?(Hash)}.compact.uniq
       end
       def panel_configurations
-        ret="<a href=\"/statistics/config_report\">all</a><br/>"
+        panel=""
         configurations.each do |cfg|
-          ret<<cfg_link(cfg)
-          ret<<"<br/>"
+          panel<<"<input class=\"fetchSeries\" type=\"button\" value=\"#{cfg}\">"
+          panel<<"<br/>"
         end
-        return ret
+        return panel
       end
     end
    
@@ -194,37 +166,37 @@ module RutemaWeb
       set :public, File.dirname(__FILE__) + '/public'
       
       @@logger = Patir.setup_logger
-      
+      @@cache = {}
       get '/' do
         page_setup "Rutema",panel_runs,"Welcome to Rutema","<p>This is the rutema web interface.<br/>It allows you to browse the contents of the test results database.</p><p>Currently you can view the results for each separate run, the results for a specific scenario (a complete list of all steps executed in the scenario with standard and error output logs) or the complete execution history of a scenario.</p><p>The panel on the left shows a list of the ten most recent runs.</p>"
-        erb :layout 
+        erb :main 
       end
       #Displays the details of a run
       #
       #Routes to /runs if no id is provided
       get '/run/:run_id' do |run_id|
         page_setup "Run #{run_id}",panel_runs,"Summary of run #{run_id}",single_run(run_id)
-        erb :layout
+        erb :main
       end
       
       get '/run/?' do
         runs(0)
-        erb :layout
+        erb :main
       end
       
       get '/runs/?' do
         runs(0)
-        erb :layout
+        erb :main
       end
       
       get '/runs/:page' do |page|
         runs(page)
-        erb :layout
+        erb :main
       end
       #Displays a paginated list of scenarios
       get '/scenarios/:page' do |page|
         scenarios(page)
-        erb :layout
+        erb :main
       end
       #Displays the details of a scenario
       get '/scenario/:scenario_id' do |scenario_id|
@@ -233,73 +205,63 @@ module RutemaWeb
         else
           @content=scenario_in_a_run(scenario_id.to_i)
         end
-        erb :layout
+        erb :main
       end
       
       get '/scenario/?' do
         scenarios(0)
-        erb :layout
+        erb :main
       end
     
       get '/scenarios/?' do
         scenarios(0)
-        erb :layout
+        erb :main
       end
       
       get '/statistics/?' do
         page_setup "Rutema",panel_configurations,"Statistics"
         @content="<p>rutema statistics provide reports that present the results on a time axis<br/>At present you can see the ratio of successful vs. failed test cases over time grouped per configuration file.</p>"
-        @content<<"statistics reports require the gruff gem which in turn depends on RMagick. gruff does not appear to be available!<br/>rutemaweb will not be able to produce statistics reports" unless Statistics.gruff_working?
-        erb :layout
+        erb :flot
       end
 
-      get '/statistics/config_report/:configuration' do |configuration|
-        tt=configuration || "All configurations"
-        page_setup(tt,panel_configurations,tt)
-        
-        if Statistics.gruff_working?
-          @content="<img src=\"/statistics/graph/#{configuration}\"/>"
-        else
-          @content="Could not generate graph.<p>This is probably due to a missing gruff/RMagick installation.</p><p>You will need to restart rutemaweb once the issue is resolved.</p>"
-        end
-        erb :layout
+      get '/statistics/data/:configuration' do |configuration|
+        dt = get_data_from_cache(configuration)
+        successful,failed,not_executed=*dt
+        content_type "text/json"
+        return ActiveSupport::JSON.encode([{:data=>successful,:label=>"successful",:color=>"green"},
+            {:data=>failed,:label=>"failed",:color=>"red"},
+            {:data=>not_executed,:label=>"not_executed",:color=>"yellow"}
+          ])
       end
-
-      get '/statistics/graph/:configuration' do |configuration|
-        content_type "image/png"
+      private
+      
+      def get_data_from_cache configuration
+        cache = @@cache[configuration]
+        return cache[:data] if cache && cache[:index] == all_runs_in_configuration(configuration).size
+        calculate_data(configuration)
+      end
+      def calculate_data configuration
+        runs=all_runs_in_configuration(configuration)
         successful=[]
         failed=[]
         not_executed=[]
-        labels=Hash.new
-        runs=all_runs_in_configuration(configuration)
-        #now extract the data
-        counter=0
-        #the normalizer thins out the labels on the x axis so that they won't overlap
-        normalizer = calculate_normalizer(runs.size)
+        counter = 0 
         runs.each do |r|
           fails=r.number_of_failed
           no_exec = r.number_of_not_executed
           #the scenarios array includes setup and teardown scripts as well - we want only the actual testcases
           #so we use the added number_of_tests method that filters setup and test scripts
-          successful<<r.number_of_tests-fails-no_exec
-          failed<<fails
-          not_executed<<no_exec
-          #every Nth label
-          labels[counter]="R#{r.id}" if counter%normalizer==0
+          successful<<[counter,r.number_of_tests-fails-no_exec] unless r.number_of_tests-fails-no_exec==0
+          failed<<[counter,fails] unless fails == 0
+          not_executed<<[counter,no_exec] unless no_exec == 0
           counter+=1
         end
-        runs_graph_jpg(successful,failed,not_executed,labels)
-      end
-      
-      private
-      #calculates a divider to sparse out the laels in statistics graphs
-      def calculate_normalizer siz
-        #the normalizer thins out the labels on the x axis so that they won't overlap
-        return siz<=11 ? 1 : siz/11
+        @@cache[configuration] = {:data =>[successful,failed,not_executed],:index=>runs.size}
+        return @@cache[configuration][:data]
       end
       #finds all the runs belonging to a specific configuration
       def all_runs_in_configuration configuration
-        runs=Rutema::Model::Run.find(:all)
+        runs=Rutema::Model::Run.find(:all,:order=>"id DESC")
         #find all runs beloging to this configuration
         runs.select{|r| r.context[:config_file]==configuration if r.context.is_a?(Hash)} if configuration
       end
@@ -462,6 +424,12 @@ module RutemaWeb
         failures=0
         scenarios.each{|sc| failures+=1 unless sc.status=="success" }
         return ((failures.to_f/scenarios.size)*100).round
+      end
+    
+      def time &block
+        t = Time.now
+        yield
+        return Time.now-t
       end
     end#SinatraApp
   end#UI module

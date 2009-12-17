@@ -36,21 +36,24 @@ module Rutema
       end
       #number of unsuccessful scenarios (does not count setup or teardown scripts)
       def number_of_failed
-        self.scenarios.select{|sc| !sc.success? && !sc.not_executed? && sc.is_test? }.size
+        #self.scenarios.select{|sc| !sc.success? && !sc.not_executed? && sc.is_test? }.size
+        Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'error' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #number of scenarios that did not run (does not count setup or teardown scripts)
       def number_of_not_executed
-        self.scenarios.select{|sc| sc.not_executed? && sc.is_test? }.size
+        #self.scenarios.select{|sc| sc.not_executed? && sc.is_test? }.size
+        Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'not_executed' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #returns the number of actual tests (so, don't take into account setup or teardown tests)
       def number_of_tests
-         self.scenarios.select{|sc| sc.is_test? }.size
+         Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #the number of the configuration file used to run the test
       def config_file
         return nil if self.context.is_a?(OpenStruct)
         return context[:config_file]
       end
+   
     end
     #Extensions of Rutema::Model::Scenario to accomodate specific view requirements for rutema_web
     class Scenario <ActiveRecord::Base

@@ -10,16 +10,13 @@ $(function () {
     $.plot(placeholder, data, options);
  
     $("input.fetchSeries").click(function () {
-        var button = $(this);
+        //var button = $(this);
         
         // find the URL in the link right next to us 
-        //var dataurl = button.siblings('a').attr('href');
+        var dataurl = '/statistics/data/' + this.value;
 
         // then fetch the data with jQuery
         function onDataReceived(series) {
-            // extract the first coordinate pair so you can see that
-            // data is now an ordinary Javascript object
-            
             // and plot all we got
             $.plot(placeholder, series, {
 			            series: {
@@ -31,7 +28,7 @@ $(function () {
          }
         
         $.ajax({
-            url: '/statistics/data/fraap016_fs.rutema',
+            url: dataurl,
             method: 'GET',
             dataType: 'json',
             success: onDataReceived
