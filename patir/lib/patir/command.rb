@@ -127,7 +127,6 @@ module Patir
     #Executes the shell command and returns the status
     def run context=nil
       start_time=Time.now
-      super
       begin
         #create the working directory if it does not exist
         FileUtils::mkdir_p(@working_directory,:verbose=>false)
