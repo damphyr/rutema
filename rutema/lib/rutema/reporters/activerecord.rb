@@ -96,7 +96,7 @@ module Rutema
           st=Model::Step.new
           st.name=step[:name]
           st.number=number
-          st.status=step[:status].to_s
+          st.status="#{step[:status]}"
           st.output=sanitize(step[:output])
           st.error=sanitize(step[:error])
           st.duration=step[:duration]
