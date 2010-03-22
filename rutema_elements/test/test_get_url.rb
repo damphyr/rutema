@@ -53,7 +53,7 @@ class TestGetUrl <Test::Unit::TestCase
     step.expects(:pause).returns(3)
     assert_nothing_raised(){ element_get_url(step) }
   end
-  
+  #tests against an unlikely port on localhost to make sure retries work correctly
   def test_running_with_retry
     mock_configuration
     step=OpenStruct.new
@@ -67,6 +67,24 @@ class TestGetUrl <Test::Unit::TestCase
     c=step.cmd
     assert_nothing_raised() { c.run }
     assert(!c.success?, "Should not be succesfull.")
+    p c.output
+  end
+  
+  #run it against google to check it with a working site
+  def test_known_server
+    mock_configuration
+    step=OpenStruct.new
+    step.expects(:has_address?).returns(true)
+    step.expects(:address).returns("http://www.google.com").times(2)
+    step.expects(:has_pause?).returns(true)
+    step.expects(:has_retry?).returns(true).times(2)
+    step.expects(:retry).returns(3)
+    step.expects(:pause).returns(3)
+    element_get_url(step)
+    c=step.cmd
+    assert_nothing_raised() { c.run }
+    assert(c.success?, "Should be succesfull.")
+    p c.output
   end
   private
   def mock_configuration

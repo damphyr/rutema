@@ -9,15 +9,18 @@ module Rutema
     module Version
       MAJOR=0
       MINOR=1
-      TINY=4
+      TINY=5
       STRING=[ MAJOR, MINOR, TINY ].join( "." )
     end
     module Web
       #Performs an HTTP GET for the given URL.
       #
-      #It's usually used as a quick "it's alive" sign. It can also be used as a smart wait when restarting web servers.
+      #It's usually used as a quick "it's alive" sign. It can also be used as a smart wait when restarting (iis) web servers.
       #===Configuration
-      #No configuration necessary
+      #No configuration necessary, but address can be defined in a get_url tool entry
+      #
+      #===Example Configuration
+      # configuration.tool={:name=>"get_url",:configuration=>{:address=>"http://localhost"}}
       #
       #===Extras
       #Requires the attribute address pointing to the URL to fetch
@@ -48,17 +51,20 @@ module Rutema
           suc=get_url(url,cmd)
           while !suc && tries < retries
             tries+=1
+            cmd.output<<"\nDidn't get it on the #{tries}. try"
             sleep pause_time if pause_time
             suc=get_url(url,cmd)
           end
           raise "get_url failed" unless suc
+          cmd.output<<"\ndone!"
         end
       end
       
       def get_url url,cmd
         begin
           #get the base URL to start the server
-          cmd.output<<"\n#{url.read}"
+          o=url.read
+          cmd.output<<"\n#{o}" if $DEBUG
           return true
         rescue Timeout::Error, OpenURI::HTTPError, Errno::ECONNREFUSED
           cmd.error<<$!.message

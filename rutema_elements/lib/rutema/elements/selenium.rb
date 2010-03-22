@@ -5,7 +5,7 @@ module Rutema
   module Elements
     #Elements to drive the Selenium web testing tool
     module Selenium
-      def element_selenium
+      def element_selenese
         
       end
     end
