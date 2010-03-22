@@ -1,3 +1,5 @@
+== 1.0.9 / 2010-03-22
+* Fixed a nagging bug in activerecord reporter where it would crash if a step had status nil.
 == 1.0.8 / 2009-11-13
 * ActiveRecordReporter now accepts all activerecord adapter parameters - you can now connect to DBs other than sqlite3
 * Reporter delegation now more robust (rutemax will exit gracefully and log if one reporter bombs)
