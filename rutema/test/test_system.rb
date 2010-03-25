@@ -187,6 +187,7 @@ module TestRutema
     end
 
     def test_ignore
+      $DEBUG=true
       step=OpenStruct.new("status"=>:not_executed)
       step.stubs(:number).returns(1)
       step.stubs(:name).returns("mock")
@@ -197,7 +198,7 @@ module TestRutema
       step.stubs(:exec_time).returns(12)
       step.stubs(:has_cmd?).returns(false)
       step.expects(:ignore?).returns(true)
-      step.expects(:status).times(5).returns(:not_executed).then.returns(:not_executed).then.returns(:error).then.returns(:warning).then.returns(:warning)
+      step.expects(:status).times(6).returns(:not_executed).then.returns(:not_executed).then.returns(:error).then.returns(:warning).then.returns(:warning)
       scenario=Rutema::TestScenario.new
       scenario.expects(:attended?).returns(false)
       scenario.stubs(:steps).returns([step])

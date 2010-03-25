@@ -144,7 +144,6 @@ module Rutema
       reqs.collect!{|r| r.attributes["name"]}
       spec.requirements=reqs
       #Get the scenario
-      @logger.debug("Parsing scenario element")
       Dir.chdir(File.dirname(filename)) do
         spec.scenario=parse_scenario(xmldoc.elements[ELEM_SCENARIO].to_s) if xmldoc.elements[ELEM_SCENARIO]
       end
@@ -204,7 +203,6 @@ module Rutema
     end
 
     def add_attribute element,attr,value
-      @logger.debug("Adding attribute #{attr} with value #{value}")
       if boolean?(value)
         element.attribute(attr,eval(value))
       else
@@ -292,21 +290,17 @@ module Rutema
         when :all
           @runner.attended=true
           specs=parse_all_specifications
-          @logger.debug(specs)
           run_scenarios(specs)
         when :attended
           @runner.attended=true
           specs=parse_all_specifications
-          @logger.debug(specs)
           run_scenarios(specs.select{|s| s.scenario && s.scenario.attended?})
         when :unattended
           specs=parse_all_specifications
-          @logger.debug(specs)
           run_scenarios(specs.select{|s| s.scenario && !s.scenario.attended?})
         when String
           @runner.attended=true
           spec=parse_specification(mode)
-          @logger.debug("Running #{spec}")
           run_test(spec) if spec
         else
           @logger.fatal("Don't know how to run '#{mode}'")
@@ -484,7 +478,8 @@ module Rutema
       @number_of_runs=0
       @context=context || Hash.new
     end
-
+    
+    #Tells you if the system runs in the mode that expects user input
     def attended?
       return @attended
     end
@@ -530,7 +525,8 @@ module Rutema
     def [](name)
       return @states[name]
     end
-
+    
+    #Resets the Runner's internal state
     def reset
       @states.clear
       @number_of_runs=0
@@ -582,28 +578,28 @@ module Rutema
       @logger.info("Running step #{step.number} - #{step.name}")
       if step.has_cmd? && step.cmd.respond_to?(:run)
         step.cmd.run(@context)
+        msg=step.to_s
+        if !step.cmd.success?
+          msg<<"\n#{step.cmd.output}" unless step.cmd.output.empty?
+          msg<<"\n#{step.cmd.error}" unless step.cmd.error.empty?
+        end
       else
         @logger.warn("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
       end
-      msg=step.to_s
-      p step if $DEBUG
-      # we might not have a command object
-      if step.has_cmd? && step.cmd.executed? && !step.cmd.success?
-        msg<<"\n#{step.cmd.output}" unless step.cmd.output.empty?
-        msg<<"\n#{step.cmd.error}" unless step.cmd.error.empty?
-      end
+      step.status=:success if step.status==:error && step.ignore?
+      log_step_result(step,msg)
+      return step
+    end
+    def log_step_result step,msg
       if step.status==:error
         if step.ignore?
-          @logger.warn("Step failed but result is being ignored!")
-          @logger.warn(msg)
-          step.status=:success
+          @logger.warn("Step failed but result is being ignored!\n#{msg}")
         else
           @logger.error(msg) 
         end
       else
-        @logger.info(msg)
+        @logger.info(msg) if msg && !msg.empty?
       end
-      return step
     end
   end
 
