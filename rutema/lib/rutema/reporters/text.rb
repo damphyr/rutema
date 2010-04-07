@@ -24,6 +24,7 @@ module Rutema
       end
       msg<<"\n---"
       #Report on scenarios
+      runner_states.compact!#make sure no nil elements make it through
       msg<<"\nNo scenarios in this run" if runner_states.empty?
       msg<<"\nOne scenario in the current run" if runner_states.size==1
       msg<<"\n#{runner_states.size} scenarios in the current run" if runner_states.size>1

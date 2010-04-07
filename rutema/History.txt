@@ -1,5 +1,6 @@
 == 1.0.9 / 2010-03-22
 * Fixed (hopefully) a nagging bug in activerecord reporter where it would crash if a step had status nil.
+* Fixed the same behaviour in the text reporter
 * Improved the logging of steps to avoid a debug logging exception that messed logs up
 * Thinned out the debug logs
 == 1.0.8 / 2009-11-13
