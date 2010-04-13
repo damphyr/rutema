@@ -114,7 +114,7 @@ module RutemaWeb
 
     #Contains all the settings that control the display of information for RutemaWeb's controllers 
     module Settings
-      DEFAULT_PAGE_SIZE=10
+      @@defaults = {:page_size=>10,:latest_runs=>20}
       @@rutemaweb_settings||=Hash.new
       #Set to true to show all setup and teardown scenarios
       def show_setup_teardown= v
@@ -130,8 +130,17 @@ module RutemaWeb
       end
 
       def page_size
-        @@rutemaweb_settings[:page_size]||=DEFAULT_PAGE_SIZE
+        @@rutemaweb_settings[:page_size]||=@@defaults[:page_size]
         return @@rutemaweb_settings[:page_size]
+      end
+    
+      def latest_runs= v
+        @@rutemaweb_settings[:latest_runs]=v
+      end
+      
+      def latest_runs
+        @@rutemaweb_settings[:latest_runs]||=@@defaults[:latest_runs]
+        return @@rutemaweb_settings[:latest_runs]
       end
     end
   
@@ -151,11 +160,37 @@ module RutemaWeb
         return panel
       end
     end
-   
+    
+    module Timeline
+      #Collects the timeline information from a set of runs.
+      #Essentially this lists the status for all scenarios in each run
+      #filling in not_executed status for any missing entries
+      def timeline_data runs
+        # {:scenario=>{"run_id"=>status}}
+        data=Hash.new
+        runs.each do |run|
+          run.scenarios.each do |scenario|
+            unless scenario.name=~/_setup$/ || scenario.name=~/_teardown$/
+              data[scenario.name]||={}
+              data[scenario.name][run.id]=[scenario.status,scenario.id]
+            end
+          end
+        end
+        #fill in the blanks
+        data.each do |k,v|
+          runs.each do |run|
+            data[k][run.id]=["not_executed",nil] unless data[k][run.id]
+          end
+        end
+        return data
+      end
+    end
+    
     class SinatraApp<Sinatra::Base
       include ViewUtilities
       include Settings
       include Statistics
+      include Timeline 
       attr_accessor :title,:panel_content,:content_title,:content
       enable :logging
       enable :run
@@ -233,6 +268,30 @@ module RutemaWeb
             {:data=>not_executed,:label=>"not_executed",:color=>"yellow"}
           ])
       end
+      
+      get '/timeline/:configuration' do |configuration|
+        page_setup "Rutema",nil,"Timeline for #{configuration}"
+        data=timeline_data(last_n_runs_in_configuration(configuration,latest_runs))
+
+        @content="<table class=\"timeline\">"
+        data.each do |sc_name,run_data|
+          @content<<"<tr><td>#{sc_name}</td>"
+          run_data.keys.sort.each do |key|
+            sc_data=run_data[key]
+            @content<<"<td class=\"#{sc_data[0]}\">"
+            if sc_data[1]
+              @content<<"<a class=\"timeline\" href=\"/scenario/#{sc_data[1]}\">#{key}</a>"
+            else
+              @content<<"<span class=\"timeline\">#{key}</span>"
+            end
+            @content<<"</td>"
+          end
+          @content<<"</tr>"
+        end
+        @content<<"</table>"
+        erb :main
+      end
+      
       private
       
       def get_data_from_cache configuration
@@ -425,7 +484,15 @@ module RutemaWeb
         scenarios.each{|sc| failures+=1 unless sc.status=="success" }
         return ((failures.to_f/scenarios.size)*100).round
       end
-    
+      
+      def last_n_runs_in_configuration configuration,n
+        runs=all_runs_in_configuration(configuration)
+        if n<runs.size
+          return runs[-0,n]
+        else
+          return runs
+        end
+      end
     end#SinatraApp
   end#UI module
 end

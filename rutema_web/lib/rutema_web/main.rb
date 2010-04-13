@@ -8,7 +8,7 @@ module RutemaWeb
   module Version
     MAJOR=1
     MINOR=0
-    TINY=3
+    TINY=4
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #Starts App
@@ -22,7 +22,7 @@ module RutemaWeb
   #Parses the command line arguments
   def self.parse_command_line args
     args.options do |opt|
-      opt.on("Usage:")
+      opt.on("Usage:")  
       opt.on("rutemaweb [options] database_file")
       opt.on("Options:")
       opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
