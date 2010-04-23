@@ -1,7 +1,5 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),"..")
-require 'active_record'
-require 'ruport/acts_as_reportable'
+$:.unshift File.join(File.dirname(__FILE__),"..") 
 require 'rutema/model'
 module Rutema
   module Model

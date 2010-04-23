@@ -11,9 +11,9 @@ $(function () {
  
     $("input.fetchSeries").click(function () {
         //var button = $(this);
-        
+        var cfg = document.configurations_form.configurations_list.value
         // find the URL in the link right next to us 
-        var dataurl = '/statistics/data/' + this.value;
+        var dataurl = '/statistics/data/' + cfg;
 
         // then fetch the data with jQuery
         function onDataReceived(series) {

@@ -61,7 +61,7 @@ module RutemaWeb
         end
         return msg
       end
-     
+
       def run_link r
         "<a class=\"smallgreytext\" href=\"#{run_url(r)}\">Run #{r.id}</a>"
       end
@@ -112,38 +112,6 @@ module RutemaWeb
 
     end
 
-    #Contains all the settings that control the display of information for RutemaWeb's controllers 
-    module Settings
-      @@defaults = {:page_size=>10,:latest_runs=>20}
-      @@rutemaweb_settings||=Hash.new
-      #Set to true to show all setup and teardown scenarios
-      def show_setup_teardown= v
-        @@rutemaweb_settings[:show_setup_teardown]= v
-      end 
-
-      def show_setup_teardown?
-        return @@rutemaweb_settings[:show_setup_teardown]
-      end
-
-      def page_size= v
-        @@rutemaweb_settings[:page_size]=v
-      end
-
-      def page_size
-        @@rutemaweb_settings[:page_size]||=@@defaults[:page_size]
-        return @@rutemaweb_settings[:page_size]
-      end
-    
-      def latest_runs= v
-        @@rutemaweb_settings[:latest_runs]=v
-      end
-      
-      def latest_runs
-        @@rutemaweb_settings[:latest_runs]||=@@defaults[:latest_runs]
-        return @@rutemaweb_settings[:latest_runs]
-      end
-    end
-  
     module Statistics
       private
       #extract all the configuration names
@@ -152,15 +120,18 @@ module RutemaWeb
         return runs.map{|r| r.context[:config_file] if r.context.is_a?(Hash)}.compact.uniq
       end
       def panel_configurations
-        panel=""
+        panel="<form name=\"configurations_form\" action=\"\"><select name=\"configurations_list\">"
+       
         configurations.each do |cfg|
-          panel<<"<input class=\"fetchSeries\" type=\"button\" value=\"#{cfg}\">"
-          panel<<"<br/>"
+          panel<<"<option value=\"#{cfg}\">#{cfg}</option>"
+          #panel<<"<input class=\"fetchSeries\" type=\"button\" value=\"#{cfg}\">"
+          #panel<<"<br/>"
         end
+        panel<<"</select><input class=\"fetchSeries\" type=\"button\" value=\"Go\"></form>"
         return panel
       end
     end
-    
+
     module Timeline
       #Collects the timeline information from a set of runs.
       #Essentially this lists the status for all scenarios in each run
@@ -185,23 +156,18 @@ module RutemaWeb
         return data
       end
     end
-    
+
     class SinatraApp<Sinatra::Base
       include ViewUtilities
-      include Settings
       include Statistics
       include Timeline 
       attr_accessor :title,:panel_content,:content_title,:content
-      enable :logging
-      enable :run
-      enable :static
-      set :server, %w[thin mongrel webrick]
-      set :port, 7000
-      set :root, File.dirname(__FILE__)
-      set :public, File.dirname(__FILE__) + '/public'
       
+      DEFAULT_SETTINGS = {:show_setup_teardown=>true,:page_size=>10,:last_n_runs=>20,:sorting_order=>"start_time",:port=>7000}
+
       @@logger = Patir.setup_logger
       @@cache = {}
+
       get '/' do
         page_setup "Rutema",panel_runs,"Welcome to Rutema","<p>This is the rutema web interface.<br/>It allows you to browse the contents of the test results database.</p><p>Currently you can view the results for each separate run, the results for a specific scenario (a complete list of all steps executed in the scenario with standard and error output logs) or the complete execution history of a scenario.</p><p>The panel on the left shows a list of the ten most recent runs.</p>"
         erb :main 
@@ -213,17 +179,17 @@ module RutemaWeb
         page_setup "Run #{run_id}",panel_runs,"Summary of run #{run_id}",single_run(run_id)
         erb :main
       end
-      
+
       get '/run/?' do
         runs(0)
         erb :main
       end
-      
+
       get '/runs/?' do
         runs(0)
         erb :main
       end
-      
+
       get '/runs/:page' do |page|
         runs(page)
         erb :main
@@ -242,17 +208,17 @@ module RutemaWeb
         end
         erb :main
       end
-      
+
       get '/scenario/?' do
         scenarios(0)
         erb :main
       end
-    
+
       get '/scenarios/?' do
         scenarios(0)
         erb :main
       end
-      
+
       get '/statistics/?' do
         page_setup "Rutema",panel_configurations,"Statistics"
         @content="<p>rutema statistics provide reports that present the results on a time axis<br/>At present you can see the ratio of successful vs. failed test cases over time grouped per configuration file.</p>"
@@ -264,14 +230,14 @@ module RutemaWeb
         successful,failed,not_executed=*dt
         content_type "text/json"
         return ActiveSupport::JSON.encode([{:data=>successful,:label=>"successful",:color=>"green"},
-            {:data=>failed,:label=>"failed",:color=>"red"},
-            {:data=>not_executed,:label=>"not_executed",:color=>"yellow"}
+          {:data=>failed,:label=>"failed",:color=>"red"},
+          {:data=>not_executed,:label=>"not_executed",:color=>"yellow"}
           ])
       end
-      
+
       get '/timeline/:configuration' do |configuration|
         page_setup "Rutema",nil,"Timeline for #{configuration}"
-        data=timeline_data(last_n_runs_in_configuration(configuration,latest_runs))
+        data=timeline_data(last_n_runs_in_configuration(configuration,settings.last_n_runs))
 
         @content="<table class=\"timeline\">"
         data.each do |sc_name,run_data|
@@ -291,14 +257,35 @@ module RutemaWeb
         @content<<"</table>"
         erb :main
       end
+
       
+      def self.define_settings cfg
+        #the settings that are not public
+        enable :logging
+        enable :run
+        enable :static
+        set :server, %w[thin mongrel webrick]
+        set :root, File.dirname(__FILE__)
+        set :public, File.dirname(__FILE__) + '/public'
+        #the settings that can be changed
+          #set any missing values with the default
+        cfg[:show_setup_teardown] ||= DEFAULT_SETTINGS[:show_setup_teardown]
+        cfg[:page_size] ||= DEFAULT_SETTINGS[:page_size]
+        cfg[:last_n_runs] ||= DEFAULT_SETTINGS[:last_n_runs]
+        cfg[:port] ||= DEFAULT_SETTINGS[:port]
+        #set them
+        set :show_setup_teardown, cfg[:show_setup_teardown]
+        set :page_size, cfg[:page_size]
+        set :last_n_runs, cfg[:last_n_runs]
+        set :port, cfg[:port]
+      end
       private
-      
       def get_data_from_cache configuration
         cache = @@cache[configuration]
         return cache[:data] if cache && cache[:index] == all_runs_in_configuration(configuration).size
         calculate_data(configuration)
       end
+      
       def calculate_data configuration
         runs=all_runs_in_configuration(configuration)
         successful=[]
@@ -331,15 +318,15 @@ module RutemaWeb
         @content_title=content_title
         @content=content
       end
-      
+
       def runs page
         page_setup "All runs",nil,"All runs"
 
         dt=[]
-        total_pages=(Rutema::Model::Run.count/page_size)+1
+        total_pages=(Rutema::Model::Run.count/settings.page_size)+1
         page_number=validated_page_number(page,total_pages)
 
-        runs=Rutema::Model::Run.find_on_page(page_number,page_size)
+        runs=Rutema::Model::Run.find_on_page(page_number,settings.page_size)
         runs.each do |r| 
           dt<<[status_icon(r.status),run_summary(r),r.config_file]
         end
@@ -347,7 +334,7 @@ module RutemaWeb
         @content<<"<br/>"
         @content<<run_page_link(page_number,total_pages)
       end
-    
+
       def scenarios page
         page_setup "All scenarios",panel_runs,"All scenarios"
         runs=Hash.new
@@ -360,10 +347,10 @@ module RutemaWeb
           runs[nm]<<sc.run.id
         end
         #the size of the hash is also the number of unique scenario names
-        total_pages=(runs.size / page_size)+1
+        total_pages=(runs.size / settings.page_size)+1
         page_number=validated_page_number(page,total_pages)
         #Ramaze::Log.debug("Getting scenarios for page #{page_number}")
-        scens=Rutema::Model::Scenario.find_on_page(page_number,page_size,conditions)
+        scens=Rutema::Model::Scenario.find_on_page(page_number,settings.page_size,conditions)
         #and now build the table data
         dt=Array.new
         scens.each do |sc|
@@ -455,7 +442,7 @@ module RutemaWeb
         conditions="run_id = :run_id AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'"
         table=Rutema::Model::Scenario.report_table(:all,
         :conditions=>[conditions,{:run_id=>run_id}],:except=>["run_id"],
-        :order=>"name ASC")
+        :order=>"start_time ASC")
         if table.empty?
           ret<<"No scenarios for run #{run_id}"
         else
@@ -484,7 +471,7 @@ module RutemaWeb
         scenarios.each{|sc| failures+=1 unless sc.status=="success" }
         return ((failures.to_f/scenarios.size)*100).round
       end
-      
+
       def last_n_runs_in_configuration configuration,n
         runs=all_runs_in_configuration(configuration)
         if n<runs.size

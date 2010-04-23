@@ -1,9 +1,10 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rutema_web/sinatra'
-require 'rutema/db'
 require 'optparse'
+require 'rutema/reporters/activerecord'
 #This is the web frontend for Rutema databases.
 module RutemaWeb
+  extend Rutema::ActiveRecordConnections
   #This module defines the version numbers for the library
   module Version
     MAJOR=1
@@ -14,16 +15,22 @@ module RutemaWeb
   #Starts App
   def self.start
     logger=Patir.setup_logger
-    db_file=parse_command_line(ARGV)
-    db_file=File.expand_path(db_file)
-    Rutema.connect_to_ar(db_file,logger)  
-    RutemaWeb::UI::SinatraApp.run!
+    cfg_file=parse_command_line(ARGV)
+    cfg_file=File.expand_path(cfg_file)
+    configuration=YAML.load_file(cfg_file)
+    if (configuration[:db])
+      self.connect_to_active_record(configuration[:db],logger)
+      RutemaWeb::UI::SinatraApp.define_settings(configuration[:settings])
+      RutemaWeb::UI::SinatraApp.run!
+    else
+      logger.fatal("No database configuration information found in #{cfg_file}")
+    end
   end
   #Parses the command line arguments
   def self.parse_command_line args
     args.options do |opt|
       opt.on("Usage:")  
-      opt.on("rutemaweb [options] database_file")
+      opt.on("rutema_web [options] config_file")
       opt.on("Options:")
       opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
       opt.on("-v", "--version","Displays the version") { $stdout.puts("v#{Version::STRING}");exit 0 }
@@ -38,6 +45,7 @@ module RutemaWeb
       end
     end
   end
+
 end
 
 
