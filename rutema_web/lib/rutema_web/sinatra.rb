@@ -293,6 +293,7 @@ module RutemaWeb
         end
         @content<<"</table>"
       end
+      
       def get_data_from_cache configuration
         cache = @@cache[configuration]
         return cache[:data] if cache && cache[:index] == all_runs_in_configuration(configuration).size
@@ -300,12 +301,13 @@ module RutemaWeb
       end
       
       def calculate_data configuration
-        runs=all_runs_in_configuration(configuration)
+        runs=last_n_runs_in_configuration(configuration,50)
+        #runs=all_runs_in_configuration(configuration)
         successful=[]
         failed=[]
         not_executed=[]
         counter = 0 
-        runs.each do |r|
+        runs.reverse.each do |r|
           fails=r.number_of_failed
           no_exec = r.number_of_not_executed
           #the scenarios array includes setup and teardown scripts as well - we want only the actual testcases
@@ -320,7 +322,7 @@ module RutemaWeb
       end
       #finds all the runs belonging to a specific configuration
       def all_runs_in_configuration configuration
-        runs=Rutema::Model::Run.find(:all,:order=>"id DESC")
+        runs=Rutema::Model::Run.find(:all,:order=>"id ASC")
         #find all runs beloging to this configuration
         runs.select{|r| r.context[:config_file]==configuration if r.context.is_a?(Hash)} if configuration
       end
@@ -487,6 +489,7 @@ module RutemaWeb
 
       def last_n_runs_in_configuration configuration,n
         runs=all_runs_in_configuration(configuration)
+        runs.reverse!
         if n<runs.size
           return runs[-0,n]
         else
