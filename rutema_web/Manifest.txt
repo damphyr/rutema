@@ -28,5 +28,5 @@ lib/rutema_web/ruport_formatter.rb
 lib/rutema_web/sinatra.rb
 lib/rutema_web/views/flot.erb
 lib/rutema_web/views/main.erb
+lib/rutema_web/views/timeline.erb
 test/test_model.rb
-test/test_rutema_web.rb

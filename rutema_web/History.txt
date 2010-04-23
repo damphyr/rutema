@@ -1,10 +1,12 @@
 === 1.0.4 / 2010-04-23
 * Fixed manifest missing entry for the flot lib
+* Fixed sequence of data in flot diagrams (was reversed)
 * Added timeline diagrams per config
 * Scenarios in a run are now listed in ascending order of start time 
 * Custom settings solution scrapped in favor for Sinatra's settings.
 * Settings expanded to include last n runs number
 * IMPORTANT: a configuration file is now needed instead of the sqlite3 database file, as rutema_web should now be able to connect to all activerecord databases. The configuration file is a yaml dump of {:db=>{:adapter=>'sqlite3', :database=>'rutema_test.db'}, :settings=>{ :page_size=>10, :last_n_runs=>20, :port=>7000, :show_setup_teardown=>true}}
+Also important to know that at the moment this does not check or adjust paths, so the yaml file should be in the directory from which rutema_web is running so that paths to sqlite3 databases are correct.
 * Statistics now use a drop down list instead of a bunch of buttons - tidier UI
 === 1.0.3 / 2009-12-17
 * Replaced gruff with flot removing the gruff/RMagick/ImageMagick dependency

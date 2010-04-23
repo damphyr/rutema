@@ -10,17 +10,12 @@ diagrams of debatable aesthetics but undoubtable value!
 == FEATURES/PROBLEMS:
 
 == SYNOPSIS:
-rutema_web [results.db] and browse to http://localhost:7000 for the glorious view
+rutema_web config.yaml and browse to http://localhost:7000 for the glorious view
 
 == REQUIREMENTS:
-* patir (http://patir.rubyforge.org)
 * rutema (http://patir.rubyforge.org/rutema)
-* activerecord (http://ar.rubyonrails.com/)
-* sqlite3 (http://rubyforge.org/projects/sqlite-ruby/)
 * sinatra (http://www.sinatrarb.com/)
 * ruport (http://rubyreports.org/)
-* acts_as_reportable
-* gruff/RMagick (optional, but needed if you want to see the statistics graphs)
 
 == INSTALL:
 * sudo gem install rutema_web
@@ -28,7 +23,7 @@ rutema_web [results.db] and browse to http://localhost:7000 for the glorious vie
 == LICENSE:
 (The Ruby License)
 
-rutema is copyright (c) 2007 - 2009 Vassilis Rizopoulos
+rutema is copyright (c) 2007 - 2010 Vassilis Rizopoulos
 
 You can redistribute it and/or modify it under either the terms of the GPL
 (see COPYING.txt file), or the conditions below:
