@@ -241,29 +241,13 @@ module RutemaWeb
       
       post '/timeline' do
         configuration = params["configurations_list"]
-        page_setup "Rutema",panel_configurations("submit","/timeline"),"Timeline for #{configuration}"
-        data=timeline_data(last_n_runs_in_configuration(configuration,settings.last_n_runs))
-
-        @content="<table class=\"timeline\">"
-        data.each do |sc_name,run_data|
-          @content<<"<tr><td>#{sc_name}</td>"
-          run_data.keys.sort.each do |key|
-            sc_data=run_data[key]
-            @content<<"<td class=\"#{sc_data[0]}\">"
-            if sc_data[1]
-              @content<<"<a class=\"timeline\" href=\"/scenario/#{sc_data[1]}\">#{key}</a>"
-            else
-              @content<<"<span class=\"timeline\">#{key}</span>"
-            end
-            @content<<"</td>"
-          end
-          @content<<"</tr>"
-        end
-        @content<<"</table>"
+        timeline(configuration)
         erb :timeline
       end
+      
       get '/timeline/:configuration' do |configuration|
-        
+        timeline(configuration)
+        erb :timeline
       end
 
       
@@ -288,6 +272,27 @@ module RutemaWeb
         set :port, cfg[:port]
       end
       private
+      def timeline configuration
+        page_setup "Rutema",panel_configurations("submit","/timeline"),"Timeline for #{configuration}"
+        data=timeline_data(last_n_runs_in_configuration(configuration,settings.last_n_runs))
+
+        @content="<table class=\"timeline\">"
+        data.each do |sc_name,run_data|
+          @content<<"<tr><td>#{sc_name}</td>"
+          run_data.keys.sort.each do |key|
+            sc_data=run_data[key]
+            @content<<"<td class=\"#{sc_data[0]}\">"
+            if sc_data[1]
+              @content<<"<a class=\"timeline\" href=\"/scenario/#{sc_data[1]}\">#{key}</a>"
+            else
+              @content<<"<span class=\"timeline\">#{key}</span>"
+            end
+            @content<<"</td>"
+          end
+          @content<<"</tr>"
+        end
+        @content<<"</table>"
+      end
       def get_data_from_cache configuration
         cache = @@cache[configuration]
         return cache[:data] if cache && cache[:index] == all_runs_in_configuration(configuration).size
