@@ -23,7 +23,7 @@ $(function () {
 			                stack: true,
 			                bars: { show: true, barWidth: 0.6 },
 			            },
-						legend: {position:'sw'}
+						legend: {position:'nw'}
 			});
          }
         

@@ -119,15 +119,13 @@ module RutemaWeb
         runs=Rutema::Model::Run.find(:all)
         return runs.map{|r| r.context[:config_file] if r.context.is_a?(Hash)}.compact.uniq
       end
-      def panel_configurations
-        panel="<form name=\"configurations_form\" action=\"\"><select name=\"configurations_list\">"
+      def panel_configurations type,action=nil
+        panel="<form name=\"configurations_form\" action=\"#{action}\" method=\"post\"><select name=\"configurations_list\">"
        
         configurations.each do |cfg|
           panel<<"<option value=\"#{cfg}\">#{cfg}</option>"
-          #panel<<"<input class=\"fetchSeries\" type=\"button\" value=\"#{cfg}\">"
-          #panel<<"<br/>"
         end
-        panel<<"</select><input class=\"fetchSeries\" type=\"button\" value=\"Go\"></form>"
+        panel<<"</select><input class=\"fetchSeries\" type=\"#{type}\" value=\"Go\"></form>"
         return panel
       end
     end
@@ -220,7 +218,7 @@ module RutemaWeb
       end
 
       get '/statistics/?' do
-        page_setup "Rutema",panel_configurations,"Statistics"
+        page_setup "Rutema",panel_configurations("button"),"Statistics"
         @content="<p>rutema statistics provide reports that present the results on a time axis<br/>At present you can see the ratio of successful vs. failed test cases over time grouped per configuration file.</p>"
         erb :flot
       end
@@ -234,9 +232,16 @@ module RutemaWeb
           {:data=>not_executed,:label=>"not_executed",:color=>"yellow"}
           ])
       end
-
-      get '/timeline/:configuration' do |configuration|
-        page_setup "Rutema",nil,"Timeline for #{configuration}"
+      
+      get '/timeline/?' do
+        page_setup "Rutema",panel_configurations("submit","/timeline"),"Timeline"
+        @content="<p>rutema timelines show the status of executed scenarios for the last N runs.</p>"
+        erb :timeline
+      end
+      
+      post '/timeline' do
+        configuration = params["configurations_list"]
+        page_setup "Rutema",panel_configurations("submit","/timeline"),"Timeline for #{configuration}"
         data=timeline_data(last_n_runs_in_configuration(configuration,settings.last_n_runs))
 
         @content="<table class=\"timeline\">"
@@ -255,7 +260,10 @@ module RutemaWeb
           @content<<"</tr>"
         end
         @content<<"</table>"
-        erb :main
+        erb :timeline
+      end
+      get '/timeline/:configuration' do |configuration|
+        
       end
 
       
