@@ -1,4 +1,4 @@
-#  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rexml/document'
 require 'patir/configuration'
@@ -12,8 +12,8 @@ module Rutema
   #This module defines the version numbers for the library
   module Version
     MAJOR=1
-    MINOR=0
-    TINY=9
+    MINOR=1
+    TINY=0
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #The Elements module provides the namespace for the various modules adding parser functionality
@@ -500,6 +500,9 @@ module Rutema
             @logger.info("Scenario for #{name}")
             @states[name]=run_scenario(name,scenario)
             @states[name].sequence_id="#{@number_of_runs}"
+          else
+            @states[name]=initialize_state(name,scenario)
+            @states[name].sequence_id="#{@number_of_runs}"
           end
         end
       else
@@ -542,18 +545,9 @@ module Rutema
     end
     private
     def run_scenario name,scenario
-      state=Patir::CommandSequenceStatus.new(name,scenario.steps)
-      begin
-        attention_needed=scenario.attended?
-        if attention_needed && !self.attended?
-          @logger.warn("Attended scenario cannot be run in unattended mode")
-          state.status=:warning
-        else
-          if attention_needed
-            state.strategy=:attended
-          else
-            state.strategy=:unattended
-          end
+      state=initialize_state(name,scenario)
+      begin 
+        if evaluate_attention(scenario,state)
           stps=scenario.steps
           if stps.empty?
             @logger.warn("Scenario #{name} contains no steps")
@@ -573,6 +567,22 @@ module Rutema
       state.stop_time=Time.now
       state.sequence_id=@number_of_runs
       return state
+    end
+    def initialize_state name,scenario
+      state=Patir::CommandSequenceStatus.new(name,scenario.steps)
+    end
+    def evaluate_attention scenario,state
+      if scenario.attended?
+        if !self.attended?
+          @logger.warn("Attended scenario cannot be run in unattended mode")
+          state.status=:warning
+          return false
+        end
+        state.strategy=:attended
+      else
+        state.strategy=:unattended
+      end
+      return true
     end
     def run_step step
       @logger.info("Running step #{step.number} - #{step.name}")
@@ -601,6 +611,7 @@ module Rutema
         @logger.info(msg) if msg && !msg.empty?
       end
     end
+
   end
 
   #StepRunner halts before every step and asks if it should be executed or not.

@@ -1,4 +1,4 @@
-#  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 
 module Rutema

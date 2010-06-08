@@ -1,4 +1,4 @@
-#  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..","..")
 require 'net/smtp'
 require 'rutema/reporter'
@@ -24,6 +24,8 @@ module Rutema
   #Customization keys:
   #
   #:subject - the string of this key will be prefixed as a subject for the email
+  #
+  #:verbose - when true, the report contains info on setup and teardown specs. Optional. Default is false
   class EmailReporter
     attr_reader :last_message
     def initialize definition
@@ -47,6 +49,8 @@ module Rutema
       @subject||=""
       @footer=definition[:footer]
       @footer||=""
+      @verbose=definition[:verbose]
+      @verbose||=false
       @logger.info("Reporter '#{self.to_s}' registered")
     end
 
@@ -57,7 +61,7 @@ module Rutema
     
     def report specifications,runner_states,parse_errors,configuration
       @mail.subject = "#{@subject}"
-      txt=TextReporter.new.report(specifications,runner_states,parse_errors,configuration)
+      txt=TextReporter.new(:verbose=>@verbose).report(specifications,runner_states,parse_errors,configuration)
       txt<<"\n\n#{@footer}"
       @mail.text = txt 
       begin
