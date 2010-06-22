@@ -219,6 +219,7 @@ module Rutema
         property :slug, :read_only => true
         property :context
         property :scenarios
+        property :parse_errors
         
         set_callback :save, :before, :generate_slug_from_payload
         def generate_slug_from_payload

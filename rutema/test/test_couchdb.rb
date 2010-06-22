@@ -15,7 +15,11 @@ module TestRutema
     end
   end
 
+  class TestCouchDBModel<Test::Unit::TestCase
+  end
+  
   class TestCouchDBReporter<Test::Unit::TestCase
+    CFG={:db=>{:url=>"http://localhost:5984", :database=>"rutema_test_sandbox"}}
       def setup
         @parse_errors=[{:filename=>"f.spec",:error=>"error"}]
         st=Patir::CommandSequenceStatus.new("test_seq")
@@ -27,8 +31,8 @@ module TestRutema
       
       def test_no_errors
         spec=mock
-        r=Rutema::CouchDB::Reporter.new({})
-        assert_nothing_raised() { puts r.report({"test"=>spec},[runner_state_mock()],[],nil) }
+        r=Rutema::CouchDBReporter.new(CFG)
+        assert_nothing_raised() { r.report({"test"=>spec},[runner_state_mock()],[],nil) }
       end
       
       def test_a_bit_of_everything
@@ -37,8 +41,8 @@ module TestRutema
         spec.expects(:title).returns("T")
         spec.expects(:description).returns("cool test")
        
-        r=Rutema::CouchDB::Reporter.new({})
-        puts r.report({"1"=>spec},[runner_state_mock,runner_state_mock(1,:error)],[],nil)
+        r=Rutema::CouchDBReporter.new(CFG)
+        assert_nothing_raised() {  r.report({"1"=>spec},[runner_state_mock,runner_state_mock(1,:error)],[],nil) }
       end
       
       def runner_state_mock n=0,status=:success,step_states=[]
