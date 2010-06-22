@@ -15,6 +15,7 @@ lib/rutema/reporters/email.rb
 lib/rutema/reporters/standard_reporters.rb
 lib/rutema/reporters/text.rb
 lib/rutema/reporters/yaml.rb
+lib/rutema/reporters/couchdb.rb
 lib/rutema/specification.rb
 lib/rutema/system.rb
 selftest.sh
@@ -39,4 +40,5 @@ test/test_model.rb
 test/test_reporter.rb
 test/test_specification.rb
 test/test_system.rb
+test/test_couchdb.rb
 

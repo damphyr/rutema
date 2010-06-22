@@ -616,9 +616,9 @@ module Rutema
 
   #StepRunner halts before every step and asks if it should be executed or not.
   class StepRunner<Runner
-    def initialize setup=nil, teardown=nil,logger=nil
+    def initialize context=nil,setup=nil, teardown=nil,logger=nil
       @questioner=HighLine.new
-      super(setup,teardown,logger)
+      super(context,setup,teardown,logger)
     end
     def run_step step
       if @questioner.agree("Execute #{step.to_s}?")

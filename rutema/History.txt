@@ -2,6 +2,7 @@
 * Email reporting now suppresses _setup and _teardown entries unless it's configured as verbose. To do this add a :verbose=>true entry in the reporter configuration
 * Fixed a bug, where on a setup spec failure the state of the actual spec was nil
 * added YAML dump reporter	
+* Fixed a bug in the initialization of StepRunner that prevented use of --step
 == 1.0.9 / 2010-03-22
 * Fixed (hopefully) a nagging bug in activerecord reporter where it would crash if a step had status nil.
 * Fixed the same behaviour in the text reporter

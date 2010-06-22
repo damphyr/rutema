@@ -22,6 +22,7 @@ Hoe.spec('rutema') do |p|
   p.extra_deps<<['activerecord','2.3.8']
   p.extra_deps<<['ruport','1.6.1']
   p.extra_deps<<['acts_as_reportable','1.1.1']
+  p.extra_deps<<['couchrest','=0.37']
   p.spec_extras={:executables=>["rutemax","rutema_upgrader"],
     :default_executable=>"rutemax"}
 end
