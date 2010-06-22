@@ -1,0 +1,54 @@
+#  Copyright (c) 2008-2010 Vassilis Rizopoulos. All rights reserved.
+$:.unshift File.join(File.dirname(__FILE__),"..","lib")
+require 'rubygems'
+require 'rutema/model'
+require 'patir/base'
+
+#Parses the command line arguments
+def parse_command_line args
+  args.options do |opt|
+    opt.on("Usage:")
+    opt.on("rutema_upgrader [options] config_file")
+    opt.on("Options:")
+    opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
+    opt.on("-v", "--version","Displays the version") { $stdout.puts("v#{Version::STRING}");exit 0 }
+    opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
+    opt.parse!
+    #and now the rest
+    if args.empty?
+      $stdout.puts opt 
+      exit 0
+    else
+      return args.shift
+    end
+  end
+end
+
+def write_data exporter,counter,logger
+  t=Time.now
+  data = exporter.next
+  File.open("data#{counter}.yaml","w") {|f| f.write(YAML.dump(data))}
+  logger.info("Wrote file no #{counter} in #{Time.now-t}")
+  return data.size
+end
+logger=Patir.setup_logger
+config_file=parse_command_line(ARGV)
+begin
+  raise "No configuration file defined!" if !config_file
+  config=YAML.load(File.read(config_file))
+  exporter=Rutema::ActiveRecord::Export.new(config)
+  
+  logger.info("Starting export")
+  counter=0
+  write_data(exporter,counter,logger)
+  counter+=1
+  while true
+    break if 0==write_data(exporter,counter,logger)
+    counter+=1
+  end
+  logger.info("Done!")
+rescue
+  logger.debug($!)
+  logger.fatal("#{$!.message}")
+  exit 1
+end
