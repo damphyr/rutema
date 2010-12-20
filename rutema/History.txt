@@ -1,4 +1,4 @@
-== 1.1.0 /2010-12
+== 1.1.0 /2010-12-20
 * Added Rutema::RakeTask class to allow integration of the test runner with rake
 * Email reporting now suppresses _setup and _teardown entries unless it's configured as verbose. To do this add a :verbose=>true entry in the reporter configuration
 * Fixed a bug, where on a setup spec failure the state of the actual spec was nil
