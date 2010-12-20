@@ -2,8 +2,18 @@ require 'rutema/system'
 require 'optparse'
 
 module Rutema
+  #Integrates rutema with rake
   class RakeTask
-    attr_accessor :config_file, :log_file, :step, :name
+    attr_accessor :config_file, :log_file, :name
+    #Params is a parameter hash.
+    #
+    #Valid parameters are:
+    #
+    #:config_file => path to the configuration file
+    #
+    #:log_file => path to the file where the log is saved. If missing then the logger prints in stdout
+    #
+    #:name => the name for the rutema task. If missing then the task is named rutema, otherwise it will be rutema:name
     def initialize params=nil
       params||={}
       @config_file=params[:config]
