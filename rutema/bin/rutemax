@@ -1,4 +1,8 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 require 'rutema/gems'
 require 'rutema/system'
-Rutema::RutemaX.new(ARGV)
+begin
+	Rutema::RutemaX.new(ARGV)
+rescue
+	exit 1
+end	

@@ -9,6 +9,7 @@ distro_test.sh
 lib/rutema/configuration.rb
 lib/rutema/gems.rb
 lib/rutema/model.rb
+lib/rutema/rake.rb
 lib/rutema/reporter.rb
 lib/rutema/reporters/activerecord.rb
 lib/rutema/reporters/email.rb

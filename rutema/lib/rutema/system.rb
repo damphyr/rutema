@@ -304,12 +304,12 @@ module Rutema
           run_test(spec) if spec
         else
           @logger.fatal("Don't know how to run '#{mode}'")
-          exit 1
+          raise "Don't know how to run '#{mode}'"
         end
       rescue
         @logger.debug($!)
         @logger.fatal("Runner error: #{$!.message}")
-        exit 1
+        raise 
       end
       @configuration.context[:end_time]=Time.now
       @logger.info("Run completed in #{@configuration.context[:end_time]-@configuration.context[:start_time]}s")
@@ -652,11 +652,11 @@ module Rutema
       rescue Patir::ConfigurationException
         @logger.debug($!)
         @logger.fatal("Configuration error '#{$!.message}'")
-        exit 1
+        raise "Configuration error '#{$!.message}'"
       rescue
         @logger.debug($!)
         @logger.fatal("#{$!.message}")
-        exit 1
+        raise
       end
     end
     private
@@ -693,7 +693,7 @@ module Rutema
               @mode=File.expand_path(command)
             else
               $stderr.puts "Can't find '#{command}' and it does not match any known commands. Don't know what to do with it."
-              exit 1
+              raise "Can't find '#{command}' and it does not match any known commands. Don't know what to do with it."
             end
           end
         end
@@ -707,7 +707,7 @@ module Rutema
           @coordinator.run(@configuration.check)
         else
           @logger.fatal("There is no check test defined in the configuration.")
-          exit 1
+          raise "There is no check test defined in the configuration."
         end
       else
         #run everything
@@ -717,10 +717,9 @@ module Rutema
       @coordinator.report
       if @coordinator.parse_errors.empty? && @coordinator.last_run_a_success?
         @logger.info("All tests successful")
-        exit 0
       else
         @logger.warn("Not all tests were successful")
-        exit 1
+        raise "Not all tests were successful"
       end
     end
   end
