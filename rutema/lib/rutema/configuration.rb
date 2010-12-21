@@ -3,19 +3,28 @@ $:.unshift File.join(File.dirname(__FILE__),"..")
 
 module Rutema
   #This module defines the "configuration directives" used in the configuration of RutemaX
+  #
+  #Example
+  #A configuration file needs as a minimum to define which parser to use and which tests to run.
+  #
+  #Since rutema configuration files are valid Ruby code, you can use the full power of the Ruby language including require directives
+  #
+  # require 'rubygems'
+  # require 'rake'
+  # configuration.parser={:class=>Rutema::MinimalXMLParser}
+  # configuration.tests=FileList['all/of/the/tests/**/*.*']
   module RutemaXConfiguration
     #Adds a hash of values to the tools hash of the configuration
-    #
     #
     #This hash is then accessible in the parser and reporters as a property of the configuration instance
     #
     #Required keys:
     # :name - the name to use for accessing the path in code
     #Example:
-    # configuration.tool={:name=>"make",:path=>"/bin/make",:configuration=>{:important=>"info"}}
+    # configuration.tool={:name=>"nunit",:path=>"/bin/nunit",:configuration=>{:important=>"info"}}
     #
     #The path to make can be accessed in the parser as
-    # @configuration.make[:path]
+    # @configuration.tools.nunit[:path]
     #
     #This way you can pass configuration information for the tools you use
     def tool= definition
@@ -116,6 +125,8 @@ module Rutema
   end
   
   #This class reads a RutemaX configuration file
+  #
+  #See Rutema::RutemaXConfiguration for configuration examples and directives
   class RutemaXConfigurator<Patir::Configurator
     include RutemaXConfiguration
     def initialize config_file,logger=nil

@@ -229,7 +229,7 @@ module Rutema
   end
   #The ExtensibleXMLParser allows you to easily add methods to handle specification elements.
   #
-  #A method element_foo(step) allows you to add behaviour for <foo> scenario elements.
+  #A method element_foo(step) allows you to add behaviour for foo scenario elements.
   #
   #The method will receive a Rutema::TestStep instance. 
   class ExtensibleXMLParser<BaseXMLParser
@@ -252,9 +252,7 @@ module Rutema
       return spec
     end
   end
-  #MinimalXMLParser offers three runnable steps in the scenarios
-  #
-  #
+  #MinimalXMLParser offers three runnable steps in the scenarios as defined in Rutema::Elements::Minimal
   class MinimalXMLParser<ExtensibleXMLParser
     include Rutema::Elements::Minimal
   end
