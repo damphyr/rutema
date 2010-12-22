@@ -1,3 +1,5 @@
+== 1.1.1 /2010-12-22
+* Bugfix: RakeTask constructor parameter config renamed to config_file to match the accessor methods
 == 1.1.0 /2010-12-20
 * Added Rutema::RakeTask class to allow integration of the test runner with rake
 * Email reporting now suppresses _setup and _teardown entries unless it's configured as verbose. To do this add a :verbose=>true entry in the reporter configuration

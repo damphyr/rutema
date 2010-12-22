@@ -13,7 +13,7 @@ module Rutema
   module Version
     MAJOR=1
     MINOR=1
-    TINY=0
+    TINY=1
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #The Elements module provides the namespace for the various modules adding parser functionality

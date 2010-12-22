@@ -16,12 +16,12 @@ module Rutema
     #:name => the name for the rutema task. If missing then the task is named rutema, otherwise it will be rutema:name
     def initialize params=nil
       params||={}
-      @config_file=params[:config]
+      @config_file=params[:config_file]
       @log_file=params[:log]
       @name=params[:name]
       yield self if block_given?
       
-      raise "No rutema configuration given" unless @config_file
+      raise "No rutema configuration given, :config_file is nil" unless @config_file
       args=['-c',@config_file]
       args+=['-l',@log_file] if @log_file
       args<<"all"
