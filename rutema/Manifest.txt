@@ -42,4 +42,5 @@ test/test_reporter.rb
 test/test_specification.rb
 test/test_system.rb
 test/test_couchdb.rb
+test/test_rake.rb
 
