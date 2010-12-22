@@ -33,6 +33,7 @@ module Rutema
       @log_file=params[:log]
       @name=params[:name]
       @dependencies=params[:dependencies]
+      @dependencies||=[]
       yield self if block_given?
       @dependencies||=[]
       raise "No rutema configuration given, :config_file is nil" unless @config_file
@@ -42,19 +43,20 @@ module Rutema
       OptionParser::Arguable.extend_object(args)
       if @name
         desc "Executes the tests in #{File.basename(@config_file)}" 
-        @rake_task=task :"rutema:#{@name}" do
+        @rake_task=task :"rutema:#{@name}" => @dependencies do
           Rutema::RutemaX.new(args)
         end
       else
         desc "Executes the tests in #{File.basename(@config_file)}" 
-        @rake_task=task :rutema do
+        @rake_task=task :rutema => @dependencies do
           Rutema::RutemaX.new(args)
         end
       end
     end
     #Adds a dependency to the rutema task created
     def add_dependency dependency
-      task @rake_task => [dependency]
+      @dependencies<<dependency
+      task @rake_task => [dependency] if @rake_task
     end
   end
 end

@@ -25,7 +25,6 @@ module TestRutema
         rt.add_dependency("some_task")
       end  }
       assert_equal("rutema:test", t.rake_task.name)
-      assert_nothing_raised() { t.add_dependency("some_task") }
       assert_equal(["some_task"], t.rake_task.prerequisites)
     end
   end
