@@ -11,7 +11,7 @@ log/
 pkg/
 doc/
 rubyforge_site/
-
+test/coverage/
 # except foo.html which is maintained by hand.
 #!foo.html
 # Ignore objects and archives.
