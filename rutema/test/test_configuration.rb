@@ -1,13 +1,12 @@
-$:.unshift File.join(File.dirname(__FILE__),"..","lib")
+$:.unshift File.join(File.dirname(__FILE__),"..")
 
 require 'test/unit'
 require 'rubygems'
-require 'rutema/gems'
+require 'patir/configuration'
+require 'lib/rutema/configuration'
 #$DEBUG=true
 module TestRutema
-  require 'rutema/system'
-  
-  class TestRutemaXConfigurator<Test::Unit::TestCase
+  class TestRutemaConfigurator<Test::Unit::TestCase
     def setup
       @prev_dir=Dir.pwd
       Dir.chdir(File.dirname(__FILE__))
@@ -15,10 +14,10 @@ module TestRutema
     def teardown
       Dir.chdir(@prev_dir)
     end
-    def test_rutemax_configuration
+    def test_rutema_configuration
       cfg=nil
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::RutemaXConfigurator.new("distro_test/config/full.rutema").configuration}
+      assert_nothing_raised() { cfg=Rutema::RutemaConfigurator.new("distro_test/config/full.rutema").configuration}
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -36,7 +35,7 @@ module TestRutema
     end
     
     def test_specification_paths
-      cfg=Rutema::RutemaXConfigurator.new("distro_test/config/full.rutema").configuration
+      cfg=Rutema::RutemaConfigurator.new("distro_test/config/full.rutema").configuration
       assert_not_nil(cfg.tests)
     end
   end

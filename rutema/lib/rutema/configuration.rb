@@ -2,7 +2,7 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
 
 module Rutema
-  #This module defines the "configuration directives" used in the configuration of RutemaX
+  #This module defines the "configuration directives" used in the configuration of Rutema
   #
   #Example
   #A configuration file needs as a minimum to define which parser to use and which tests to run.
@@ -13,7 +13,7 @@ module Rutema
   # require 'rake'
   # configuration.parser={:class=>Rutema::MinimalXMLParser}
   # configuration.tests=FileList['all/of/the/tests/**/*.*']
-  module RutemaXConfiguration
+  module RutemaConfiguration
     #Adds a hash of values to the tools hash of the configuration
     #
     #This hash is then accessible in the parser and reporters as a property of the configuration instance
@@ -79,7 +79,7 @@ module Rutema
       end
     end
     
-    #Adds the files to the specifications available to RutemaX.
+    #Adds the files to the specifications available to Rutema.
     def tests= array_of_files
       @tests||=Array.new
       @tests+=array_of_files
@@ -124,11 +124,11 @@ module Rutema
     end
   end
   
-  #This class reads a RutemaX configuration file
+  #This class reads a Rutema configuration file
   #
-  #See Rutema::RutemaXConfiguration for configuration examples and directives
-  class RutemaXConfigurator<Patir::Configurator
-    include RutemaXConfiguration
+  #See Rutema::RutemaConfiguration for configuration examples and directives
+  class RutemaConfigurator<Patir::Configurator
+    include RutemaConfiguration
     def initialize config_file,logger=nil
       @reporters=Array.new
       @context=Hash.new

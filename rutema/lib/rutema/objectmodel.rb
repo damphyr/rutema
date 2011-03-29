@@ -1,6 +1,5 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema/reporters/standard_reporters'
 require 'patir/command'
 
 module Rutema
@@ -37,8 +36,6 @@ module Rutema
       end
     end
   end
-
-  
   #A TestSpecification encompasses all elements required to run a test, the builds used, the scenario to run,
   #together with a textual description and information that aids in tracing the test back to the requirements.
   class TestSpecification
@@ -79,7 +76,6 @@ module Rutema
       return "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
-    
   #A TestScenario is a sequence of TestStep instances.
   #
   #TestStep instances are run in the definition sequence and the scenario
@@ -121,7 +117,6 @@ module Rutema
       end
     end
   end
-  
   #Represents a step in a TestScenario.
   #
   #Each TestStep can have text and a command associated with it. 

@@ -1,3 +1,5 @@
+require 'rutema/parsers/xml'
+require 'rutema/reporters/activerecord'
 configuration.parser={:class=>Rutema::MinimalXMLParser}
 configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:adapter=>"sqlite3",:database=>"sample.db"}}
 configuration.tests=[

@@ -1,3 +1,5 @@
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+
 module Rutema
   #This reporter creates a simple text summary of a test run
   #
@@ -9,7 +11,6 @@ module Rutema
       @verbose=params[:verbose] if params
       @verbose||=false 
     end
-    
     #Returns the text summary
     #
     #runner_states is an Array of Patir::CommandSequenceStatus containing the stati of the last run (so it contains all the Scenario stati for the loaded tests)
@@ -59,7 +60,6 @@ module Rutema
       end
       msg<<"\nSuccesses:" unless successes.empty?
       msg<<scenario_summaries(successes,specifications)
-      
       return msg
     end
     

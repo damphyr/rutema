@@ -2,8 +2,7 @@
 require 'rutema/gems'
 require 'rutema/system'
 begin
-	puts "rutemax is deprecated and will be removed in the near future, use rutema instead"
 	Rutema::RutemaX.new(ARGV)
 rescue
 	exit 1
-end	
+end

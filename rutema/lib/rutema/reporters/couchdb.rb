@@ -1,4 +1,5 @@
-require 'rutema/model'
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+require 'rutema/models/couchdb'
 
 module Rutema
   class CouchDBReporter
@@ -13,7 +14,7 @@ module Rutema
     
     #We get all the data for a Rutema::CouchDB::Model::Run entry in here.
     def report specifications,runner_states,parse_errors,configuration
-      run_entry=Rutema::CouchDB::Model::Run.new
+      run_entry=Rutema::CouchDB::Run.new
       run_entry.database=@database
       if configuration && configuration.context
         run_entry.context=configuration.context
