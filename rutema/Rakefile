@@ -2,11 +2,9 @@
 # -*- ruby -*-
 $:.unshift File.join(File.dirname(__FILE__),"lib")
 $:.unshift File.join(File.dirname(__FILE__),"ext")
-require 'rubygems'
-require 'rutema/gems'
-require 'hoe'
 require 'rutema/system'
-
+require 'rubygems'
+require 'hoe'
 Hoe.spec('rutema') do |p|
   p.version=Rutema::Version::STRING
   p.rubyforge_name = 'patir'
@@ -19,11 +17,11 @@ Hoe.spec('rutema') do |p|
   p.extra_deps<<['patir',">=0.6.4"]
   p.extra_deps<<['highline','1.5.2']
   p.extra_deps<<['mailfactory','1.4.0']
-  p.extra_deps<<['activerecord','2.3.8']
+  p.extra_deps<<['activerecord','3.0.5']
   p.extra_deps<<['ruport','1.6.3']
   p.extra_deps<<['acts_as_reportable','1.1.1']
   p.extra_deps<<['couchrest','=0.37']
-  p.spec_extras={:executables=>["rutemax","rutema_upgrader"],
+  p.spec_extras={:executables=>["rutemax","rutema","rutema_export"],
     :default_executable=>"rutemax"}
 end
 

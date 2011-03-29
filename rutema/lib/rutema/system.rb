@@ -4,9 +4,7 @@ require 'rexml/document'
 require 'patir/configuration'
 require 'patir/command'
 require 'patir/base'
-require 'rutema/specification'
 require 'rutema/configuration'
-require 'rutema/reporters/standard_reporters'
 
 module Rutema
   #This module defines the version numbers for the library

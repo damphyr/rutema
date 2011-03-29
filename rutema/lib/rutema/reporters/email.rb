@@ -1,10 +1,8 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..","..")
 require 'net/smtp'
-require 'rutema/reporter'
-require 'rutema/specification'
-require 'rutema/reporters/text'
 require 'mailfactory'
+require 'rutema/reporters/text'
 
 module Rutema
   #The following configuration keys are used by EmailReporter:
