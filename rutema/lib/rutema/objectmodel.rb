@@ -71,8 +71,7 @@ module Rutema
       @scenario=TestScenario.new(@attributes[:version])
       @requirements||=Array.new
     end
-    
-    def to_s
+    def to_s#:nodoc: 
       return "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
@@ -205,7 +204,7 @@ module Rutema
       param=" - #{self.cmd.to_s}" if self.has_cmd?
       return "#{@attributes[:step_type]}#{param}"
     end
-    def to_s
+    def to_s#:nodoc:
       param=""
       param=" - #{self.cmd.to_s}" if self.has_cmd?
       msg="#{self.number} - #{self.step_type}#{param} - #{self.status}"
@@ -217,13 +216,13 @@ module Rutema
 end
 
 class Patir::ShellCommand
-  def to_s
+  def to_s#:nodoc:
     return @command
   end
 end
 
 class Patir::RubyCommand
-  def to_s
+  def to_s#:nodoc:
     return @name
   end
 end

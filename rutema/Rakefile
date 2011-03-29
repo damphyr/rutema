@@ -11,8 +11,8 @@ Hoe.spec('rutema') do |p|
   p.author = "Vassilis Rizopoulos"
   p.email = "riva@braveworld.net"
   p.summary = 'rutema is a test execution and management framework for heterogeneous testing environments'
-  p.description = p.paragraphs_of('README.txt', 1..5).join("\n\n")
-  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.description = p.paragraphs_of('README.md', 1..5).join("\n\n")
+  p.url = p.paragraphs_of('README.md', 0).first.split(/\n/)[1..-1]
   p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
   p.extra_deps<<['patir',">=0.6.4"]
   p.extra_deps<<['highline','1.5.2']

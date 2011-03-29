@@ -10,7 +10,6 @@ For more information look at http://patir.rubyforge.org/rutema
 == FEATURES/PROBLEMS:
 * Unified test execution environment for automated and manual tests
 * Extensible reports and notifications in various formats (email, rss, pdf, html etc.)
-* Web frontend and command line report generation tools for browsing the test results database (with rutemaweb)
 * Comprehensive history of test execution
 * A well defined way to create a project specific test specification format
 
@@ -32,7 +31,7 @@ See http://patir.rubyforge.org/rutema/distro_test.html for an introductory examp
 == LICENSE:
 (The Ruby License)
 
-rutema is copyright (c) 2007 - 2009 Vassilis Rizopoulos
+rutema is copyright (c) 2007 - 2011 Vassilis Rizopoulos
 
 You can redistribute it and/or modify it under either the terms of the GPL
 (see COPYING.txt file), or the conditions below:
@@ -90,10 +89,3 @@ You can redistribute it and/or modify it under either the terms of the GPL
      IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
      WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
      PURPOSE.
-
-== CREDITS
-	RutemaWeb uses icons from
-	Fast Icon (Dirceu Veiga)
-	Homepage:	http://www.fasticon.com
-	The page design used is an adaptation of RedTie, a design found in www.oswd.org
-	Homepage: http://www.oswd.org/design/preview/id/3699

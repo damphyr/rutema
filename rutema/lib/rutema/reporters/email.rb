@@ -51,8 +51,7 @@ module Rutema
       @verbose||=false
       @logger.info("Reporter '#{self.to_s}' registered")
     end
-
-    def to_s
+    def to_s#:nodoc:
       list=@recipients.join(', ')
       "EmailReporter - #{@server}:#{@port} from #{@mail.from} to #{list}"
     end

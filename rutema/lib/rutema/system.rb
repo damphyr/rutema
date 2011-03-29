@@ -19,8 +19,8 @@ module Rutema
   #This module defines the version numbers for the library
   module Version
     MAJOR=1
-    MINOR=1
-    TINY=4
+    MINOR=2
+    TINY=0
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications
@@ -124,7 +124,7 @@ module Rutema
     def last_run_a_success?
       return @runner.success?
     end
-    def to_s
+    def to_s#:nodoc:
       "Parsed #{@parsed_files.size} files\n#{TextReporter.new.report(@specifications,@runner.states.values,@parse_errors,@configuration)}"
     end
     private

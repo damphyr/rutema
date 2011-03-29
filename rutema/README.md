@@ -1,22 +1,22 @@
 rutema http://patir.rubyforge.org/rutema
 
-== DESCRIPTION:
+## DESCRIPTION:
 rutema is a test execution tool with a twist.
 It allows you to combine test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
 It's purpose is to make testing in heterogeneous environments easier. 
 
 For more information look at http://patir.rubyforge.org/rutema
 
-== FEATURES/PROBLEMS:
+## FEATURES/PROBLEMS:
 * Unified test execution environment for automated and manual tests
 * Extensible reports and notifications in various formats (email, rss, pdf, html etc.)
 * Comprehensive history of test execution
 * A well defined way to create a project specific test specification format
 
-== SYNOPSIS:
+## SYNOPSIS:
 See http://patir.rubyforge.org/rutema/distro_test.html for an introductory example.
 
-== REQUIREMENTS:
+## REQUIREMENTS:
 * patir (http://patir.rubyforge.org)
 * mailfactory (http://rubyforge.org/projects/mailfactory/)
 * activerecord (http://ar.rubyonrails.com/)
@@ -25,10 +25,10 @@ See http://patir.rubyforge.org/rutema/distro_test.html for an introductory examp
 * acts_as_reportable
 * highline
 
-== INSTALL:
+## INSTALL:
 * gem install rutema
 
-== LICENSE:
+## LICENSE:
 (The Ruby License)
 
 rutema is copyright (c) 2007 - 2011 Vassilis Rizopoulos

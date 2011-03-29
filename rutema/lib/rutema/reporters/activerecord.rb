@@ -70,7 +70,7 @@ module Rutema
       run_entry.save!
       "activerecord reporter done"
     end
-    def to_s
+    def to_s#:nodoc:
       "ActiveRecordReporter"
     end
     private

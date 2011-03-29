@@ -27,8 +27,7 @@ module Rutema
       run_entry.save
       "couchdb reporter done"
     end
-    
-    def to_s
+    def to_s#:nodoc:
       "CouchDBReporter"
     end
     private 
