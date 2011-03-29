@@ -18,7 +18,6 @@ lib/rutema/reporters/activerecord.rb
 lib/rutema/reporters/base.rb
 lib/rutema/reporters/couchdb.rb
 lib/rutema/reporters/email.rb
-lib/rutema/reporters/standard_reporters.rb
 lib/rutema/reporters/text.rb
 lib/rutema/reporters/yaml.rb
 lib/rutema/runners/default.rb
