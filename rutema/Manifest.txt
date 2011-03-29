@@ -3,8 +3,8 @@ History.txt
 Manifest.txt
 README.txt
 Rakefile
+bin/rutema
 bin/rutemax
-bin/rutema_upgrader
 lib/rutema/configuration.rb
 lib/rutema/gems.rb
 lib/rutema/models/activerecord.rb
