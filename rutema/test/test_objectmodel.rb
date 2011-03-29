@@ -1,18 +1,14 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
 require 'rubygems'
-require 'rutema/gems'
+require 'rutema/objectmodel'
 module TestRutema
-  require 'rutema/specification'
   class DummyCommand
     include Patir::Command
     def initialize
       @name="dummy"
       @output="output"
       @error="error"
-    end
-    def to_s
-      return ""
     end
   end
   class Dummy
@@ -23,26 +19,27 @@ module TestRutema
       step=Rutema::TestStep.new("test step",DummyCommand.new())
       assert(!step.attended?, "attended?")
       assert_not_equal("dummy", step.name)
-      assert_equal("step - ", step.name)
+      assert(/step - .*DummyCommand.*/=~step.name)
       assert_equal("output", step.output)
       assert_equal("error", step.error)
       assert_equal(:not_executed, step.status)
       assert_nothing_raised() { step.run }
-      assert_nothing_raised() { step.run("context") }
       assert_equal(:success, step.status)
       assert_nothing_raised() { step.reset }
       assert_equal(:not_executed, step.status)
       assert_equal("", step.output)
+      assert(/0 - step - .*DummyCommand.*- not_executed/=~step.to_s)
     end
   end
   class TestSpecification<Test::Unit::TestCase
     def test_new
-      spec=Rutema::TestSpecification.new
-      assert_equal("", spec.name)
-      assert_equal("", spec.title)
-      assert_equal("", spec.description)
+      spec=Rutema::TestSpecification.new(:name=>"name",:title=>"title",:description=>"description")
+      assert_equal("name", spec.name)
+      assert_equal("title", spec.title)
+      assert_equal("description", spec.description)
       assert_not_nil(spec.scenario)
       assert(spec.requirements.empty?)
+      assert_equal("name - title", spec.to_s)
     end
   end
   class TestScenario<Test::Unit::TestCase

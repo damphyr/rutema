@@ -1,9 +1,9 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema/specification'
-
 module Rutema
-  #Reporter is meant as a base class for reporter classes.
+  #Reporter is meant as a base class for reporter classes. Which means that it is here for ducumentation purposes.
+  #
+  #In order to create act as a Reporter for Rutema a class only need to implement the #report method
   class Reporter
     #params should be a Hash containing the parameters used to initialize the class
     def initialize params
@@ -15,10 +15,6 @@ module Rutema
     #
     #parse_errors is an Array of {:filename,:error} hashes containing the errors encountered by the parser when loading the specifications
     def report specifications,runner_states,parse_errors,configuration
-
     end
   end
-
-  private
-  
 end

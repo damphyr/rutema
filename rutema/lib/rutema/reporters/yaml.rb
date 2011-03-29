@@ -1,7 +1,7 @@
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 require 'yaml'
 
 module Rutema
-  
   module YAML
     #Experimental reporter used to dump the data of a run on disk
     #
@@ -18,7 +18,6 @@ module Rutema
         @filename||="rutema.yaml"
         @logger.info("Reporter #{self.to_s} registered")
       end
-      
       #We get all the data from a test run in here.
       def report specifications,runner_states,parse_errors,configuration
         run_entry={}

@@ -13,7 +13,7 @@ module Rutema
   # require 'rake'
   # configuration.parser={:class=>Rutema::MinimalXMLParser}
   # configuration.tests=FileList['all/of/the/tests/**/*.*']
-  module RutemaXConfiguration
+  module RutemaConfiguration
     #Adds a hash of values to the tools hash of the configuration
     #
     #This hash is then accessible in the parser and reporters as a property of the configuration instance
@@ -127,8 +127,8 @@ module Rutema
   #This class reads a RutemaX configuration file
   #
   #See Rutema::RutemaXConfiguration for configuration examples and directives
-  class RutemaXConfigurator<Patir::Configurator
-    include RutemaXConfiguration
+  class RutemaConfigurator<Patir::Configurator
+    include RutemaConfiguration
     def initialize config_file,logger=nil
       @reporters=Array.new
       @context=Hash.new

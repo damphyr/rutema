@@ -1,4 +1,5 @@
-require 'rutema/model'
+#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+require 'rutema/models/couchdb'
 
 module Rutema
   class CouchDBReporter
