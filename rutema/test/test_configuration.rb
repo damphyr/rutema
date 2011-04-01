@@ -1,5 +1,4 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
-
 require 'test/unit'
 require 'rubygems'
 require 'patir/configuration'

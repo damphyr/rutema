@@ -16,6 +16,20 @@ module TestRutema
   end
 
   class TestCouchDBModel<Test::Unit::TestCase
+    def setup
+      @db=CouchRest.database!("http://localhost:5984/rutema_test")
+    end
+    
+    def test_couchdb_model
+      run=Rutema::CouchDB::Run.new
+      run.database=@db
+      run.context="context"
+      run.scenarios=["1","2","#{self.object_id}"]
+      assert_nothing_raised() {  run.save }
+      
+      r=Rutema::CouchDB::Run.get(run.slug)
+      assert_equal(run.slug, r.slug)
+    end
   end
   
   class TestCouchDBReporter<Test::Unit::TestCase

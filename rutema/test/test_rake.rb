@@ -1,7 +1,7 @@
 $:.unshift File.join(File.dirname(__FILE__),"..","lib")
-require 'rubygems'
-require 'rutema/gems'
 require 'test/unit'
+require 'rubygems'
+require 'rake'
 require 'rutema/rake'
 
 module TestRutema
@@ -14,7 +14,6 @@ module TestRutema
       assert_equal([], t.rake_task.prerequisites)
       assert_nothing_raised() { t.add_dependency("some_task") }
       assert_equal(["some_task"], t.rake_task.prerequisites)
-      
     end
     
     def test_rake_task_block
