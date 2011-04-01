@@ -6,17 +6,16 @@ Rakefile
 bin/rutema
 bin/rutemax
 lib/rutema/configuration.rb
+lib/rutema/elements/minimal.rb
 lib/rutema/gems.rb
 lib/rutema/models/activerecord.rb
 lib/rutema/models/base.rb
-lib/rutema/models/couchdb.rb
 lib/rutema/objectmodel.rb
 lib/rutema/base.rb
 lib/rutema/xml.rb
 lib/rutema/rake.rb
 lib/rutema/reporters/activerecord.rb
 lib/rutema/reporters/base.rb
-lib/rutema/reporters/couchdb.rb
 lib/rutema/reporters/email.rb
 lib/rutema/reporters/text.rb
 lib/rutema/reporters/yaml.rb
@@ -37,7 +36,6 @@ test/distro_test/specs/no_title.spec
 test/distro_test/specs/sample.spec
 test/rutema.rutema
 test/rutema.spec
-test/migration.spec
 test/test_configuration.rb
 test/test_models.rb
 test/test_objectmodel.rb
