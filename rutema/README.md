@@ -1,4 +1,4 @@
-rutema http://patir.rubyforge.org/rutema
+rutema [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
 
 ## DESCRIPTION:
 rutema is a test execution tool with a twist.
