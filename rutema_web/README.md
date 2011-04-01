@@ -1,13 +1,13 @@
-rutema_web http://patir.rubyforge.org/rutema
+rutema_web [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
 
-== DESCRIPTION:
+##DESCRIPTION:
 rutema_web is the web frontend for rutema. 
 
 It can be used as a viewer for database files created with the rutema ActiveRecord reporter.
 It also provides you with some basic statistics about the tests in your database in the form of 
 diagrams of debatable aesthetics but undoubtable value!
 
-== SYNOPSIS:
+##SYNOPSIS:
 rutema_web config.yaml and browse to http://localhost:7000 for the glorious view
 
 Here is a sample of the configuration YAML:
@@ -23,15 +23,15 @@ Here is a sample of the configuration YAML:
 
 The :db: section should be the activerecord adapter configuration. The :settings: section controls the behaviour of the web app.
 
-== REQUIREMENTS:
+##REQUIREMENTS:
 * rutema (http://patir.rubyforge.org/rutema)
 * sinatra (http://www.sinatrarb.com/)
 * ruport (http://rubyreports.org/)
 
-== INSTALL:
+##INSTALL:
 * sudo gem install rutema_web
 
-== LICENSE:
+##LICENSE:
 (The Ruby License)
 
 rutema is copyright (c) 2007 - 2010 Vassilis Rizopoulos

@@ -1,15 +1,15 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rutema_web/sinatra'
 require 'optparse'
-require 'rutema/reporters/activerecord'
+require 'patir/base'
+require 'rutema_web/activerecord/model'
+require 'rutema_web/sinatra'
 #This is the web frontend for Rutema databases.
 module RutemaWeb
-  extend Rutema::ActiveRecordConnections
   #This module defines the version numbers for the library
   module Version
     MAJOR=1
     MINOR=0
-    TINY=4
+    TINY=5
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #Starts App
@@ -19,7 +19,7 @@ module RutemaWeb
     cfg_file=File.expand_path(cfg_file)
     configuration=YAML.load_file(cfg_file)
     if (configuration[:db])
-      self.connect_to_active_record(configuration[:db],logger)
+      Rutema::ActiveRecord.connect(configuration[:db],logger)
       RutemaWeb::UI::SinatraApp.define_settings(configuration[:settings])
       RutemaWeb::UI::SinatraApp.run!
     else
@@ -45,8 +45,5 @@ module RutemaWeb
       end
     end
   end
-
 end
-
-
 

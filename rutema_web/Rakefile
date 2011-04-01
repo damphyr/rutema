@@ -1,8 +1,8 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 # -*- ruby -*-
 $:.unshift File.join(File.dirname(__FILE__),"lib")
-require 'rutema_web/main'
 require 'rubygems'
+require 'rutema_web/main'
 require 'hoe'
 
 Hoe.spec('rutema_web') do |p|
@@ -12,11 +12,10 @@ Hoe.spec('rutema_web') do |p|
   p.email = "riva@braveworld.net"
   p.summary = 'rutema_web is the web frontend for rutema'
   p.description = p.paragraphs_of('README.txt', 1..5).join("\n\n")
-  p.url = p.paragraphs_of('README.txt', 0).first.split(/\n/)[1..-1]
+  p.url = "http://patir.rubyforge.org/rutema"
   p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
-  p.extra_deps<<['rutema',"=1.0.9"]
-  p.extra_deps<<['sinatra','=1.0.0']
+  p.extra_deps<<['rutema',"=1.2.0"]
+  p.extra_deps<<['sinatra','=1.2.1']
   p.extra_deps<<['ruport','>=1.6.1']
-  p.spec_extras={:executables=>["rutema_web"],
-    :default_executable=>"rutema_web"}
+  p.spec_extras={:executables=>["rutema_web"],:default_executable=>"rutema_web"}
 end

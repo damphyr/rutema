@@ -1,4 +1,3 @@
-require 'rubygems'
-gem 'sinatra','=1.0.0'
-gem 'rutema',"=1.0.9"
-gem 'ruport','>=1.6.1'
+gem 'sinatra','=1.1.0'
+gem 'rutema',"=1.2.0"
+gem 'json','=1.5.1'

@@ -1,10 +1,10 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..") 
-require 'rutema/model'
+require 'rutema/models/activerecord'
 module Rutema
-  module Model
-    #Extensions of Rutema::Model::Run to accomodate specific view requirements for rutema_web
-    class Run <ActiveRecord::Base
+  module ActiveRecord
+    #Extensions of Rutema::ActiveRecord::Run to accomodate specific view requirements for rutema_web
+    class Run <::ActiveRecord::Base
       # The view wants to display runs grouped into pages, 
       # where each page shows page_size runs at a time. 
       # This method returns the runs on page page_num (starting 
@@ -35,16 +35,16 @@ module Rutema
       #number of unsuccessful scenarios (does not count setup or teardown scripts)
       def number_of_failed
         #self.scenarios.select{|sc| !sc.success? && !sc.not_executed? && sc.is_test? }.size
-        Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'error' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
+        Rutema::ActiveRecord::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'error' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #number of scenarios that did not run (does not count setup or teardown scripts)
       def number_of_not_executed
         #self.scenarios.select{|sc| sc.not_executed? && sc.is_test? }.size
-        Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'not_executed' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
+        Rutema::ActiveRecord::Scenario.count(:conditions=>"run_id=#{self.id} AND status = 'not_executed' AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #returns the number of actual tests (so, don't take into account setup or teardown tests)
       def number_of_tests
-         Rutema::Model::Scenario.count(:conditions=>"run_id=#{self.id} AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
+         Rutema::ActiveRecord::Scenario.count(:conditions=>"run_id=#{self.id} AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'")
       end
       #the number of the configuration file used to run the test
       def config_file
@@ -53,8 +53,8 @@ module Rutema
       end
    
     end
-    #Extensions of Rutema::Model::Scenario to accomodate specific view requirements for rutema_web
-    class Scenario <ActiveRecord::Base
+    #Extensions of Rutema::ActiveRecord::Scenario to accomodate specific view requirements for rutema_web
+    class Scenario <::ActiveRecord::Base
       # The view wants to display scenarios grouped into pages, 
       # where each page shows page_size scenarios at a time. 
       # This method returns the scenarios grouped by name on page page_num (starting 
@@ -83,7 +83,3 @@ module Rutema
     end
   end
 end
-
-
-
-

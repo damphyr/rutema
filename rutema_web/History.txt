@@ -1,3 +1,5 @@
+===1.0.5 / 2011-04-01
+* Updated to use the latest rutema (1.2.0) and sinatra releases
 === 1.0.4 / 2010-04-23
 * Fixed manifest missing entry for the flot lib
 * Fixed sequence of data in flot diagrams (was reversed)

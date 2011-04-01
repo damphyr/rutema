@@ -1,27 +1,27 @@
+$:.unshift File.join(File.dirname(__FILE__),"..")
 require 'test/unit'
 require 'ostruct'
-require 'rutema_web/ramaze_controller'
 require 'rubygems'
 require 'mocha'
+require 'lib/rutema_web/activerecord/model'
 
 class TestModel <Test::Unit::TestCase
-  ActiveRecord::Base.establish_connection(:adapter  => "sqlite3",:database =>":memory:")
-  Rutema::Model::Schema.up
+  ::ActiveRecord::Base.establish_connection(:adapter  => "sqlite3",:database =>":memory:")
+  Rutema::ActiveRecord::Schema.up
   def setup
-    @stp=Rutema::Model::Scenario.new
-    @stp.name="test_setup"
-    @trd=Rutema::Model::Scenario.new
-    @trd.name="test_teardown"
-    @tst=Rutema::Model::Scenario.new
-    @tst.name="test"
-    @r=Rutema::Model::Run.new
+    @stp=Rutema::ActiveRecord::Scenario.new(:name=>"TC000_setup",:attended=>false,:status=>"success",:start_time=>Time.now)
+    @stp.steps<<Rutema::ActiveRecord::Step.new(:name=>"echo",:number=>1,:status=>"success",:output=>"testing is nice",:error=>"",:duration=>1)
+    @trd=Rutema::ActiveRecord::Scenario.new(:name=>"TC000_teardown",:attended=>false,:status=>"success",:start_time=>Time.now)
+    @trd.steps<<Rutema::ActiveRecord::Step.new(:name=>"echo",:number=>1,:status=>"success",:output=>"testing is nice",:error=>"",:duration=>1)
+    @tst=Rutema::ActiveRecord::Scenario.new(:name=>"TC000",:attended=>false,:status=>"success",:start_time=>Time.now)
+    @trd.steps<<Rutema::ActiveRecord::Step.new(:name=>"echo",:number=>1,:status=>"success",:output=>"testing is nice",:error=>"",:duration=>1)
+    @r=Rutema::ActiveRecord::Run.new
     @r.scenarios=[@stp,@tst,@trd]
+    @r.save
   end
   def test_status
     assert_equal(:success,@r.status)
-    t1=Rutema::Model::Scenario.new
-    t1.name="failed"
-    t1.stubs(:status).returns("error")
+    t1=Rutema::ActiveRecord::Scenario.new(:name=>"failed",:attended=>false,:status=>"error",:start_time=>Time.now)
     @r.scenarios<<t1
     assert_equal(:error,@r.status)
   end
@@ -34,15 +34,19 @@ class TestModel <Test::Unit::TestCase
     assert_equal(1, @r.number_of_tests)
   end
   def test_number_of_failed
-    t1=Rutema::Model::Scenario.new
-    t1.name="failed"
-    t1.stubs(:status).returns("error")
-    t2=Rutema::Model::Scenario.new
-    t2.name="not executed"
-    t2.stubs(:status).returns("not_executed")
+    t1=Rutema::ActiveRecord::Scenario.new(:name=>"failed",:attended=>false,:status=>"error",:start_time=>Time.now)
+    t2=Rutema::ActiveRecord::Scenario.new(:name=>"not executed",:attended=>false,:status=>"not_executed",:start_time=>Time.now)
     @tst.stubs(:status).returns("success")
     @r.scenarios<<t1
     @r.scenarios<<t2
-    assert_equal(2,@r.number_of_failed)
+    assert_equal(1,@r.number_of_failed)
+  end
+  def test_number_of_not_executed
+    t1=Rutema::ActiveRecord::Scenario.new(:name=>"failed",:attended=>false,:status=>"error",:start_time=>Time.now)
+    t2=Rutema::ActiveRecord::Scenario.new(:name=>"not executed",:attended=>false,:status=>"not_executed",:start_time=>Time.now)
+    @tst.stubs(:status).returns("success")
+    @r.scenarios<<t1
+    @r.scenarios<<t2
+    assert_equal(1,@r.number_of_not_executed)
   end
 end

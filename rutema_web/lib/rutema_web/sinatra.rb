@@ -2,11 +2,9 @@
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'sinatra/base'
 require 'erb'
-require 'patir/configuration'
-require 'patir/command'
 require 'patir/base'
-require 'rutema_web/model'
-require 'rutema_web/ruport_formatter'
+require 'rutema_web/activerecord/model'
+require 'rutema_web/activerecord/ruport_formatter'
 require 'json'
 
 module RutemaWeb
@@ -116,7 +114,7 @@ module RutemaWeb
       private
       #extract all the configuration names
       def configurations
-        runs=Rutema::Model::Run.find(:all)
+        runs=Rutema::ActiveRecord::Run.find(:all)
         return runs.map{|r| r.context[:config_file] if r.context.is_a?(Hash)}.compact.uniq
       end
       def panel_configurations type,action=nil
@@ -322,7 +320,7 @@ module RutemaWeb
       end
       #finds all the runs belonging to a specific configuration
       def all_runs_in_configuration configuration
-        runs=Rutema::Model::Run.find(:all,:order=>"id ASC")
+        runs=Rutema::ActiveRecord::Run.find(:all,:order=>"id ASC")
         #find all runs beloging to this configuration
         runs.select{|r| r.context[:config_file]==configuration if r.context.is_a?(Hash)} if configuration
       end
@@ -338,10 +336,10 @@ module RutemaWeb
         page_setup "All runs",nil,"All runs"
 
         dt=[]
-        total_pages=(Rutema::Model::Run.count/settings.page_size)+1
+        total_pages=(Rutema::ActiveRecord::Run.count/settings.page_size)+1
         page_number=validated_page_number(page,total_pages)
 
-        runs=Rutema::Model::Run.find_on_page(page_number,settings.page_size)
+        runs=Rutema::ActiveRecord::Run.find_on_page(page_number,settings.page_size)
         runs.each do |r| 
           dt<<[status_icon(r.status),run_summary(r),r.config_file]
         end
@@ -356,7 +354,7 @@ module RutemaWeb
         #find which runs contain each scenario with the same name
         #Ramaze::Log.debug("Getting the runs for each scenario")
         conditions="name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'"
-        Rutema::Model::Scenario.find(:all, :conditions=>conditions).each do |sc|
+        Rutema::ActiveRecord::Scenario.find(:all, :conditions=>conditions).each do |sc|
           nm=sc.name
           runs[nm]||=[]
           runs[nm]<<sc.run.id
@@ -365,7 +363,7 @@ module RutemaWeb
         total_pages=(runs.size / settings.page_size)+1
         page_number=validated_page_number(page,total_pages)
         #Ramaze::Log.debug("Getting scenarios for page #{page_number}")
-        scens=Rutema::Model::Scenario.find_on_page(page_number,settings.page_size,conditions)
+        scens=Rutema::ActiveRecord::Scenario.find_on_page(page_number,settings.page_size,conditions)
         #and now build the table data
         dt=Array.new
         scens.each do |sc|
@@ -395,7 +393,7 @@ module RutemaWeb
         ret=""
         page_setup "Runs for #{scenario_id}",nil,"Scenario #{scenario_id} runs"
         begin
-          table=Rutema::Model::Scenario.report_table(:all,:conditions=>["name = :spec_name",{:spec_name=>scenario_id}],
+          table=Rutema::ActiveRecord::Scenario.report_table(:all,:conditions=>["name = :spec_name",{:spec_name=>scenario_id}],
           :order=>"run_id DESC")
           if table.empty?
             ret="<p>no results for the given name</p>"
@@ -422,9 +420,9 @@ module RutemaWeb
       #giving a detailed list of the steps, with status and output
       def scenario_in_a_run scenario_id
         begin
-          scenario=Rutema::Model::Scenario.find(scenario_id)
+          scenario=Rutema::ActiveRecord::Scenario.find(scenario_id)
           page_setup "Summary for #{scenario.name} in run #{scenario.run_id}",panel_runs,"Summary for #{scenario.name} in run #{scenario.run_id}"
-          table=Rutema::Model::Step.report_table(:all,
+          table=Rutema::ActiveRecord::Step.report_table(:all,
           :conditions=>["scenario_id = :scenario_id",{:scenario_id=>scenario_id}],
           :order=>"number ASC")
           if table.empty?
@@ -447,7 +445,7 @@ module RutemaWeb
       def single_run run_id
         ret=""
         begin
-          run=Rutema::Model::Run.find(run_id)
+          run=Rutema::ActiveRecord::Run.find(run_id)
         rescue
           return "Could not find #{run_id}"
         end
@@ -455,7 +453,7 @@ module RutemaWeb
           ret<<context_table(run.context)
         end
         conditions="run_id = :run_id AND name NOT LIKE '%_teardown' AND name NOT LIKE '%_setup'"
-        table=Rutema::Model::Scenario.report_table(:all,
+        table=Rutema::ActiveRecord::Scenario.report_table(:all,
         :conditions=>[conditions,{:run_id=>run_id}],:except=>["run_id"],
         :order=>"start_time ASC")
         if table.empty?
@@ -474,14 +472,14 @@ module RutemaWeb
 
       def panel_runs
         ret=""
-        Rutema::Model::Run.find(:all,:limit=>10,:order=>"id DESC").each do |r|
+        Rutema::ActiveRecord::Run.find(:all,:limit=>10,:order=>"id DESC").each do |r|
           ret<<"#{status_icon(r.status)} #{run_link(r)}<br/>"
         end
         return ret
       end
 
       def failure_rate scenario_name
-        scenarios=Rutema::Model::Scenario.find(:all,:conditions=>["name = :spec_name",{:spec_name=>scenario_name}])
+        scenarios=Rutema::ActiveRecord::Scenario.find(:all,:conditions=>["name = :spec_name",{:spec_name=>scenario_name}])
         failures=0
         scenarios.each{|sc| failures+=1 unless sc.status=="success" }
         return ((failures.to_f/scenarios.size)*100).round
