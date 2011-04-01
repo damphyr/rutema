@@ -1,0 +1,9 @@
+--- 
+:db: 
+  :adapter: sqlite3
+  :database: rutema_test.db
+:settings: 
+  :page_size: 10
+  :last_n_runs: 20
+  :port: 7000
+  :show_setup_teardown: true
