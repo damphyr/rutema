@@ -1,3 +1,3 @@
 configuration.parser={:class=>Rutema::MinimalXMLParser}
 configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:adapter=>"sqlite3",:database=>"rutema.db"}}
-configuration.tests=["rutema.spec","migration.spec"]
+configuration.tests=["rutema.spec"]

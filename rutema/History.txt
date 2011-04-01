@@ -1,8 +1,7 @@
-== 1.2.0 /2011-03-
-* refactored library structure. Parsers, runners and reporters are now dynamically loaded.
-	This way a third party gem can i.e. add a parser in rutema/parsers/ and have it immediately available
+== 1.2.0 /2011-04-01
+* refactored library structure
 * More unit tests. We're now over the magical 80% coverage point
-* Updated gem dependencies for activerecord and couchrest to the newest versions
+* Updated gem dependencies for activerecord to the newest version
 * Deprecated rutemax. The command now is simply rutema (avoids observed confusion). Will remove in 1.3.0
 == 1.1.3 /2010-12-23
 * fixed dependency handling of Rutema::RakeTask within the block.

@@ -20,9 +20,9 @@ Hoe.spec('rutema') do |p|
   p.extra_deps<<['activerecord','3.0.5']
   p.extra_deps<<['ruport','1.6.3']
   p.extra_deps<<['acts_as_reportable','1.1.1']
-  p.extra_deps<<['couchrest','=0.37']
-  p.spec_extras={:executables=>["rutemax","rutema","rutema_export"],
-    :default_executable=>"rutemax"}
+  #p.extra_deps<<['couchrest','=1.0.1']
+  p.spec_extras={:executables=>["rutemax","rutema"],
+    :default_executable=>"rutema"}
 end
 
 # vim: syntax=Ruby

@@ -6,14 +6,16 @@ require 'patir/command'
 require 'patir/base'
 require 'rutema/configuration'
 
-def load_plugins subdir #:nodoc
-  #load every file you find in the given subdirectory
-  plugins=Dir.entries(File.join(File.dirname(__FILE__),subdir)).select{|e| e.end_with?('.rb')}
-  plugins.each{ |plugin| require "rutema/#{subdir}/#{plugin}"  }
-end
-load_plugins('parsers')
-load_plugins('runners')
-load_plugins('reporters')
+require 'rutema/parsers/base'
+require 'rutema/parsers/xml'
+         
+require 'rutema/runners/default'
+require 'rutema/runners/step'
+         
+require 'rutema/reporters/activerecord'
+require 'rutema/reporters/text'
+require 'rutema/reporters/yaml'
+require 'rutema/reporters/email'
 
 module Rutema
   #This module defines the version numbers for the library

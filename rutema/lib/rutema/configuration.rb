@@ -9,7 +9,6 @@ module Rutema
   #
   #Since rutema configuration files are valid Ruby code, you can use the full power of the Ruby language including require directives
   #
-  # require 'rubygems'
   # require 'rake'
   # configuration.parser={:class=>Rutema::MinimalXMLParser}
   # configuration.tests=FileList['all/of/the/tests/**/*.*']
