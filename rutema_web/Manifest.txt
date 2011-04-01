@@ -1,7 +1,6 @@
 bin/rutema_web
 COPYING.txt
 History.txt
-
 lib/rutema_web/activerecord/model.rb
 lib/rutema_web/activerecord/ruport_formatter.rb
 lib/rutema_web/gems.rb
