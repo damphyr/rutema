@@ -11,6 +11,7 @@ diagrams of debatable aesthetics but undoubtable value!
 rutema_web config.yaml and browse to http://localhost:7000 for the glorious view
 
 Here is a sample of the configuration YAML:
+<pre>
 --- 
 :db: 
   :adapter: sqlite3
@@ -20,7 +21,7 @@ Here is a sample of the configuration YAML:
   :last_n_runs: 20
   :port: 7000
   :show_setup_teardown: true
-
+</pre>
 The :db: section should be the activerecord adapter configuration. The :settings: section controls the behaviour of the web app.
 
 ##REQUIREMENTS:
