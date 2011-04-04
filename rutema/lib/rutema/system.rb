@@ -22,7 +22,7 @@ module Rutema
   module Version
     MAJOR=1
     MINOR=2
-    TINY=0
+    TINY=1
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications
@@ -233,7 +233,7 @@ module Rutema
     def initialize command_line_args
       parse_command_line(command_line_args)
       @logger=Patir.setup_logger(@log_file)
-      @logger.info("rutemax v#{Version::STRING}")
+      @logger.info("rutema v#{Version::STRING}")
       begin
         raise "No configuration file defined!" if !@config_file
         @configuration=RutemaConfigurator.new(@config_file,@logger).configuration
@@ -262,7 +262,7 @@ module Rutema
         opt.on("--log FILE", "-l FILE",String,"Redirects the log output to FILE") { |@log_file|}
         opt.on("--check","Runs just the check test"){@check=true}
         opt.on("--step","Runs test cases step by step"){@step=true}
-        opt.on("-v", "--version","Displays the version") { $stdout.puts("rutemax v#{Version::STRING}");exit 0 }
+        opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
         opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
         opt.on("The commands are:")
         opt.on("\tall - Runs all tests")

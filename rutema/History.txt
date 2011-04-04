@@ -1,3 +1,6 @@
+== 1.2.1 /2011-04-04
+* The configuration code no longer assumes that you are passing files. configuration.tests= now assumes you're passing an array of strings and it is the responsibility of the parser to make heads or tails from that. The configuraiton is clever enough to detect paths relative to the configuration file and expand them.
+* some minor cosmetic changes in the documentation
 == 1.2.0 /2011-04-01
 * refactored library structure
 * More unit tests. We're now over the magical 80% coverage point

@@ -78,10 +78,13 @@ module Rutema
       end
     end
     
-    #Adds the files to the specifications available to Rutema.
-    def tests= array_of_files
+    #Adds the specification identifiers available to this instance of Rutema
+    #
+    #These will usually be files, but they can be anything.
+    #Essentially this is an Array of strings that mean something to your parser
+    def tests= array_of_identifiers
       @tests||=Array.new
-      @tests+=array_of_files
+      @tests+=array_of_identifiers
     end
     
     #A hash defining the parser to use.
@@ -150,7 +153,13 @@ module Rutema
         raise Patir::ConfigurationException,"No parser defined" unless @configuration.parser
         raise Patir::ConfigurationException,"Syntax error in parser definition - missing :class" unless @configuration.parser[:class]
         @configuration.reporters=@reporters
-        @configuration.tests=@tests.collect{|e| File.expand_path(e) }
+        @configuration.tests=@tests.collect do |t|  
+          if File.exists?(t) 
+            File.expand_path(t)
+          else
+            t
+          end
+        end
         @configuration.filename=@config_file
       end
       return @configuration
