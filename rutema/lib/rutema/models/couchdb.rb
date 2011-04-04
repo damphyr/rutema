@@ -2,6 +2,7 @@
 $:.unshift File.join(File.dirname(__FILE__),'..','..')
 require 'rutema/models/base'
 require 'couchrest'
+require 'couchrest_model'
 module Rutema
   module CouchDB
     def self.connect cfg,logger
@@ -14,7 +15,7 @@ module Rutema
         raise Rutema::ConnectionError,"Erroneous database configuration. Missing :url and/or :database"
       end
     end
-    class Run <CouchRest::ExtendedDocument
+    class Run <CouchRest::Model::Base
       unique_id :slug
       
       timestamps!
