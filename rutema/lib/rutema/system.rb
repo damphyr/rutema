@@ -22,7 +22,7 @@ module Rutema
   module Version
     MAJOR=1
     MINOR=2
-    TINY=1
+    TINY=2
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications
@@ -38,7 +38,6 @@ module Rutema
       raise "Could not instantiate parser" unless @parser
       @reporters=@configuration.reporters.collect{ |reporter| instantiate_class(reporter) }
       @reporters.compact!
-      @configuration.tests.collect!{|t| File.expand_path(t)}
       #this will hold any specifications that are succesfully parsed.
       @specifications=Hash.new
       @parsed_files=Array.new
@@ -161,30 +160,24 @@ module Rutema
       end
     end
 
-    def parse_specification spec_file
-      filename=File.expand_path(spec_file)
-      if File.exists?(filename)
-        begin
-          @parsed_files<<filename
-          @parsed_files.uniq!
-          spec=@parser.parse_specification(spec_file)
-          if @specifications[spec.name]
-            msg="Duplicate specification name '#{spec.name}' in '#{spec_file}'"
-            @logger.error(msg)
-            @parse_errors<<{:filename=>spec_file,:error=>msg}
-            @test_states[spec.name]=Patir::CommandSequenceStatus.new(spec.name,[])
-          else
-            @specifications[spec.name]=spec
-            @test_states[spec.name]=Patir::CommandSequenceStatus.new(spec.name,spec.scenario.steps)
-          end
-        rescue ParserError
-          @logger.error("Error parsing '#{spec_file}': #{$!.message}")
-          @parse_errors<<{:filename=>filename,:error=>$!.message}
+    def parse_specification spec_identifier
+      spec=nil
+      begin
+        @parsed_files<<spec_identifier
+        @parsed_files.uniq!
+        spec=@parser.parse_specification(spec_identifier)
+        if @specifications[spec.name]
+          msg="Duplicate specification name '#{spec.name}' in '#{spec_identifier}'"
+          @logger.error(msg)
+          @parse_errors<<{:filename=>spec_identifier,:error=>msg}
+          @test_states[spec.name]=Patir::CommandSequenceStatus.new(spec.name,[])
+        else
+          @specifications[spec.name]=spec
+          @test_states[spec.name]=Patir::CommandSequenceStatus.new(spec.name,spec.scenario.steps)
         end
-      else
-        msg="'#{filename}' not found."
-        @logger.error(msg)
-        @parse_errors<<{:filename=>filename,:error=>msg}
+      rescue ParserError
+        @logger.error("Error parsing '#{spec_identifier}': #{$!.message}")
+        @parse_errors<<{:filename=>spec_identifier,:error=>$!.message}
       end
       return spec
     end
@@ -283,12 +276,7 @@ module Rutema
           when "unattended"
             @mode=:unattended
           else
-            if File.exists?(command)
-              @mode=File.expand_path(command)
-            else
-              $stderr.puts "Can't find '#{command}' and it does not match any known commands. Don't know what to do with it."
-              raise "Can't find '#{command}' and it does not match any known commands. Don't know what to do with it."
-            end
+            @mode=command
           end
         end
       end

@@ -34,8 +34,12 @@ module TestRutema
     end
     
     def test_specification_paths
-      cfg=Rutema::RutemaConfigurator.new("distro_test/config/full.rutema").configuration
+      cfg=Rutema::RutemaConfigurator.new("distro_test/config/test_identifiers.rutema").configuration
       assert_not_nil(cfg.tests)
+      assert(File.exists?(cfg.tests[0]))
+      assert(File.exists?(cfg.tests[2]))
+      assert(cfg.tests.include?('22345'))
     end
+    
   end
 end

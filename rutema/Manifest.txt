@@ -26,6 +26,7 @@ README.txt
 test/distro_test/config/database.rutema
 test/distro_test/config/full.rutema
 test/distro_test/config/minimal.rutema
+test/distro_test/config/test_identifiers.rutema
 test/distro_test/specs/check.spec
 test/distro_test/specs/duplicate_name.spec
 test/distro_test/specs/fail.spec

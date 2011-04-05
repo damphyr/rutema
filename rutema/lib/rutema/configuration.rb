@@ -1,6 +1,6 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-
+require 'ostruct'
 module Rutema
   #This module defines the "configuration directives" used in the configuration of Rutema
   #
