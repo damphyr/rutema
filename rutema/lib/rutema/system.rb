@@ -22,7 +22,7 @@ module Rutema
   module Version
     MAJOR=1
     MINOR=2
-    TINY=2
+    TINY=3
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications
@@ -146,11 +146,11 @@ module Rutema
       teardown=nil
       if @configuration.setup
         @logger.info("Parsing setup specification from '#{@configuration.setup}'")
-        setup=@parser.parse_specification(@configuration.setup).scenario
+        setup=@parser.parse_setup(@configuration.setup).scenario
       end
       if @configuration.teardown
         @logger.info("Parsing teardown specification from '#{@configuration.teardown}'")
-        teardown=@parser.parse_specification(@configuration.teardown).scenario
+        teardown=@parser.parse_teardown(@configuration.teardown).scenario
       end
       if @configuration.use_step_by_step
         @logger.info("Using StepRunner")

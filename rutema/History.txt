@@ -1,3 +1,6 @@
+== 1.2.3 /2011-05-03
+* parser interface expanded for configuration validation
+* parser interface expanded to allow separate parsing of setup and teardown scripts
 == 1.2.2 /2011-04-05
 * Actually fixed all the places where path expansion takes place.
 == 1.2.1 /2011-04-04
