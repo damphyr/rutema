@@ -1,4 +1,4 @@
-==0.7.0 / 2011-08
+==0.7.0 / 2011-08-11
 * Ruby 1.9 compatibility
 * updated systemu dependency
 * Unit tests extended
