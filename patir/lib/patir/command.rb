@@ -83,14 +83,10 @@ module Patir
     #returns the command status.
     #
     #valid stati are
-    #
-    #:not_executed when the command was not run
-    #
-    #:success when the command has finished succesfully
-    #
-    #:error when the command has an error
-    #
-    #:warning when the command finished without errors, but there where warnings
+    # :not_executed when the command was not run
+    # :success when the command has finished succesfully
+    # :error when the command has an error
+    # :warning when the command finished without errors, but there where warnings
     def status
       #initialize nil values to something meaningful
       @status||=:not_executed
@@ -98,16 +94,14 @@ module Patir
     end
   end
 
-  #This class wraps the http://codeforpeople.com/lib/ruby/systemu/ as a Command duck.
+  #This class wraps the Command interface around https://github.com/ahoward/systemu 
   #
-  #It allows for execution of any shell command.
+  #It allows for execution of any shell command on any platform.
   #
   #Accepted keys are
-  #
-  #:cmd should be the shell command to execute (required - ParameterException will be raised).
-  #
-  #:working_directory for specifying the working directory (default is '.') and :name for assigning a name to the command (default is "").
-  #
+  # :cmd - the shell command to execute (required - ParameterException will be raised).
+  # :working_directory - specify the working directory (default is '.')
+  # :name - assign a name to the command (default is "").
   class ShellCommand
     include Command
     #The constructor will throw CommandError if :cmd is missing.
@@ -149,6 +143,8 @@ module Patir
           @status=:warning
         end
       rescue
+        #if it blows in systemu it will be nil
+        @error||=""
         @error<<"\n#{$!.message}"
         @error<<"\n#{$!.backtrace}" if $DEBUG
         @status=:error
@@ -319,18 +315,12 @@ module Patir
   #In order to extract the status from steps, classes should quack to the rythm of Command. CommandSequenceStatus does this, so you can nest Stati
   #
   #The status of an action sequence is :not_executed, :running, :success, :warning or :error and represents the overall status
-  #
-  #:not_executed is set when all steps are :not_executed
-  #
-  #:running is set while the sequence is running.
-  #
+  # :not_executed is set when all steps are :not_executed
+  # :running is set while the sequence is running.
   #Upon completion or interruption one of :success, :error or :warning will be set.
-  #
-  #:success is set when all steps are succesfull.
-  #
-  #:warning is set when at least one step generates warnings and there are no failures.
-  #
-  #:error is set when after execution at least one step has the :error status
+  # :success is set when all steps are succesfull.
+  # :warning is set when at least one step generates warnings and there are no failures.
+  # :error is set when after execution at least one step has the :error status
   class CommandSequenceStatus
     attr_accessor :start_time,:stop_time,:sequence_runner,:sequence_name,:status,:step_states,:sequence_id,:strategy
     #You can pass an array of Commands to initialize CommandSequenceStatus
@@ -465,13 +455,13 @@ module Patir
   #== Examples
   #An example (using the excellent HighLine lib) of a CLI prompt as a RubyCommand
   # RubyCommand.new("prompt") do |cmd|  
-  #     cmd.output=""
-  #     cmd.error=""
-  #     unless HighLine.agree("#{step.text}?")
-  #       cmd.error="Why not?"
-  #       raise "You did not agree" 
-  #     end
+  #   cmd.output=""
+  #   cmd.error=""
+  #   unless HighLine.agree("#{step.text}?")
+  #     cmd.error="Why not?"
+  #     raise "You did not agree" 
   #   end
+  # end
   class RubyCommand
     include Patir::Command
     attr_reader :cmd,:working_directory,:context

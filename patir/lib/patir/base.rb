@@ -5,8 +5,8 @@ module Patir
   #The Patir version used
   module Version
     MAJOR=0
-    MINOR=6
-    TINY=6
+    MINOR=7
+    TINY=0
     STRING=[ MAJOR, MINOR, TINY ].join( "." )  	
   end
   #Error thrown usually in initialize methods when missing required parameters
@@ -32,13 +32,9 @@ module Patir
   #It creates a logger just as we want it.
   #
   #mode can be
-  #
-  #:mute to set the level to FATAL
-  #
-  #:silent to set the level to WARN
-  #
-  #:debug to set the level to DEBUG. Debug is set also if $DEBUG is true.
-  #
+  # :mute to set the level to FATAL
+  # :silent to set the level to WARN
+  # :debug to set the level to DEBUG. Debug is set also if $DEBUG is true.
   #The default logger level is INFO
   def self.setup_logger(filename=nil,mode=nil)
     if filename

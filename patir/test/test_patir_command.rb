@@ -73,7 +73,7 @@ class TestShellCommand<Test::Unit::TestCase
   #when passed a wroking directory, the command should change into that directory
   def test_cwd
     cmd=nil
-    assert_nothing_raised(){cmd=ShellCommand.new(:cmd=>"echo", :working_directory=>"samples/")}
+    assert_nothing_raised(){cmd=ShellCommand.new(:cmd=>"echo", :working_directory=>"missing/")}
     assert_nothing_raised(){cmd.run}
     assert(cmd.success?)
   end

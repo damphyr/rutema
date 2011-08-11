@@ -1,9 +1,11 @@
-==0.6.6 / 2009-09-8
-* Bugfixes for ShellCommand
-==0.6.5 / 2009-09-8
-* context added to RubyCommand instances
+==0.7.0 / 2011-08
+* Ruby 1.9 compatibility
+* updated systemu dependency
+* Unit tests extended
+* added context parameter to RubyCommand instances
+* ShellCommand now sets the error output consistently (at times it was nil)
 
-==0.6.4 / 2009-09-4
+==0.6.4 / 2009-09-04
 * context parameter added to Command#run
 ==0.6.3
 * Repository restructured (git is used internally so the svn repository matches now the master branch)
