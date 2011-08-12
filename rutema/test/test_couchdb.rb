@@ -1,10 +1,12 @@
-$:.unshift File.join(File.dirname(__FILE__),"..","lib")
+$:.unshift File.join(File.dirname(__FILE__),"..")
 require 'rubygems'
 require 'test/unit'
 require 'ostruct'
-require 'rutema/reporters/couchdb'
 require 'patir/command'
+require 'couchrest_model'
 require 'mocha'
+require 'lib/rutema/reporters/couchdb'
+
 #$DEBUG=true
 module TestRutema
   class MockCommand

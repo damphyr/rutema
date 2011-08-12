@@ -1,4 +1,4 @@
-$:.unshift File.join(File.dirname(__FILE__),"..","lib")
+$:.unshift File.join(File.dirname(__FILE__),"..")
 require 'test/unit'
 require 'ostruct'
 
@@ -6,9 +6,9 @@ require 'rubygems'
 require 'patir/command'
 require 'mocha'
 
-require 'rutema/objectmodel'
-require 'rutema/runners/default'
-require 'rutema/runners/step'
+require 'lib/rutema/objectmodel'
+require 'lib/rutema/runners/default'
+require 'lib/rutema/runners/step'
 
 #$DEBUG=true
 module TestRutema

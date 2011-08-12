@@ -7,21 +7,21 @@ module Rutema
   end
   #Base class that bombs out when used.
   #
-  #Initialze expects a hash and as a base implementation assigns :logger as the internal logger.
-  #
   #By default the internal logger will log to the console if no logger is provided.
-  #
-  #At the end validate_configuration is called
   class SpecificationParser
     attr_reader :configuration
+    #Expects a hash with at least {:configuration, :logger}
+    #
+    #At the end validate_configuration is called
     def initialize params
-      @configuration=params
-      @logger.warn("No system configuration provided to the parser") unless @configuration
-      @logger=@configuration[:logger]
+      @configuration=params[:configuration]
+      @logger=params[:logger]
       unless @logger
         @logger=Patir.setup_logger
+        @configuration||={}
         @configuration[:logger]=@logger
       end
+      @logger.warn("No system configuration provided to the parser") unless @configuration
       validate_configuration
     end
     #parses a specification

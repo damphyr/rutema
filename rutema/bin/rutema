@@ -1,6 +1,5 @@
-#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
 require 'rubygems'
-require 'rutema/gems'
 require 'rutema/system'
 begin
 	Rutema::RutemaX.new(ARGV)

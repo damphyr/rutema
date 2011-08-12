@@ -13,8 +13,8 @@ module Rutema
     def attribute symbol,value
       @attributes||=Hash.new
       case symbol
-        when String : @attributes[:"#{symbol}"]=value
-        when Symbol : @attributes[symbol]=value
+        when String then @attributes[:"#{symbol}"]=value
+        when Symbol then @attributes[symbol]=value
       end
     end
     #allows us to call object.attribute, object.attribute=, object.attribute? and object.has_attribute?

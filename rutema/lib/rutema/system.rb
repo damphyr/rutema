@@ -22,7 +22,7 @@ module Rutema
   module Version
     MAJOR=1
     MINOR=2
-    TINY=3
+    TINY=4
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications
@@ -251,8 +251,8 @@ module Rutema
       args.options do |opt|
         opt.on("Options:")
         opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
-        opt.on("--config FILE", "-c FILE",String,"Loads the configuration from FILE") { |@config_file|}
-        opt.on("--log FILE", "-l FILE",String,"Redirects the log output to FILE") { |@log_file|}
+        opt.on("--config FILE", "-c FILE",String,"Loads the configuration from FILE") { |config_file| @config_file=config_file}
+        opt.on("--log FILE", "-l FILE",String,"Redirects the log output to FILE") { |log_file| @log_file=logfile}
         opt.on("--check","Runs just the check test"){@check=true}
         opt.on("--step","Runs test cases step by step"){@step=true}
         opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }

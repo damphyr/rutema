@@ -1,3 +1,7 @@
+== 1.2.4 /2011-08-12
+* fixed a regression in parsing the configuration
+* updated gem dependencies
+* added Bundler configuration. The safe way to run rutema is now bundle exec rutema 
 == 1.2.3 /2011-05-03
 * parser interface expanded for configuration validation
 * parser interface expanded to allow separate parsing of setup and teardown scripts

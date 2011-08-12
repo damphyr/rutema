@@ -16,15 +16,6 @@ For more information look at http://patir.rubyforge.org/rutema
 == SYNOPSIS:
 See http://patir.rubyforge.org/rutema/distro_test.html for an introductory example.
 
-== REQUIREMENTS:
-* patir (http://patir.rubyforge.org)
-* mailfactory (http://rubyforge.org/projects/mailfactory/)
-* activerecord (http://ar.rubyonrails.com/)
-* sqlite3 (http://rubyforge.org/projects/sqlite-ruby/)
-* ruport (http://rubyreports.org/)
-* acts_as_reportable
-* highline
-
 == INSTALL:
 * gem install rutema
 

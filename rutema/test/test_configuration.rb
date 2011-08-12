@@ -17,6 +17,7 @@ module TestRutema
       cfg=nil
       #load the valid configuration
       assert_nothing_raised() { cfg=Rutema::RutemaConfigurator.new("distro_test/config/full.rutema").configuration}
+      p cfg
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)

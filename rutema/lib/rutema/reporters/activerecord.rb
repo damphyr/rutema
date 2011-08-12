@@ -14,6 +14,8 @@ module Rutema
       @logger||=Patir.setup_logger
       database_configuration = definition[:db]
       raise "No database configuration defined, missing :db configuration key." unless database_configuration
+      $:.unshift File.join(File.dirname(__FILE__),"..","..")
+      require 'rutema/models/activerecord'
       Rutema::ActiveRecord.connect(database_configuration,@logger)
       @logger.info("Reporter #{self.to_s} registered")
     end
