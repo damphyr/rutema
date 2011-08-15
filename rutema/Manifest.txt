@@ -4,7 +4,6 @@ COPYING.txt
 History.txt
 lib/rutema/configuration.rb
 lib/rutema/elements/minimal.rb
-lib/rutema/gems.rb
 lib/rutema/models/activerecord.rb
 lib/rutema/models/base.rb
 lib/rutema/objectmodel.rb
