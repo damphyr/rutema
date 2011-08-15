@@ -1,7 +1,6 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..","..")
 require 'yaml'
-require 'rutema/models/activerecord'
 
 module Rutema
   #The ActiveRecordReporter will store the results of a test run in a database using ActiveRecord.
