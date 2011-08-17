@@ -15,7 +15,7 @@ Hoe.spec('patir') do
   self.description = paragraphs_of('README.md', 1..4).join("\n\n")
   self.url = "http://patir.rubyforge.org"
   self.changes = paragraphs_of('History.txt', 0..1).join("\n\n")
-  extra_deps<<['systemu',"~>2.2.0"]
+  extra_deps<<['systemu',"~>2.3"]
 end
 
 # vim: syntax=Ruby
