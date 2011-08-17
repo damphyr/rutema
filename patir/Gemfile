@@ -1,0 +1,3 @@
+source :rubygems
+gem 'systemu',"~>2.3"
+gem "hoe",'~>2.12'
