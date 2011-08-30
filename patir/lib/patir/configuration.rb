@@ -37,7 +37,7 @@ module Patir
   #To use it you would do
   # cfg=SimpleConfigurator.new("config.cfg").configuration
   class Configurator
-    attr_reader :logger,:config_file
+    attr_reader :logger,:config_file,:wd
     def initialize config_file,logger=nil
       @logger=logger
       @logger||=Patir.setup_logger
@@ -59,17 +59,18 @@ module Patir
     #You can 'include' the first.cfg file in the other configurations with
     # configuration.load_from_file("first.cfg")
     def load_from_file filename
-      load_configuration(filename)
+      fnm = File.exists?(filename) ? filename : File.join(@wd,filename)
+      load_configuration(fnm)
     end
     private
     def load_configuration filename
       begin 
-        #change into the directory of the configuration file to make requiring easy
-        prev_dir=Dir.pwd
-        Dir.chdir(File.dirname(filename))
-        cfg_txt=File.readlines(File.basename(filename))
+        cfg_txt=File.read(filename)
+        @wd=File.dirname(filename)
         configuration=self
-        eval(cfg_txt.join(),binding())
+        #add the path to the require lookup path to allow require statements in the configuration files
+        $:.unshift File.join(File.dirname(filename))
+        eval(cfg_txt,binding())
         @logger.info("Configuration loaded from #{filename}") if @logger
       rescue ConfigurationException
         #pass it on, do not wrap again
@@ -85,9 +86,6 @@ module Patir
         @logger.debug($!)
         #Just wrap the exception so we can differentiate
         raise ConfigurationException.new,"#{$!.message}"
-      ensure
-        #ensure we go back to our previous dir
-        Dir.chdir(prev_dir)
       end
     end
   end
