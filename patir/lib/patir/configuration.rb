@@ -66,7 +66,7 @@ module Patir
     def load_configuration filename
       begin 
         cfg_txt=File.read(filename)
-        @wd=File.dirname(filename)
+        @wd=File.expand_path(File.dirname(filename))
         configuration=self
         #add the path to the require lookup path to allow require statements in the configuration files
         $:.unshift File.join(@wd)
