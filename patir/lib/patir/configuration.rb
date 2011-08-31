@@ -69,8 +69,9 @@ module Patir
         @wd=File.dirname(filename)
         configuration=self
         #add the path to the require lookup path to allow require statements in the configuration files
-        $:.unshift File.join(File.dirname(filename))
-        eval(cfg_txt,binding())
+        $:.unshift File.join(@wd)
+        #evaluate in the working directory to enable relative paths in configuration
+        Dir.chdir(@wd){eval(cfg_txt,binding())}
         @logger.info("Configuration loaded from #{filename}") if @logger
       rescue ConfigurationException
         #pass it on, do not wrap again

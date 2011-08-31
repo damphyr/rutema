@@ -1,6 +1,5 @@
 ==0.7.2 / 2011-08-30
 * you can now use require in configuration files
-* no chdir calls in Configurator anymore
 * better handling of paths in configuration files. Relative paths in chained configuration files are now correct
 * more unit tests
 ==0.7.0 / 2011-08-11
