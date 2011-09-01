@@ -15,7 +15,7 @@ Hoe.spec('rutema') do |p|
   p.url = "http://patir.rubyforge.org/rutema"
   p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
   p.extra_deps<<["activerecord", "~>3.0.9"]
-  p.extra_deps<<["patir", "~>0.7.0"]
+  p.extra_deps<<["patir", "~>0.7.2"]
   p.extra_deps<<["ruport", "~>1.6.3"]
   p.extra_deps<<["acts_as_reportable","~>1.1.1"]
   p.extra_deps<<["highline","~>1.6.2"]
