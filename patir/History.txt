@@ -1,4 +1,4 @@
-==0.7.2 / 2011-08-30
+==0.7.2 / 2011-11-29
 * you can now use require in configuration files
 * better handling of paths in configuration files. Relative paths in chained configuration files are now correct
 * more unit tests
