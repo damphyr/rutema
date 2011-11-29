@@ -36,6 +36,7 @@ lib/rutema/runners/step.rb
 lib/rutema/system.rb
 Manifest.txt
 Rakefile
+README.md
 README.txt
 test/data/duplicate_name.spec
 test/data/no_title.spec

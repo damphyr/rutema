@@ -12,7 +12,7 @@
 == 1.2.2 /2011-04-05
 * Actually fixed all the places where path expansion takes place.
 == 1.2.1 /2011-04-04
-* The configuration code no longer assumes that you are passing files. configuration.tests= now assumes you're passing an array of strings and it is the responsibility of the parser to make heads or tails from that. The configuraiton is clever enough to detect paths relative to the configuration file and expand them.
+* The configuration code no longer assumes that you are passing files. configuration.tests= now assumes you're passing an array of strings and it is the responsibility of the parser to make heads or tails from that. The configuration is clever enough to detect paths relative to the configuration file and expand them.
 * some minor cosmetic changes in the documentation
 == 1.2.0 /2011-04-01
 * refactored library structure
