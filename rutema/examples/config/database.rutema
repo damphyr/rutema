@@ -3,7 +3,8 @@ configuration.parser={:class=>Rutema::MinimalXMLParser}
 #Use the AR-Reporter. 
 #In case of reporters the whole Hash is passed to the reporter initializer, so any keys are dependent on the reporter to use
 #Check the appropriate RDoc entries
-configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:adpater=>"sqlite3",:database=>"sample.db"}}
+#Also note that any relative paths are relative to __the location of the configuration file__
+configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:adapter=>"sqlite3",:database=>"../example.db"}}
 configuration.tests=[
 "../specs/T001.spec",
 "../specs/T002.spec",

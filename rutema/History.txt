@@ -1,9 +1,11 @@
-== 1.2.4 /2011-08-12
+== 1.2.4 /2011-11-29
 * fixed a regression in parsing the configuration
 * updated gem dependencies
 * added Bundler configuration for development purposes
 * activerecord now loaded on demand to improve startup times
-* 1.9 compatibility! 
+* 1.9 compatibility!
+* the mixed sample/tests are now clearly split between examples and test data
+* Documentation overhaul started. 4 years of cruft to get rid of
 == 1.2.3 /2011-05-03
 * parser interface expanded for configuration validation
 * parser interface expanded to allow separate parsing of setup and teardown scripts

@@ -14,7 +14,7 @@ For more information look at http://patir.rubyforge.org/rutema
 * A well defined way to create a project specific test specification format
 
 ## SYNOPSIS:
-See http://patir.rubyforge.org/rutema/distro_test.html for an introductory example.
+See http://patir.rubyforge.org/rutema/examples.html for an introductory example.
 
 ## INSTALL:
 * gem install rutema

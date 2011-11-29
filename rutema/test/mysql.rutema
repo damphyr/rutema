@@ -1,3 +1,0 @@
-configuration.parser={:class=>Rutema::MinimalXMLParser}
-configuration.reporter={:class=>Rutema::ActiveRecordReporter, :db=>{:adapter=>"mysql",:database=>"rutema",:username=>"rutema",:password=>"rutemadata",:host=>"meisterbrau.local"}}
-configuration.tests=["rutema.spec","migration.spec"]

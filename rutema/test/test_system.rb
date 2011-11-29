@@ -21,7 +21,7 @@ module TestRutema
       conf=OpenStruct.new(:parser=>{:class=>Rutema::BaseXMLParser},
       :tools=>{},
       :paths=>{},
-      :tests=>["distro_test/specs/sample.spec","distro_test/specs/duplicate_name.spec"],
+      :tests=>["data/sample.spec","data/duplicate_name.spec"],
       :reporters=>[],
       :context=>{})
       coord=nil
@@ -36,10 +36,11 @@ module TestRutema
         coord.run(:unattended)
         assert_equal(1,coord.parse_errors.size)
         coord=Rutema::Coordinator.new(conf)
-        coord.run("distro_test/specs/sample.spec")
+        coord.run("data/sample.spec")
+        p coord.parse_errors
         assert_equal(0,coord.parse_errors.size)
         coord=Rutema::Coordinator.new(conf)
-        coord.run("distro_test/specs/no_title.spec")
+        coord.run("data/no_title.spec")
         assert_equal(1,coord.parse_errors.size)
       end
       puts coord.to_s if $DEBUG

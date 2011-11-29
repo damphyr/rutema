@@ -16,8 +16,7 @@ module TestRutema
     def test_rutema_configuration
       cfg=nil
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::RutemaConfigurator.new("distro_test/config/full.rutema").configuration}
-      p cfg
+      assert_nothing_raised() { cfg=Rutema::RutemaConfigurator.new("../examples/config/full.rutema").configuration}
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -35,7 +34,7 @@ module TestRutema
     end
     
     def test_specification_paths
-      cfg=Rutema::RutemaConfigurator.new("distro_test/config/test_identifiers.rutema").configuration
+      cfg=Rutema::RutemaConfigurator.new("data/test_identifiers.rutema").configuration
       assert_not_nil(cfg.tests)
       assert(File.exists?(cfg.tests[0]))
       assert(File.exists?(cfg.tests[2]))

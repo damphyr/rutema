@@ -33,7 +33,7 @@ module TestRutema
     <description>Description</description>
     <scenario>
     <step/>
-    <include_scenario file="#{File.expand_path(File.dirname(__FILE__))}/distro_test/specs/include.scenario"/>
+    <include_scenario file="#{File.expand_path(File.dirname(__FILE__))}/../examples/specs/include.scenario"/>
     </scenario>
     </specification>
     EOT

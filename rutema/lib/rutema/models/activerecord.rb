@@ -2,7 +2,6 @@
 $:.unshift File.join(File.dirname(__FILE__),'..','..')
 require 'rutema/models/base'
 require 'active_record'
-require 'ruport/acts_as_reportable'
 
 #this fixes the AR Logger hack that annoys me sooooo much
 class Logger
@@ -55,21 +54,17 @@ module Rutema
     class Run< ::ActiveRecord::Base
       has_many :scenarios
       has_many :parse_errors
-      serialize :context
-      acts_as_reportable      
+      serialize :context    
     end
     class Scenario< ::ActiveRecord::Base
       belongs_to :run
       has_many :steps
-      acts_as_reportable
     end
     class Step< ::ActiveRecord::Base
       belongs_to :scenario
-      acts_as_reportable
     end
     class ParseError< ::ActiveRecord::Base
       belongs_to :run
-      acts_as_reportable
     end
     #Exports the contents of the database/model as a yaml dump
     class Export
