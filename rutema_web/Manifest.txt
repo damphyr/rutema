@@ -1,9 +1,11 @@
 bin/rutema_web
 COPYING.txt
+examples/rutema_web.yaml
+examples/example.db
+Gemfile
 History.txt
 lib/rutema_web/activerecord/model.rb
 lib/rutema_web/activerecord/ruport_formatter.rb
-lib/rutema_web/gems.rb
 lib/rutema_web/main.rb
 lib/rutema_web/public/css/style.css
 lib/rutema_web/public/images/bg_menu.gif

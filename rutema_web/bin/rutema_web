@@ -1,7 +1,27 @@
-#  Copyright (c) 2007 Vassilis Rizopoulos. All rights reserved.
-#this locks on the versions we need
+#!/usr/bin/env ruby
 require 'rubygems'
-require 'rutema_web/gems'
+require 'bundler/setup'
 require 'rutema_web/main'
 
-RutemaWeb.start
+
+if ARGV.empty?
+  cfg_file=File.join(Dir.pwd,"rutema_web.yaml")
+  RutemaWeb.start(cfg_file)
+else
+  if ARGV[0]=="-s"
+    if ARGV[1]
+      target_dir=File.expand_path(ARGV[1])
+      puts "Creating scaffolding on #{target_dir}"
+      RutemaWeb.scaffolding(target_dir)
+    else
+      puts "You need to provide a target directory"
+    end
+  else
+    puts "Front end for rutema test result databases"
+    puts "To run create a scaffolding with"
+    puts "  rutema_web -s target_dir"
+    puts "edit the target_dir/rutema_web.yaml and run"
+    puts "  rutema_web"
+    puts "in target_dir"
+  end
+end

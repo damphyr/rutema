@@ -1,10 +1,12 @@
 #  Copyright (c) 2008 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..") 
 require 'rutema/models/activerecord'
+require 'ruport/acts_as_reportable'
 module Rutema
   module ActiveRecord
     #Extensions of Rutema::ActiveRecord::Run to accomodate specific view requirements for rutema_web
     class Run <::ActiveRecord::Base
+      acts_as_reportable
       # The view wants to display runs grouped into pages, 
       # where each page shows page_size runs at a time. 
       # This method returns the runs on page page_num (starting 
@@ -55,6 +57,7 @@ module Rutema
     end
     #Extensions of Rutema::ActiveRecord::Scenario to accomodate specific view requirements for rutema_web
     class Scenario <::ActiveRecord::Base
+      acts_as_reportable
       # The view wants to display scenarios grouped into pages, 
       # where each page shows page_size scenarios at a time. 
       # This method returns the scenarios grouped by name on page page_num (starting 
@@ -80,6 +83,12 @@ module Rutema
       def fail?
         return self.status=="error"
       end
+    end
+    class Step< ::ActiveRecord::Base
+      acts_as_reportable
+    end
+    class ParseError< ::ActiveRecord::Base
+      acts_as_reportable
     end
   end
 end

@@ -1,3 +1,6 @@
+===1.0.6 / 2011-11-30
+* Incorporated bundler in the app. This requires a two step installation process: rutema_web -s target_dir;cd target_dir;rutema_web
+* Updated to use the latest rutema and sinatra releases
 ===1.0.5 / 2011-04-01
 * Updated to use the latest rutema (1.2.0) and sinatra releases
 === 1.0.4 / 2010-04-23

@@ -13,37 +13,40 @@ module RutemaWeb
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #Starts App
-  def self.start
+  def self.start(cfg_file)
     logger=Patir.setup_logger
-    cfg_file=parse_command_line(ARGV)
-    cfg_file=File.expand_path(cfg_file)
-    configuration=YAML.load_file(cfg_file)
-    if (configuration[:db])
-      Rutema::ActiveRecord.connect(configuration[:db],logger)
-      RutemaWeb::UI::SinatraApp.define_settings(configuration[:settings])
-      RutemaWeb::UI::SinatraApp.run!
+    if File.exists?(cfg_file)
+      Dir.chdir(File.dirname(cfg_file)) do
+        configuration=YAML.load_file(cfg_file)
+        if (configuration[:db])
+          Rutema::ActiveRecord.connect(configuration[:db],logger)
+          RutemaWeb::UI::SinatraApp.define_settings(configuration[:settings])
+          RutemaWeb::UI::SinatraApp.run!
+        else
+          logger.fatal("No database configuration information found in #{cfg_file}")
+        end
+      end
     else
-      logger.fatal("No database configuration information found in #{cfg_file}")
+      logger.fatal("Could not find rutema_web.yaml")
     end
   end
-  #Parses the command line arguments
-  def self.parse_command_line args
-    args.options do |opt|
-      opt.on("Usage:")  
-      opt.on("rutema_web [options] config_file")
-      opt.on("Options:")
-      opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
-      opt.on("-v", "--version","Displays the version") { $stdout.puts("v#{Version::STRING}");exit 0 }
-      opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
-      opt.parse!
-      #and now the rest
-      if args.empty?
-        $stdout.puts opt 
-        exit 0
-      else
-        return args.shift
+  
+  #Creates the scaffolding for a new rutema_web instance
+  def self.scaffolding target_dir
+    if File.exists?(target_dir)
+      unless File.directory?(target_dir)
+       puts "FATAL: '#{target_dir}' exists but is not a directory"
+      exit 1
       end
+    else
+      FileUtils.mkdir_p(target_dir)
     end
+    gemfile=File.join(File.dirname(__FILE__),'../../Gemfile')
+    config=File.join(File.dirname(__FILE__),'../../examples/rutema_web.yaml')
+    FileUtils.cp(config,target_dir,:verbose=>false)
+    FileUtils.cp(gemfile,target_dir,:verbose=>false)
+    puts "Done!"
+    puts "You should now do\n\tbundle install\n\trutema_web\nto start "
   end
 end
 
