@@ -1,10 +1,9 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'bundler/setup'
 require 'rutema_web/main'
 
-
 if ARGV.empty?
+  require 'bundler/setup'
   cfg_file=File.join(Dir.pwd,"rutema_web.yaml")
   RutemaWeb.start(cfg_file)
 else
