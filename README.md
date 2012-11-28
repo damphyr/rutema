@@ -1,82 +1,62 @@
 rutema [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
 
-## DESCRIPTION:
-rutema is a test execution tool with a twist.
-It allows you to combine test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
+rutema is a test execution tool.
+It allows the  combination of  various test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
 It's purpose is to make testing in heterogeneous environments easier. 
 
-For more information look at http://patir.rubyforge.org/rutema
+###Why?
+Require consistency, repeatability and reliability from your test infrastructure while gathering data on every run.
 
-## FEATURES/PROBLEMS:
+Whether running through a checklist of manual steps, or executing a sequence of fully automated commands we always want in the end to know if a test has failed, where it failed and what was the state of the system at that time.
+
+rutema will gather all logs, timestamp them, store them and report on them. 
+
+Using one of the database reporters we can then extract more information on the quality and state of our system by examining the behaviour of the tests over time.
+
+For more information look at [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
+
+###The dry stuff
 * Unified test execution environment for automated and manual tests
 * Extensible reports and notifications in various formats (email, rss, pdf, html etc.)
 * Comprehensive history of test execution
 * A well defined way to create a project specific test specification format
 
-## SYNOPSIS:
+## Synopsis:
 See http://patir.rubyforge.org/rutema/examples.html for an introductory example.
 
-## INSTALL:
+## Installation:
 * gem install rutema
 
-## LICENSE:
-(The Ruby License)
+## Dependencies
+The core functionality of rutema depends on the following gems:
+ * [patir](http://github.com/damphyr/patir)
+ * [highline](http://highline.rubyforge.org/)
 
-rutema is copyright (c) 2007 - 2011 Vassilis Rizopoulos
+Depending on which parser or reporter is used though, further dependencies might be needed.
+The reporters included in the gem depend on 
+ * activerecord used by rutema/reporters/activerecord
+ * [mailfactory](http://mailfactory.rubyforge.org/) used by rutema/reporters/email
 
-You can redistribute it and/or modify it under either the terms of the GPL
-(see COPYING.txt file), or the conditions below:
+## License:
+(The MIT License)
 
-  1. You may make and give away verbatim copies of the source form of the
-     software without restriction, provided that you duplicate all of the
-     original copyright notices and associated disclaimers.
+Copyright (c) 2007-2012 Vassilis Rizopoulos
 
-  2. You may modify your copy of the software in any way, provided that
-     you do at least ONE of the following:
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
 
-       a) place your modifications in the Public Domain or otherwise
-          make them Freely Available, such as by posting said
-	  modifications to Usenet or an equivalent medium, or by allowing
-	  the author to include your modifications in the software.
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
 
-       b) use the modified software only within your corporation or
-          organization.
-
-       c) rename any non-standard executables so the names do not conflict
-	  with standard executables, which must also be provided.
-
-       d) make other distribution arrangements with the author.
-
-  3. You may distribute the software in object code or executable
-     form, provided that you do at least ONE of the following:
-
-       a) distribute the executables and library files of the software,
-	  together with instructions (in the manual page or equivalent)
-	  on where to get the original distribution.
-
-       b) accompany the distribution with the machine-readable source of
-	  the software.
-
-       c) give non-standard executables non-standard names, with
-          instructions on where to get the original software distribution.
-
-       d) make other distribution arrangements with the author.
-
-  4. You may modify and include the part of the software into any other
-     software (possibly commercial).  But some files in the distribution
-     are not written by the author, so that they are not under this terms.
-
-     They are gc.c(partly), utils.c(partly), regex.[ch], st.[ch] and some
-     files under the ./missing directory.  See each file for the copying
-     condition.
-
-  5. The scripts and library files supplied as input to or produced as 
-     output from the software do not automatically fall under the
-     copyright of the software, but belong to whomever generated them, 
-     and may be sold commercially, and may be aggregated with this
-     software.
-
-  6. THIS SOFTWARE IS PROVIDED "AS IS" AND WITHOUT ANY EXPRESS OR
-     IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-     PURPOSE.
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

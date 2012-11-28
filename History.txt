@@ -1,3 +1,8 @@
+== 1.3.0 /2012-11-28
+* remove most of the gem dependencies by not requiring parsers and reporters in the core
+* update gem dependencies
+* switched license to MIT
+
 == 1.2.4 /2011-11-29
 * fixed a regression in parsing the configuration
 * updated gem dependencies
