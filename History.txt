@@ -2,6 +2,7 @@
 * remove most of the gem dependencies by not requiring parsers and reporters in the core
 * update gem dependencies
 * switched license to MIT
+* officially abandon 1.8.7 support
 
 == 1.2.4 /2011-11-29
 * fixed a regression in parsing the configuration
