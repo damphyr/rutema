@@ -1,4 +1,0 @@
-source :rubygems
-gem 'systemu',"~>2.3"
-gem "hoe",'~>2.12.2'
-gem 'rcov','~>0.9'

@@ -1,6 +1,0 @@
-shell "echo #{request.request_id}"
-shell "svn co https:// .. mydir", "workingDir"
-ruby do
-  puts "ruby code as command"
-end
-#command :class=>CustomCommandClass,:parameters=>{}

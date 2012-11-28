@@ -1,3 +1,0 @@
-#The filename without the extension gives us the name of the worker
-ip "127.0.0.1"
-port 3333
