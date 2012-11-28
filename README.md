@@ -1,4 +1,4 @@
-rutema [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
+[![Build Status](https://secure.travis-ci.org/damphyr/rutema.png)](http://travis-ci.org/damphyr/rutema) rutema [http://patir.rubyforge.org/rutema](http://patir.rubyforge.org/rutema)
 
 rutema is a test execution tool.
 It allows the  combination of  various test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
