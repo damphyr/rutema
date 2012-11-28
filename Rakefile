@@ -19,5 +19,12 @@ Hoe.spec('rutema') do |p|
   p.spec_extras={:executables=>["rutema"]}
 end
 
+task :default =>[:test,:system_tests]
+
+task :system_tests do 
+  Dir.chdir(File.join(File.dirname(__FILE__),'examples')) do 
+    sh('./system_test.sh')
+  end
+end
 # vim: syntax=Ruby
 
