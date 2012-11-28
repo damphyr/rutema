@@ -1,9 +1,0 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-require 'rubygems'
-require 'rutema/system'
-begin
-	puts "rutemax is deprecated and will be removed in the near future, use rutema instead"
-	Rutema::RutemaX.new(ARGV)
-rescue
-	exit 1
-end	

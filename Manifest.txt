@@ -1,6 +1,4 @@
 bin/rutema
-bin/rutemax
-COPYING.txt
 History.txt
 examples/config/database.rutema
 examples/config/full.rutema
@@ -30,7 +28,6 @@ lib/rutema/reporters/activerecord.rb
 lib/rutema/reporters/base.rb
 lib/rutema/reporters/email.rb
 lib/rutema/reporters/text.rb
-lib/rutema/reporters/yaml.rb
 lib/rutema/runners/default.rb
 lib/rutema/runners/step.rb
 lib/rutema/system.rb
