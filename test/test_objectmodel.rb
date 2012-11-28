@@ -1,7 +1,6 @@
-$:.unshift File.join(File.dirname(__FILE__),"..")
+$:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
-require 'rubygems'
-require 'lib/rutema/objectmodel'
+require 'rutema/objectmodel'
 module TestRutema
   class DummyCommand
     include Patir::Command

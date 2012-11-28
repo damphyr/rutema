@@ -1,3 +1,5 @@
+require 'rutema/parsers/xml'
+require 'rutema/reporters/activerecord'
 #The parser to use
 configuration.parser={:class=>Rutema::MinimalXMLParser}
 #Use the AR-Reporter. 

@@ -1,11 +1,8 @@
-$:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rubygems'
+$:.unshift File.join(File.dirname(__FILE__),"..",'lib')
 require 'test/unit'
 require 'ostruct'
-require 'patir/command'
-require 'mocha'
-require 'lib/rutema/system'
-require 'lib/rutema/parsers/xml'
+require 'mocha/setup'
+require 'rutema/system'
 
 #$DEBUG=true
 module TestRutema
@@ -37,7 +34,6 @@ module TestRutema
         assert_equal(1,coord.parse_errors.size)
         coord=Rutema::Coordinator.new(conf)
         coord.run("data/sample.spec")
-        p coord.parse_errors
         assert_equal(0,coord.parse_errors.size)
         coord=Rutema::Coordinator.new(conf)
         coord.run("data/no_title.spec")

@@ -1,28 +1,22 @@
-#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2012 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
-require 'rexml/document'
-require 'patir/configuration'
 require 'patir/command'
 require 'patir/base'
 require 'rutema/configuration'
 
 require 'rutema/parsers/base'
-require 'rutema/parsers/xml'
          
 require 'rutema/runners/default'
 require 'rutema/runners/step'
-         
-require 'rutema/reporters/activerecord'
+
 require 'rutema/reporters/text'
-require 'rutema/reporters/yaml'
-require 'rutema/reporters/email'
 
 module Rutema
   #This module defines the version numbers for the library
   module Version
     MAJOR=1
-    MINOR=2
-    TINY=4
+    MINOR=3
+    TINY=0
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
   #This class coordinates parsing, execution and reporting of test specifications

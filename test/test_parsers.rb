@@ -1,9 +1,8 @@
-$:.unshift File.join(File.dirname(__FILE__),'..')
+$:.unshift File.join(File.dirname(__FILE__),'..','lib')
 require 'test/unit'
 require 'ostruct'
-require 'patir/command'
-require 'mocha'
-require 'lib/rutema/parsers/xml'
+require 'mocha/setup'
+require 'rutema/parsers/xml'
 
 #$DEBUG=true
 module TestRutema

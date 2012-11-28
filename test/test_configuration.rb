@@ -1,8 +1,6 @@
-$:.unshift File.join(File.dirname(__FILE__),"..")
+$:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
-require 'rubygems'
-require 'patir/configuration'
-require 'lib/rutema/configuration'
+require 'rutema/configuration'
 #$DEBUG=true
 module TestRutema
   class TestRutemaConfigurator<Test::Unit::TestCase

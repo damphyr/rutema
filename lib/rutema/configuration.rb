@@ -1,6 +1,7 @@
 #  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
 $:.unshift File.join(File.dirname(__FILE__),"..")
 require 'ostruct'
+require 'patir/configuration'
 module Rutema
   #This module defines the "configuration directives" used in the configuration of Rutema
   #
@@ -137,6 +138,9 @@ module Rutema
       @paths=Hash.new
       @tools=Hash.new
       @tests=Array.new
+      @setup=nil
+      @teardown=nil
+      @check=nil
       super(config_file,logger)
     end
     

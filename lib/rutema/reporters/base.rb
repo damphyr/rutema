@@ -9,7 +9,10 @@ module Rutema
     def initialize params
     end
 
-    #Coordinator will pass the Rutema __configuration__ giving you access to the context which can contain data like headings and build numbers to use in the report. It will also pass the specifications used in the last run so that data like the title and the specification version can be used.
+    #Coordinator will pass the Rutema __configuration__ giving you access to the context which can contain data like 
+    #headings and build numbers to use in the report. 
+    #
+    #It will also pass the specifications used in the last run so that data like the title and the specification version can be used.
     #
     #runner_states is an Array of Patir::CommandSequenceStatus containing the stati of the last run (so it contains all the Scenario stati for the loaded tests)
     #

@@ -1,3 +1,4 @@
+require 'rutema/parsers/xml'
 configuration.parser={:class=>Rutema::MinimalXMLParser}
 configuration.tests=[
 "../specs/T001.spec",

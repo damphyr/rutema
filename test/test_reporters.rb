@@ -1,12 +1,11 @@
-$:.unshift File.join(File.dirname(__FILE__),"..")
+$:.unshift File.join(File.dirname(__FILE__),"..",'lib')
 require 'test/unit'
 require 'ostruct'
 require 'fileutils'
-require 'rubygems'
-require 'lib/rutema/reporters/base'
-require 'lib/rutema/reporters/email'
-require 'lib/rutema/reporters/text'
-require 'mocha'
+require 'rutema/reporters/base'
+require 'rutema/reporters/email'
+require 'rutema/reporters/text'
+require 'mocha/setup'
 #$DEBUG=true
 module TestRutema
   class MockCommand
