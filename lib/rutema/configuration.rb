@@ -131,7 +131,7 @@ module Rutema
   #See Rutema::RutemaConfiguration for configuration examples and directives
   class RutemaConfigurator<Patir::Configurator
     include RutemaConfiguration
-    def initialize config_file,logger=nil
+    def initialize config_file
       @reporters=Array.new
       @context=Hash.new
       @paths=Hash.new
@@ -140,7 +140,7 @@ module Rutema
       @setup=nil
       @teardown=nil
       @check=nil
-      super(config_file,logger)
+      super(config_file)
     end
     
     def configuration
