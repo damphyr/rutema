@@ -1,6 +1,7 @@
 #  Copyright (c) 2007-2013 Vassilis Rizopoulos. All rights reserved.
 require 'thread'
 require 'rutema/parsers/base'
+require 'rutema/version'
 
 module Rutema
   module Messaging
@@ -164,6 +165,83 @@ module Rutema
       if @queue.size>0
         data=@queue.pop
         @queues.each{ |i,q| q.push(data) } if data
+      end
+    end
+  end
+  #Parses the commandline, sets up the configuration and launches Rutema::Engine
+  class App
+    require  'optparse'
+    def initialize command_line_args
+      parse_command_line(command_line_args)
+      begin
+        raise "No configuration file defined!" if !@config_file
+        @configuration=RutemaConfigurator.new(@config_file).configuration
+        @configuration.context[:config_file]=File.basename(@config_file)
+        @configuration.use_step_by_step=@step
+        Dir.chdir(File.dirname(@config_file)) do 
+          @engine=Engine.new(@configuration,@logger)
+          application_flow
+        end 
+      rescue Patir::ConfigurationException
+        raise "Configuration error '#{$!.message}'"
+      end
+    end
+    private
+    def parse_command_line args
+      args.options do |opt|
+        opt.on("Options:")
+        opt.on("--debug", "-d","Turns on debug messages") { $DEBUG=true }
+        opt.on("--config FILE", "-c FILE",String,"Loads the configuration from FILE") { |config_file| @config_file=config_file}
+        opt.on("--log FILE", "-l FILE",String,"Redirects the log output to FILE") { |log_file| @log_file=logfile}
+        opt.on("--check","Runs just the check test"){@check=true}
+        opt.on("--step","Runs test cases step by step"){@step=true}
+        opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
+        opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
+        opt.on("The commands are:")
+        opt.on("\tall - Runs all tests")
+        opt.on("\tattended - Runs all attended tests")
+        opt.on("\tunattended - Runs all unattended tests")
+        opt.on("You can also provide a specification filename in order to run a single test")
+        opt.parse!
+        #and now the rest
+        if args.empty?
+          @mode=:unattended
+        else
+          command=args.shift
+          case command
+          when "attended"
+            @mode=:attended
+          when "all"
+            @mode=:all
+          when "unattended"
+            @mode=:unattended
+          else
+            @mode=command
+          end
+        end
+      end
+    end
+
+    def application_flow
+      if @check
+        #run just the check test
+        if @configuration.check
+          @engine.run(@configuration.check)
+        else
+          @logger.fatal("There is no check test defined in the configuration.")
+          raise "There is no check test defined in the configuration."
+        end
+      else
+        #run everything
+        @engine.run(@mode)
+      end
+      @logger.info("Report:\n#{@engine.to_s}")
+      @engine.report
+      if @engine.parse_errors.empty? && @engine.last_run_a_success?
+        @logger.info("All tests successful")
+      else
+        @logger.warn("Not all tests were successful")
+        raise "Not all tests were successful"
       end
     end
   end
