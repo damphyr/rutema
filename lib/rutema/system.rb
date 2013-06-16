@@ -12,13 +12,6 @@ require 'rutema/runners/step'
 require 'rutema/reporters/text'
 
 module Rutema
-  #This module defines the version numbers for the library
-  module Version
-    MAJOR=1
-    MINOR=3
-    TINY=0
-    STRING=[ MAJOR, MINOR, TINY ].join( "." )
-  end
   #This class coordinates parsing, execution and reporting of test specifications
   class Coordinator
     attr_accessor :configuration,:parse_errors,:parsed_files

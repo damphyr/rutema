@@ -2,23 +2,68 @@
 $:.unshift File.join(File.dirname(__FILE__),'..','..')
 
 module Rutema
+  module Runners
+    module DefaultRunner
+      attr_reader :context
+      attr_accessor :setup,:teardown
+      def initialize context,queue
+        @context=context || Hash.new
+        @queue = queue
+      end
+
+      def run spec
+        message('test'=>name,'phase'=>'running')
+        if @setup
+          run_scenario("#{name}_setup",@setup)
+        
+      end
+
+      private
+      def run_scenario name,scenario
+        state=Patir::CommandSequenceStatus.new(name,scenario.steps)
+        begin 
+          if evaluate_attention(scenario,state)
+            stps=scenario.steps
+            if stps.empty?
+              error(name,"Scenario #{name} contains no steps")
+              state.status=:warning
+            else
+              stps.each do |s| 
+                state.step=run_step(s)
+                message('test'=>name,'status'=>step.status,'number'=>step.number,'out'=>step.output,'err'=>step.error,'duration'=>step.exec_time,'step_type'=>step.step_type)
+                break if :error==state.status
+              end
+            end
+          end
+        rescue  
+          error(name,$!.message)
+          state.status=:error
+        end
+        state.stop_time=Time.now
+        state.sequence_id=@number_of_runs
+        return state
+      end
+      def run_step step
+        if step.has_cmd? && step.cmd.respond_to?(:run)
+          step.cmd.run(@context)
+          msg=step.to_s
+        else
+          message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
+        end
+        step.status=:success if step.status==:error && step.ignore?
+        return step
+    end
+  end
   #Runner executes TestScenario instances and maintains the state of all scenarios run.
   class Runner
-    attr_reader :states,:number_of_runs,:context
+    attr_reader :context
     attr_accessor :setup,:teardown
     attr_writer :attended
 
-    #setup and teardown are TestScenario instances that will run before and after each call
-    #to the scenario.
-    def initialize context=nil,setup=nil, teardown=nil,logger=nil
-      @setup=setup
-      @teardown=teardown
+    def initialize context,queue
       @attended=false
-      @logger=logger
-      @logger||=Patir.setup_logger
-      @states=Hash.new
-      @number_of_runs=0
       @context=context || Hash.new
+      @queue = queue
     end
     
     #Tells you if the system runs in the mode that expects user input
@@ -28,12 +73,9 @@ module Rutema
     #Runs a scenario and stores the result internally
     #
     #Returns the result of the run as a Patir::CommandSequenceStatus
-    def run name,scenario, run_setup=true
-      @logger.debug("Starting run for #{name} with #{scenario.inspect}")
-      @context[:scenario_name]=name
+    def run name,scenario
       #if setup /teardown is defined we need to execute them before and after
-      if @setup && run_setup
-        @logger.info("Setup for #{name}")
+      if @setup
         @states["#{name}_setup"]=run_scenario("#{name}_setup",@setup)
         @states["#{name}_setup"].sequence_id="s#{@number_of_runs}"
         if @states["#{name}_setup"].executed? 
@@ -48,7 +90,6 @@ module Rutema
           end
         end
       else
-        @logger.info("Scenario for #{name}")
         @states[name]=run_scenario(name,scenario)
         @states[name].sequence_id="#{@number_of_runs}"
       end
@@ -63,36 +104,21 @@ module Rutema
       @context[:scenario_name]=nil
       return @states[name]
     end
-    
-    #Returns the state of the scenario with the given name.
-    #
-    #Will return nil if no scenario is found under that name.
-    def [](name)
-      return @states[name]
-    end
-    
-    #Resets the Runner's internal state
-    def reset
-      @states.clear
-      @number_of_runs=0
-    end
-
-    #returns true if all the scenarios in the last run were succesful or if nothing was run yet
-    def success?
-      @success=true
-      @states.each  do |k,v|
-        @success&=(v.status!=:error)
-      end
-      return @success
-    end
     private
+    def error identifier,message
+      message(:error=>{:test=>identifier,:message=>message})
+      nil
+    end
+    def message message
+      @queue.push(message)
+    end
     def run_scenario name,scenario
       state=initialize_state(name,scenario)
       begin 
         if evaluate_attention(scenario,state)
           stps=scenario.steps
           if stps.empty?
-            @logger.warn("Scenario #{name} contains no steps")
+            error(name,"Scenario #{name} contains no steps")
             state.status=:warning
           else
             stps.each do |s| 
@@ -102,8 +128,7 @@ module Rutema
           end
         end
       rescue  
-        @logger.error("Encountered error in #{name}: #{$!.message}")
-        @logger.debug($!)
+        error(name,$!.message)
         state.status=:error
       end
       state.stop_time=Time.now
@@ -116,7 +141,7 @@ module Rutema
     def evaluate_attention scenario,state
       if scenario.attended?
         if !self.attended?
-          @logger.warn("Attended scenario cannot be run in unattended mode")
+          message("Attended scenario cannot be run in unattended mode")
           state.status=:warning
           return false
         end
@@ -127,31 +152,15 @@ module Rutema
       return true
     end
     def run_step step
-      @logger.info("Running step #{step.number} - #{step.name}")
       if step.has_cmd? && step.cmd.respond_to?(:run)
         step.cmd.run(@context)
         msg=step.to_s
-        if !step.cmd.success?
-          msg<<"\n#{step.cmd.output}" unless step.cmd.output.empty?
-          msg<<"\n#{step.cmd.error}" unless step.cmd.error.empty?
-        end
       else
-        @logger.warn("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
+        message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
       end
       step.status=:success if step.status==:error && step.ignore?
-      log_step_result(step,msg)
+      message({'status'=>step.status,'number'=>step.number,'out'=>step.output,'err'=>step.error,'duration'=>step.exec_time,'step_type'=>step.step_type})
       return step
-    end
-    def log_step_result step,msg
-      if step.status==:error
-        if step.ignore?
-          @logger.warn("Step failed but result is being ignored!\n#{msg}")
-        else
-          @logger.error(msg) 
-        end
-      else
-        @logger.info(msg) if msg && !msg.empty?
-      end
     end
   end
 end

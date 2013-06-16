@@ -2,7 +2,7 @@
 # -*- ruby -*-
 $:.unshift File.join(File.dirname(__FILE__),"lib")
 require 'hoe'
-require 'rutema/system'
+require 'rutema/version '
 
 Hoe.spec('rutema') do |p|
   p.version=Rutema::Version::STRING
