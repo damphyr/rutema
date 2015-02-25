@@ -1,10 +1,7 @@
-$:.unshift File.join(File.dirname(__FILE__),'..','lib')
-require 'simplecov'
-SimpleCov.start
 require 'test/unit'
 require 'ostruct'
 require 'mocha/setup'
-require 'rutema/parsers/xml'
+require_relative '../lib/rutema/parsers/xml'
 
 #$DEBUG=true
 module TestRutema
@@ -64,7 +61,7 @@ module TestRutema
       assert_nothing_raised() { parser=Rutema::Parsers::SpecificationParser.new({}) }
       assert_not_nil(parser)
       assert(parser.configuration.empty?,"Configuration is not empty")
-      assert_raise(Rutema::Parsers::ParserError) { parser.parse_specification("foo") }
+      assert_raise(Rutema::RutemaError) { parser.parse_specification("foo") }
     end
   end
   class TestExtensibleXMLParser<Test::Unit::TestCase
@@ -80,22 +77,22 @@ module TestRutema
       assert_equal("another_step", specification.scenario.steps[1].step_type)
       assert_equal("script", specification.scenario.steps[1].script)
       assert_equal(2, specification.scenario.steps[1].number)
-      assert_raise(Rutema::Parsers::ParserError) { parser.parse_specification("") }
-      assert_raise(Rutema::Parsers::ParserError) { parser.parse_specification("missing.spec") }
+      assert_raise(Rutema::RutemaError) { parser.parse_specification("") }
+      assert_raise(Rutema::RutemaError) { parser.parse_specification("missing.spec") }
     end
     def test_include
       parser=Rutema::Parsers::ExtensibleXMLParser.new({})
       specification=parser.parse_specification(Samples::INCLUDE_SPEC)
       assert_equal(3, specification.scenario.steps.size)
       assert(specification.scenario.steps[2].has_included_in?)
-      assert_raise(Rutema::Parsers::ParserError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
-      assert_raise(Rutema::Parsers::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
+      assert_raise(Rutema::RutemaError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
+      assert_raise(Rutema::RutemaError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
     end
     def test_parse_error
       parser=Rutema::Parsers::ExtensibleXMLParser.new({})
       assert_not_nil(parser.configuration)
       specification=nil
-      assert_raise(Rutema::Parsers::ParserError) { specification=parser.parse_specification("<") }
+      assert_raise(Rutema::RutemaError) { specification=parser.parse_specification("<") }
     end
   end
 end

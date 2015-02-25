@@ -4,9 +4,9 @@ require 'ostruct'
 require 'patir/command'
 require 'mocha/setup'
 
-require 'rutema/objectmodel'
-require 'rutema/runners/default'
-require 'rutema/runners/step'
+require_relative '../lib/rutema/core/objectmodel'
+require_relative '../lib/rutema/runners/default'
+require_relative '../lib/rutema/runners/step'
 
 #$DEBUG=true
 module TestRutema

@@ -62,7 +62,7 @@ module Rutema
       tests.collect do |t| 
         begin
           parse_specification(t)
-        rescue Rutema::ParserError
+        rescue Rutema::RutemaError
           error(t,$!.message)
         end
       end.compact
@@ -70,7 +70,7 @@ module Rutema
     def parse_specification spec_identifier
       begin
         spec=@parser.parse_specification(spec_identifier)
-      rescue Rutema::ParserError
+      rescue Rutema::RutemaError
         error(spec_identifier,$!.message)
       end
     end

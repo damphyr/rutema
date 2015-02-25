@@ -13,7 +13,7 @@ module Rutema
         message('test'=>name,'phase'=>'running')
         if @setup
           run_scenario("#{name}_setup",@setup)
-        
+        end
       end
 
       private
@@ -50,6 +50,7 @@ module Rutema
         end
         step.status=:success if step.status==:error && step.ignore?
         return step
+      end
     end
   end
   #Runner executes TestScenario instances and maintains the state of all scenarios run.

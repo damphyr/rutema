@@ -36,13 +36,13 @@ module Rutema
       end
     end
 
-    def respond_to? symbol,include_all?
+    def respond_to? symbol,include_all
       @attributes||=Hash.new
       key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
       if @attributes.has_key?(:"#{key}")
           return true
       else
-        super(symbol,include_all?)
+        super(symbol,include_all)
       end
     end
   end
@@ -61,7 +61,7 @@ module Rutema
     #
     #:description - a full textual description for the testcase. To be used in reports and documents
     #
-    #:scenario - An instance of TestScenario
+    #:scenario - An instance of Scenario
     #
     #:requirements - An Array of String. The idea is that the strings can lead you back to the requirements specification that is tested here.
     #
@@ -78,7 +78,7 @@ module Rutema
       @attributes[:title]||=""
       @attributes[:filename]||=""
       @attributes[:description]||=""
-      @scenario=TestScenario.new(@attributes[:version])
+      @scenario=Scenario.new(@attributes[:version])
       @requirements||=Array.new
     end
     def to_s#:nodoc: 
@@ -126,11 +126,11 @@ module Rutema
       end
     end
   end
-  #Represents a step in a TestScenario.
+  #Represents a step in a Scenario.
   #
   #Each Rutema::Step can have text and a command associated with it. 
   #
-  #TestStep standard attributes are.
+  #Step standard attributes are.
   #
   #attended - the step can only run in attended mode, it requires user input.
   #
@@ -150,12 +150,12 @@ module Rutema
   # step.has_script? - will return true if script is step's attribute.
   #Attribute's are mostly assigned by the parser, i.e. the Rutema::BaseXMLParser from the XML element
   # <test script="some_script"/>
-  #will create a TestStep instance with step_type=="test" and script="some_script". In this case
+  #will create a Step instance with step_type=="test" and script="some_script". In this case
   #
   # step.has_script? returns true
   # step.script returns "some_script"
   #
-  #Just like an OpenStruct, TestStep attributes will be created by direct assignment:
+  #Just like an OpenStruct, Step attributes will be created by direct assignment:
   # step.script="some_script" creates the script attribute if it does not exist.
   #
   #See Rutema::SpecificationElement for the implementation details. 

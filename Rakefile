@@ -19,12 +19,6 @@ Hoe.spec "gaudi" do |prj|
   prj.spec_extras={:executables=>["rutema"],:default_executable=>"rutema"}
 end
 
-task :default =>[:test,:system_tests]
-
-task :system_tests do 
-  Dir.chdir(File.join(File.dirname(__FILE__),'examples')) do 
-    sh('./system_test.sh')
-  end
-end
+task :default =>[:test]
 # vim: syntax=Ruby
 

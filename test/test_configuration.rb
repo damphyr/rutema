@@ -1,6 +1,5 @@
-$:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
-require 'rutema/configuration'
+require_relative '../lib/rutema/core/configuration'
 #$DEBUG=true
 module TestRutema
   class TestRutemaConfigurator<Test::Unit::TestCase

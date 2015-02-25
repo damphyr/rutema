@@ -1,6 +1,5 @@
-$:.unshift File.join(File.dirname(__FILE__),"..","lib")
 require 'test/unit'
-require 'rutema/objectmodel'
+require_relative '../lib/rutema/core/objectmodel'
 module TestRutema
   class DummyCommand
     include Patir::Command
@@ -15,7 +14,7 @@ module TestRutema
   end
   class TestStep<Test::Unit::TestCase
     def test_new
-      step=Rutema::TestStep.new("test step",DummyCommand.new())
+      step=Rutema::Step.new("test step",DummyCommand.new())
       assert(!step.attended?, "attended?")
       assert_not_equal("dummy", step.name)
       assert(/step - .*DummyCommand.*/=~step.name)
@@ -32,7 +31,7 @@ module TestRutema
   end
   class TestSpecification<Test::Unit::TestCase
     def test_new
-      spec=Rutema::TestSpecification.new(:name=>"name",:title=>"title",:description=>"description")
+      spec=Rutema::Specification.new(:name=>"name",:title=>"title",:description=>"description")
       assert_equal("name", spec.name)
       assert_equal("title", spec.title)
       assert_equal("description", spec.description)
@@ -43,13 +42,13 @@ module TestRutema
   end
   class TestScenario<Test::Unit::TestCase
     def test_new
-      scenario=Rutema::TestScenario.new
+      scenario=Rutema::Scenario.new
       assert(scenario.steps.empty?)
       assert(!scenario.attended?)
     end
     def test_add_step
-      step=Rutema::TestStep.new("test step",DummyCommand.new())
-      scenario=Rutema::TestScenario.new
+      step=Rutema::Step.new("test step",DummyCommand.new())
+      scenario=Rutema::Scenario.new
       scenario.add_step(step)
       assert_equal(1,scenario.steps.size)
     end

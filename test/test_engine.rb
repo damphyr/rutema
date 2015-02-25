@@ -1,12 +1,9 @@
-$:.unshift File.join(File.dirname(__FILE__),"..",'lib')
-require 'simplecov'
-SimpleCov.start
 require 'test/unit'
 require 'ostruct'
 require 'mocha/setup'
-require 'rutema/engine'
-require 'rutema/reporters/base'
-require 'rutema/objectmodel'
+require_relative '../lib/rutema/core/engine'
+require_relative '../lib/rutema/reporters/base'
+require_relative '../lib/rutema/core/objectmodel'
 
 module TestRutema
   class MockParser
