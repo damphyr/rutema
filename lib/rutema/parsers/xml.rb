@@ -1,9 +1,9 @@
 #  Copyright (c) 2007-2013 Vassilis Rizopoulos. All rights reserved.
 require 'rexml/document'
 require 'patir/command'
-require 'rutema/objectmodel'
-require 'rutema/parsers/base'
-require 'rutema/elements/minimal'
+require_relative '../core/objectmodel'
+require_relative 'base'
+require_relative '../elements/minimal'
 
 module Rutema
   module Parsers

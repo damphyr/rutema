@@ -8,10 +8,7 @@ lib/rutema/models/base.rb
 lib/rutema/objectmodel.rb
 lib/rutema/parsers/base.rb
 lib/rutema/parsers/xml.rb
-lib/rutema/rake.rb
-lib/rutema/reporters/activerecord.rb
 lib/rutema/reporters/base.rb
-lib/rutema/reporters/email.rb
 lib/rutema/reporters/text.rb
 lib/rutema/runners/default.rb
 lib/rutema/runners/step.rb

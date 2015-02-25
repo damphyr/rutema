@@ -1,5 +1,4 @@
-#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),"..")
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
 require 'patir/command'
 
 module Rutema
@@ -9,7 +8,8 @@ module Rutema
   #
   #It will also add a has_attribute? method to query if an attribute is part of the object or not.
   module SpecificationElement
-    #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, the rest are silently ignored
+    #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, 
+    #the rest are silently ignored
     def attribute symbol,value
       @attributes||=Hash.new
       case symbol
@@ -35,10 +35,20 @@ module Rutema
         super(symbol,*args)
       end
     end
+
+    def respond_to? symbol,include_all?
+      @attributes||=Hash.new
+      key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
+      if @attributes.has_key?(:"#{key}")
+          return true
+      else
+        super(symbol,include_all?)
+      end
+    end
   end
-  #A TestSpecification encompasses all elements required to run a test, the builds used, the scenario to run,
+  #A Rutema::Specification encompasses all elements required to run a test, the builds used, the scenario to run,
   #together with a textual description and information that aids in tracing the test back to the requirements.
-  class TestSpecification
+  class Specification
     include SpecificationElement
     attr_accessor :scenario,:requirements
     #Following keys have meaning in initialization:
@@ -75,16 +85,16 @@ module Rutema
       return "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
-  #A TestScenario is a sequence of TestStep instances.
+  #A Rutema::Scenario is a sequence of Rutema::Step instances.
   #
-  #TestStep instances are run in the definition sequence and the scenario
+  #Rutema::Step instances are run in the definition sequence and the scenario
   #is succesfull when all steps are succesfull. 
   #
   #From the execution point of view each step is either succesfull or failed and it depends on 
   #the exit code of the step's command. 
   #
   #Failure in a step results in the interruption of execution and the report of the errors.
-  class TestScenario
+  class Scenario
     include SpecificationElement
     attr_reader :steps
     
@@ -118,7 +128,7 @@ module Rutema
   end
   #Represents a step in a TestScenario.
   #
-  #Each TestStep can have text and a command associated with it. 
+  #Each Rutema::Step can have text and a command associated with it. 
   #
   #TestStep standard attributes are.
   #
@@ -136,7 +146,7 @@ module Rutema
   #
   #==Dynamic behaviour
   #
-  #A TestStep can be queried dynamicaly about the attributes it posesses:
+  #A Rutema::Step can be queried dynamicaly about the attributes it posesses:
   # step.has_script? - will return true if script is step's attribute.
   #Attribute's are mostly assigned by the parser, i.e. the Rutema::BaseXMLParser from the XML element
   # <test script="some_script"/>
@@ -149,7 +159,7 @@ module Rutema
   # step.script="some_script" creates the script attribute if it does not exist.
   #
   #See Rutema::SpecificationElement for the implementation details. 
-  class TestStep
+  class Step
     include SpecificationElement
     include Patir::Command
     

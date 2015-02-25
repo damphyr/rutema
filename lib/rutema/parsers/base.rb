@@ -1,5 +1,4 @@
 #  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),'..','..')
 
 module Rutema
   #Is raised when an error is found in a specification

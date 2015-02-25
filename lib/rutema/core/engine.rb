@@ -1,7 +1,7 @@
 #  Copyright (c) 2007-2013 Vassilis Rizopoulos. All rights reserved.
 require 'thread'
-require 'rutema/parsers/base'
-require 'rutema/version'
+require_relative '../parsers/base'
+require_relative '../version'
 
 module Rutema
   module Messaging
@@ -137,12 +137,12 @@ module Rutema
       counter=0
       @streaming_reporters.each {|r| r.run!}
       @thread=Thread.new do
-                while true do
-                  dispatch()
-                  sleep INTERVAL
-                end
-            end
+          while true do
+            dispatch()
+            sleep INTERVAL
+          end
         end
+      end
     def exit
       if @thread
         while @queue.size>0 do

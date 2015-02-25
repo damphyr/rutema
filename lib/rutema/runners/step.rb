@@ -1,7 +1,5 @@
 #  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),'..','..')
-
-require 'rutema/runners/default'
+require_relative 'default'
 
 module Rutema
   #StepRunner halts before every step and asks if it should be executed or not.

@@ -1,5 +1,5 @@
 #  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),'..','..')
+
 module Rutema
   #The Elements module provides the namespace for the various modules adding parser functionality
   module Elements

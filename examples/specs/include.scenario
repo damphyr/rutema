@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scenario>
-	<echo>This is a step from an included scenario</echo>
-	<echo>And another step from the included scenario</echo>
-</scenario>
