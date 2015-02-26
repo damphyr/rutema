@@ -1,19 +1,19 @@
-#  Copyright (c) 2007-2013 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
 require 'rexml/document'
 require 'patir/command'
+require_relative '../core/parser'
 require_relative '../core/objectmodel'
-require_relative 'base'
 require_relative '../elements/minimal'
 
 module Rutema
   module Parsers
-    #ExensibleXMLParser is a basic XML parser that is easily extended
+    #Rutema::Parsers::XML is a basic XML parser that is easily extended
     #
     #Derive your parser from this class and define for each element 'foo' that you want to parse 
     #a method element_foo(step)
     #
-    #The method will receive a Rutema::TestStep instance as a parameter which it should return
-    class ExtensibleXMLParser<SpecificationParser
+    #The method will receive a Rutema::Step instance as a parameter which it should return
+    class XML<SpecificationParser
       #:nodoc:
       ELEM_SPEC="specification"
       #:nodoc:
@@ -22,11 +22,15 @@ module Rutema
       ELEM_TITLE="specification/title"
       #:nodoc:
       ELEM_SCENARIO="specification/scenario"
-      #Parses __param__ and returns the Rutema::TestSpecification instance
+
+      def initialize
+        super(nil)
+      end
+      #Parses __param__ and returns the Rutema::Specification instance
       #
       #param can be the filename of the specification or the contents of that file.
       #
-      #Will throw Rutema::RutemaError if something goes wrong
+      #Will throw Rutema::ParserError if something goes wrong
       def parse_specification param
         begin
           if File.exists?(param)
@@ -37,16 +41,16 @@ module Rutema
             filename=Dir.pwd
           end
           spec=parse_case(txt,filename)
-          raise Rutema::RutemaError,"Missing required attribute 'name' in specification element" unless spec.has_name? && !spec.name.empty?
+          raise Rutema::ParserError,"Missing required attribute 'name' in specification element" unless spec.has_name? && !spec.name.empty?
           extension_handling(spec)
-        rescue
-          raise Rutema::RutemaError,"Error loading #{param}: #{$!.message}"
+        # rescue
+        #   raise Rutema::ParserError,"Error loading #{param}: #{$!.message}"
         end
       end
       private
-      #Parses the XML specification of a testcase and creates the corresponding TestSpecification instance
+      #Parses the XML specification of a testcase and creates the corresponding Rutema::Specification instance
       def parse_case xmltxt,filename
-        spec=TestSpecification.new
+        spec=Rutema::Specification.new({})
         xmldoc=REXML::Document.new( xmltxt )
         validate_case(xmldoc)
         el=xmldoc.elements[ELEM_SPEC]
@@ -70,13 +74,13 @@ module Rutema
       end
       #Validates the XML file from our point of view.
       def validate_case xmldoc
-        raise Rutema::RutemaError,"missing #{ELEM_SPEC} element" unless xmldoc.elements[ELEM_SPEC]
-        raise Rutema::RutemaError,"missing #{ELEM_DESC} element" unless xmldoc.elements[ELEM_DESC]
-        raise Rutema::RutemaError,"missing #{ELEM_TITLE} element" unless xmldoc.elements[ELEM_TITLE]
+        raise Rutema::ParserError,"missing #{ELEM_SPEC} element" unless xmldoc.elements[ELEM_SPEC]
+        raise Rutema::ParserError,"missing #{ELEM_DESC} element" unless xmldoc.elements[ELEM_DESC]
+        raise Rutema::ParserError,"missing #{ELEM_TITLE} element" unless xmldoc.elements[ELEM_TITLE]
       end
-      #Parses the 'scenario' XML element and returns the Rutema::TestScenario instance
+      #Parses the 'scenario' XML element and returns the Rutema::Scenario instance
       def parse_scenario xmltxt
-        scenario=Rutema::TestScenario.new
+        scenario=Rutema::Scenario.new([])
         xmldoc=REXML::Document.new( xmltxt )
         xmldoc.root.attributes.each do |attr,value|
           add_attribute(scenario,attr,value)
@@ -100,11 +104,11 @@ module Rutema
         end
         return scenario
       end
-      #Parses xml and returns the Rutema::TestStep instance
+      #Parses xml and returns the Rutema::Step instance
       def parse_step xmltxt
         xmldoc=REXML::Document.new( xmltxt )
         #any step element
-        step=Rutema::TestStep.new()
+        step=Rutema::Step.new()
         step.ignore=false
         xmldoc.root.attributes.each do |attr,value|
          add_attribute(step,attr,value)
@@ -126,8 +130,9 @@ module Rutema
       end
       #handles <include_scenario> elements, adding the steps to the current scenario
       def include_scenario step
-        raise Rutema::RutemaError,"missing required attribute file in #{step}" unless step.has_file?
-        raise Rutema::RutemaError,"Cannot find #{File.expand_path(step.file)}" unless File.exists?(File.expand_path(step.file))
+        raise Rutema::ParserError,"missing required attribute file in #{step}" unless step.has_file?
+        p step.file
+        raise Rutema::ParserError,"Cannot find #{File.expand_path(step.file)}" unless File.exists?(File.expand_path(step.file))
         step.file=File.expand_path(step.file)
         include_content=File.read(step.file)
         return parse_scenario(include_content)

@@ -1,10 +1,7 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+require_relative 'framework'
 
 module Rutema
-  #Is raised when an error is found in a specification
-  class ParserError<RuntimeError
-  end
-  
   module Parsers  
     #Base class that bombs out when used.
     #
@@ -13,6 +10,7 @@ module Rutema
       attr_reader :configuration
       def initialize configuration
         @configuration=configuration
+        @configuration||={}
         validate_configuration
       end
       #parses a specification

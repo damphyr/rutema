@@ -1,4 +1,4 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
   #The Elements module provides the namespace for the various modules adding parser functionality
