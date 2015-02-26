@@ -44,5 +44,11 @@ module Rutema
         end
       end
     end
+  
+    class Console<EventReporter
+      def update data
+        $stdout.puts data
+      end
+    end
   end
 end
