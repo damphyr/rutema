@@ -4,7 +4,6 @@ require_relative '../lib/rutema/core/configuration'
 require 'test/unit'
 require 'mocha/setup'
 
-
 FULL_CONFIG=<<-EOT
 configuration.parser={:class=>Rutema::Parsers::SpecificationParser}
 configuration.reporter={:class=>Rutema::Reporters::BlockReporter}

@@ -6,7 +6,7 @@ module Rutema
   #arbitrarily add attributes to a class and then have 
   #the accessor methods for these attributes appear automagically.
   #
-  #It will also add a has_attribute? method to query if an attribute is part of the object or not.
+  #It will also add a has_attribute? method to query if _attribute_ is part of the object or not.
   module SpecificationElement
     #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, 
     #the rest are silently ignored

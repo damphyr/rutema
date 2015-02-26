@@ -1,49 +1,72 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+
+require_relative "framework"
+
 module Rutema
   module Runners
-    module DefaultRunner
+    class Default
+      include Rutema::Messaging
       attr_reader :context
       attr_accessor :setup,:teardown
       def initialize context,queue
         @context=context || Hash.new
         @queue = queue
+        @number_of_runs=0
       end
 
       def run spec
-        message('test'=>name,'phase'=>'running')
+        state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,"test"=>spec.name}
+        steps=[]
+        status=:success
+        message('test'=>spec.name,'phase'=>'started')
         if @setup
-          run_scenario("#{name}_setup",@setup)
+          message('test'=>spec.name,'phase'=>'setup')
+          executed_steps,status=run_scenario("setup",@setup,@context)
+          steps+=executed_steps
         end
+        if status!=:error
+          message('test'=>spec.name,'phase'=>'running')
+          executed_steps,status=run_scenario(spec.name,spec.scenario,@context)
+          steps+=executed_steps
+        end
+        state['status']=status
+        if @teardown
+          message('test'=>spec.name,'phase'=>'teardown')
+          executed_steps,status=run_scenario("teardown",@teardown,@context)
+        end
+        message('test'=>spec.name,'phase'=>'finished')
+        state["stop_time"]=Time.now
+        state['steps']=steps
+        @number_of_runs+=1
+        return state
       end
 
       private
-      def run_scenario name,scenario
-        state=Patir::CommandSequenceStatus.new(name,scenario.steps)
+      def run_scenario name,scenario,meta
+        executed_steps=[]
+        status=:warning
         begin 
-          if evaluate_attention(scenario,state)
-            stps=scenario.steps
-            if stps.empty?
-              error(name,"Scenario #{name} contains no steps")
-              state.status=:warning
-            else
-              stps.each do |s| 
-                state.step=run_step(s)
-                message('test'=>name,'status'=>step.status,'number'=>step.number,'out'=>step.output,'err'=>step.error,'duration'=>step.exec_time,'step_type'=>step.step_type)
-                break if :error==state.status
-              end
+          stps=scenario.steps
+          if stps.empty?
+            error(name,"Scenario #{name} contains no steps")
+            status=:error
+          else
+            stps.each do |s| 
+              executed_steps<<run_step(s,meta)
+              message('test'=>name,'status'=>s.status,'number'=>s.number,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time,'step_type'=>s.step_type)
+              status=s.status
+              break if :error==s.status
             end
           end
         rescue  
           error(name,$!.message)
-          state.status=:error
+          status=:error
         end
-        state.stop_time=Time.now
-        state.sequence_id=@number_of_runs
-        return state
+        return executed_steps,status
       end
-      def run_step step
+      def run_step step,meta
         if step.has_cmd? && step.cmd.respond_to?(:run)
-          step.cmd.run(@context)
+          step.cmd.run(meta)
           msg=step.to_s
         else
           message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
@@ -53,113 +76,21 @@ module Rutema
       end
     end
   end
-  #Runner executes TestScenario instances and maintains the state of all scenarios run.
-  class Runner
-    attr_reader :context
-    attr_accessor :setup,:teardown
-    attr_writer :attended
-
-    def initialize context,queue
-      @attended=false
-      @context=context || Hash.new
-      @queue = queue
-    end
-    
-    #Tells you if the system runs in the mode that expects user input
-    def attended?
-      return @attended
-    end
-    #Runs a scenario and stores the result internally
-    #
-    #Returns the result of the run as a Patir::CommandSequenceStatus
-    def run name,scenario
-      #if setup /teardown is defined we need to execute them before and after
-      if @setup
-        @states["#{name}_setup"]=run_scenario("#{name}_setup",@setup)
-        @states["#{name}_setup"].sequence_id="s#{@number_of_runs}"
-        if @states["#{name}_setup"].executed? 
-          #do not execute the scenario unless the setup was succesful
-          if @states["#{name}_setup"].success?
-            @logger.info("Scenario for #{name}")
-            @states[name]=run_scenario(name,scenario)
-            @states[name].sequence_id="#{@number_of_runs}"
-          else
-            @states[name]=initialize_state(name,scenario)
-            @states[name].sequence_id="#{@number_of_runs}"
-          end
-        end
-      else
-        @states[name]=run_scenario(name,scenario)
-        @states[name].sequence_id="#{@number_of_runs}"
-      end
-      #no setup means no teardown
-      if @teardown && run_setup
-        #always execute teardown
-        @logger.warn("Teardown for #{name}")
-        @states["#{name}_teardown"]=run_scenario("#{name}_teardown",@teardown)
-        @states["#{name}_teardown"].sequence_id="#{@number_of_runs}t"
-      end
-      @number_of_runs+=1
-      @context[:scenario_name]=nil
-      return @states[name]
-    end
-    private
-    def error identifier,message
-      message(:error=>{:test=>identifier,:message=>message})
-      nil
-    end
-    def message message
-      @queue.push(message)
-    end
-    def run_scenario name,scenario
-      state=initialize_state(name,scenario)
-      begin 
-        if evaluate_attention(scenario,state)
-          stps=scenario.steps
-          if stps.empty?
-            error(name,"Scenario #{name} contains no steps")
-            state.status=:warning
-          else
-            stps.each do |s| 
-              state.step=run_step(s)
-              break if :error==state.status
-            end
-          end
-        end
-      rescue  
-        error(name,$!.message)
-        state.status=:error
-      end
-      state.stop_time=Time.now
-      state.sequence_id=@number_of_runs
-      return state
-    end
-    def initialize_state name,scenario
-      state=Patir::CommandSequenceStatus.new(name,scenario.steps)
-    end
-    def evaluate_attention scenario,state
-      if scenario.attended?
-        if !self.attended?
-          message("Attended scenario cannot be run in unattended mode")
-          state.status=:warning
-          return false
-        end
-        state.strategy=:attended
-      else
-        state.strategy=:unattended
-      end
-      return true
-    end
-    def run_step step
-      if step.has_cmd? && step.cmd.respond_to?(:run)
-        step.cmd.run(@context)
-        msg=step.to_s
-      else
-        message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
-      end
-      step.status=:success if step.status==:error && step.ignore?
-      message({'status'=>step.status,'number'=>step.number,'out'=>step.output,'err'=>step.error,'duration'=>step.exec_time,'step_type'=>step.step_type})
-      return step
-    end
-  end
+  
+  #StepRunner halts before every step and asks if it should be executed or not.
+  # class StepRunner<Runner
+  #   def initialize setup=nil, teardown=nil,logger=nil
+  #     @questioner=HighLine.new
+  #     super(setup,teardown,logger)
+  #   end
+  #   def run_step step
+  #     if @questioner.agree("Execute #{step.to_s}?")
+  #       return super(step)
+  #     else
+  #       msg="#{step.number} - #{step.step_type} - #{step.status}"
+  #       @logger.info(msg)
+  #       return step
+  #     end
+  #   end
+  # end
 end
