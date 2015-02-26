@@ -40,8 +40,8 @@ module Rutema
           while @queue.size>0 do
             sleep 0.1
           end
-            Thread.kill(@thread)
-          end
+          Thread.kill(@thread)
+        end
       end
     end
   end

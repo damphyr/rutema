@@ -35,7 +35,7 @@ module TestRutema
       File.expects(:exists?).with(File.expand_path("setup.spec")).returns(true)
       File.expects(:exists?).with("T001.spec").returns(false)
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::RutemaConfigurator.new("full.rutema").configuration}
+      assert_nothing_raised() { cfg=Rutema::Configurator.new("full.rutema").configuration}
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -54,7 +54,7 @@ module TestRutema
     
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
-      cfg=Rutema::RutemaConfigurator.new("test_identifiers.rutema").configuration
+      cfg=Rutema::Configurator.new("test_identifiers.rutema").configuration
       assert_not_nil(cfg.tests)
       assert_equal(3, cfg.tests.size)
       assert(cfg.tests.include?('22345'))

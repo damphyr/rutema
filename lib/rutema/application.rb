@@ -1,4 +1,5 @@
 require  'optparse'
+require_relative "core/configuration"
 require_relative "core/engine"
 
 module Rutema
@@ -7,7 +8,7 @@ module Rutema
     def initialize command_line_args
       parse_command_line(command_line_args)
       begin
-        @configuration=RutemaConfigurator.new(@config_file).configuration
+        @configuration=Rutema::Configurator.new(@config_file).configuration
         @configuration.context[:config_file]=File.basename(@config_file)
         @configuration.use_step_by_step=@step
         Dir.chdir(File.dirname(@config_file)) do 
