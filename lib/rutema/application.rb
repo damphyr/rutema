@@ -11,6 +11,10 @@ module Rutema
         @configuration=Rutema::Configurator.new(@config_file).configuration
         @configuration.context[:config_file]=File.basename(@config_file)
         @configuration.use_step_by_step=@step
+        unless @silent
+          @configuration.reporters||=[]
+          @configuration.reporters<<{:class=>Rutema::Reporters::Console}
+        end
         Dir.chdir(File.dirname(@config_file)) do 
           @engine=Rutema::Engine.new(@configuration)
           application_flow
@@ -27,6 +31,7 @@ module Rutema
         opt.on("--step","Runs test cases step by step"){@step=true}
         opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
         opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
+        opt.on("--silent","Suppresses the Console reporter") { @silent=true}
         opt.on("You can provide a specification filename in order to run a single test")
         opt.parse!
         #and now the rest
