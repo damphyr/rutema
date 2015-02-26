@@ -20,5 +20,15 @@ Hoe.spec "gaudi" do |prj|
 end
 
 task :default =>[:test]
+
+task :test do
+  require 'coveralls'
+  Coveralls.wear!
+  require 'minitest/autorun'
+  Rake::FileList["#{File.dirname(__FILE__)}/test/test_*.rb"].each do |test_file|
+    require_relative "test/#{test_file.pathmap('%n')}"
+  end
+end
+
 # vim: syntax=Ruby
 
