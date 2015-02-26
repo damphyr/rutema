@@ -37,7 +37,7 @@ module TestRutema
   class TestEngine<Test::Unit::TestCase
     def test_checks
       conf={}
-      assert_raise(){Rutema::Engine.new(conf)}
+      assert_raise(NoMethodError){Rutema::Engine.new(conf)}
       conf=OpenStruct.new(:parser=>{},:runner=>{})
       assert_raise(Rutema::RutemaError){Rutema::Engine.new(conf)}
     end
