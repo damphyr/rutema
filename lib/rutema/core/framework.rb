@@ -1,12 +1,14 @@
 module Rutema
   module Messaging
     def error identifier,message
-      message(:test=>identifier,:error=>message,:timestamp=>Time.now)
+      message(:test=>identifier,:error=>message)
     end
     def message message
       msg=message
       if message.is_a?(String)
         msg={:message=>message,:timestamp=>Time.now}
+      elsif message.is_a?(Hash)
+        msg[:timestamp]=Time.now
       end
       @queue.push(msg)
     end
