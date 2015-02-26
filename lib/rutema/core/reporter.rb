@@ -2,8 +2,10 @@
 module Rutema
   #Rutema supports two kinds of reporters.
   #
-  #Block reporters receive data via the report() method at the end of a Rutema run
+  #Block (from en bloc) reporters receive data via the report() method at the end of a Rutema run
   #while event reporters receive events continuously during a run via the update() method
+  #
+  #Nothing prevents you from cerating a class that implements both behaviours
   module Reporters
     class BlockReporter
       def initialize configuration,dispatcher

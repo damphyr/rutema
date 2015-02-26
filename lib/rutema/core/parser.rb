@@ -17,7 +17,7 @@ module Rutema
       end
       #parses a specification
       def parse_specification param
-        raise Rutema::RutemaError,"not implemented. You should derive a parser implementation from SpecificationParser!"
+        raise ParserError,"not implemented. You should derive a parser implementation from SpecificationParser!"
       end
       #parses the setup script. By default calls parse_specification
       def parse_setup param
