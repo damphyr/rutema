@@ -5,7 +5,4 @@ begin
 rescue Rutema::RutemaError
  puts $!.message
  exit 1
-# rescue
-#   puts $!.message
-# 	exit 1
 end
