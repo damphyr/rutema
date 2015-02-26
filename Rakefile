@@ -19,9 +19,11 @@ Hoe.spec "gaudi" do |prj|
   prj.spec_extras={:executables=>["rutema"],:default_executable=>"rutema"}
 end
 
-task :default =>[:test]
+Rake::Task[:default].clear()
 
-task :test do
+task :default =>[:"test:coverage"]
+
+task :"test:coverage" do
   require 'coveralls'
   Coveralls.wear!
   require 'minitest/autorun'
