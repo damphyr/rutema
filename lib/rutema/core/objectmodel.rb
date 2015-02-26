@@ -50,7 +50,9 @@ module Rutema
   #together with a textual description and information that aids in tracing the test back to the requirements.
   class Specification
     include SpecificationElement
-    attr_accessor :scenario,:requirements
+    attr_accessor :scenario
+    #Expects a Hash of parameters
+    #
     #Following keys have meaning in initialization:
     #
     #:name - the name of the testcase. Should uniquely identify the testcase
@@ -61,15 +63,12 @@ module Rutema
     #
     #:description - a full textual description for the testcase. To be used in reports and documents
     #
-    #:scenario - An instance of Scenario
-    #
-    #:requirements - An Array of String. The idea is that the strings can lead you back to the requirements specification that is tested here.
+    #:scenario - An instance of Rutema::Scenario
     #
     #:version - The version of this specification
     #
     #Default values are empty strings and arrays. (scenario is nil)
-    def initialize *args
-      params=args[0] if args
+    def initialize params
       begin
         @attributes=params
       end if params
@@ -78,8 +77,7 @@ module Rutema
       @attributes[:title]||=""
       @attributes[:filename]||=""
       @attributes[:description]||=""
-      @scenario=Scenario.new(@attributes[:version])
-      @requirements||=Array.new
+      @scenario=@attributes[:scenario]
     end
     def to_s#:nodoc: 
       return "#{@attributes[:name]} - #{@attributes[:title]}"
@@ -98,32 +96,18 @@ module Rutema
     include SpecificationElement
     attr_reader :steps
     
-    def initialize version=nil
+    def initialize steps
       @attributes=Hash.new
-      #attended is off by default
-      @attributes[:attended]=false
-      @version=version
-      @steps=Array.new
+      @steps=steps
+      @steps||=Array.new
     end
-    
-    def attended?
-      ret=@attributes[:attended]
-      @steps.each do |step|
-        ret=true if step.attended?
-      end
-      return ret
-    end
-    
+    #Adds a step at the end of the step sequence
     def add_step step
       @steps<<step
-      @attended=true if step.attended?
     end
-    
+    #Overwrites the step sequence
     def steps= array_of_steps
       @steps=array_of_steps
-      @steps.each do |step|
-        @attributes[:attended]=true if step.attended?
-      end
     end
   end
   #Represents a step in a Scenario.
@@ -168,8 +152,6 @@ module Rutema
       @attributes=Hash.new
       #ignore is off by default
       @attributes[:ignore]=false
-      #attended is off by default
-      @attributes[:attended]=false
       #assign
       @attributes[:cmd]=cmd if cmd
       @attributes[:text]=txt
