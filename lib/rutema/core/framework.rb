@@ -11,13 +11,16 @@ module Rutema
       @queue.push(msg)
     end
   end
+  #Generic error class for errors in the engine
+  class RutemaError<RuntimeError
+  end
   #Is raised when an error is found in a specification
-  class ParserError<RuntimeError
+  class ParserError<RutemaError
   end
   #Is raised on an unexpected error during execution
-  class RunnerError<RuntimeError
+  class RunnerError<RutemaError
   end
   #Errors in reporters should use this class
-  class ReportError<RuntimeError
+  class ReportError<RutemaError
   end
 end
