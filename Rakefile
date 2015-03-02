@@ -4,7 +4,7 @@ $:.unshift File.join(File.dirname(__FILE__),"lib")
 require 'hoe'
 require 'rutema/version'
 
-Hoe.spec "gaudi" do |prj|
+Hoe.spec "rutema" do |prj|
   developer("Vassilis Rizopoulos", "vassilisrizopoulos@gmail.com")
   license "MIT"
   prj.version = Rutema::Version::STRING
@@ -14,8 +14,7 @@ Hoe.spec "gaudi" do |prj|
   prj.local_rdoc_dir='doc/rdoc'
   prj.readme_file="README.md"
   prj.extra_deps<<["patir", "~>0.8.0"]
-  prj.extra_deps<<["highline","~>1.6.15"]
-  prj.extra_deps<<["mailfactory","~>1.4.0"]
+  prj.extra_deps<<["highline","~>1.7.0"]
   prj.spec_extras={:executables=>["rutema"],:default_executable=>"rutema"}
 end
 
