@@ -8,9 +8,8 @@ module Rutema
     def initialize command_line_args
       parse_command_line(command_line_args)
       begin
-        @configuration=Rutema::Configurator.new(@config_file).configuration
+        @configuration=Rutema::Configuration.new(@config_file)
         @configuration.context[:config_file]=File.basename(@config_file)
-        @configuration.use_step_by_step=@step
         unless @silent
           @configuration.reporters||=[]
           @configuration.reporters<<{:class=>Rutema::Reporters::Console}

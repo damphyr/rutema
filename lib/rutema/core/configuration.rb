@@ -170,7 +170,7 @@
           #add the path to the require lookup path to allow require statements in the configuration files
           $:.unshift @cwd
           #evaluate in the working directory to enable relative paths in configuration
-          Dir.chdir(@cwd){eval(cfg_txt,binding(),config_file,__LINE__)}
+          Dir.chdir(@cwd){eval(cfg_txt,binding(),filename,__LINE__)}
         rescue ConfigurationException
           #pass it on, do not wrap again
           raise

@@ -30,7 +30,7 @@ end
 EOT
 
 module TestRutema
-  class TestRutemaConfigurator<Test::Unit::TestCase
+  class TestRutemaConfiguration<Test::Unit::TestCase
     def test_rutema_configuration
       cfg="foo.cfg"
       File.expects(:read).with("full.rutema").returns(FULL_CONFIG)
@@ -39,7 +39,7 @@ module TestRutema
       File.expects(:exists?).with(File.expand_path("setup.spec")).returns(true)
       File.expects(:exists?).with("T001.spec").returns(false)
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::Configurator.new("full.rutema")}
+      assert_nothing_raised() { cfg=Rutema::Configuration.new("full.rutema")}
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -55,7 +55,7 @@ module TestRutema
 
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
-      cfg=Rutema::Configurator.new("test_identifiers.rutema")
+      cfg=Rutema::Configuration.new("test_identifiers.rutema")
       assert_not_nil(cfg.tests)
       assert_equal(3, cfg.tests.size)
       assert(cfg.tests.include?('22345'))
