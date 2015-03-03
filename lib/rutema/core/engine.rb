@@ -10,15 +10,15 @@ module Rutema
     include Messaging
     def initialize configuration
       @queue=Queue.new
-      @configuration=configuration
-      @parser=instantiate_class(configuration.parser) if @configuration.respond_to?(:parser)
-      if @configuration.respond_to?(:runner)
+      @parser=instantiate_class(configuration.parser) if configuration.parser
+      if configuration.runner
         @runner=instantiate_class(configuration.runner) 
       else
         @runner=Rutema::Runners::Default.new(configuration.context,@queue)
       end
       raise RutemaError,"Could not instantiate parser" unless @parser
       @dispatcher=Dispatcher.new(@queue,configuration)
+      @configuration=configuration
     end
     def run test_identifier=nil
       @dispatcher.run!

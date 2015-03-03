@@ -14,7 +14,8 @@
     # configuration.parser={:class=>Rutema::MinimalXMLParser}
     # configuration.tests=FileList['all/of/the/tests/**/*.*']
     module ConfigurationDirectives
-      attr_reader :parser,:tools,:paths,:reporters,:tests,:context,:check,:setup,:teardown
+      attr_reader :parser,:runner,:tools,:paths,:tests,:context,:check,:setup,:teardown
+      attr_accessor :reporters
       #Adds a hash of values to the tools hash of the configuration
       #
       #This hash is then accessible in the parser and reporters as a property of the configuration instance
@@ -31,7 +32,6 @@
       #
       #This way you can pass configuration information for the tools you use
       def tool= definition
-        @tools||=OpenStruct.new
         raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
         @tools[definition[:name]]=definition
       end
@@ -43,7 +43,6 @@
       #Example:
       # cfg.path={:name=>"sources",:path=>"/src"}
       def path= definition
-        @paths||=OpenStruct.new
         raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
         raise ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
         @paths[definition[:name]]=definition[:path]
@@ -85,7 +84,6 @@
       #These will usually be files, but they can be anything.
       #Essentially this is an Array of strings that mean something to your parser
       def tests= array_of_identifiers
-        @tests||=Array.new
         @tests+=array_of_identifiers.map{|f| full_path(f)}
       end
       
@@ -108,11 +106,17 @@
       # 
       #Unlike the parser, you can define multiple reporters.
       def reporter= definition
-        @reporters||=Array.new
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @reporters<<definition
       end
 
+      def init
+        @reporters=[]
+        @context={}
+        @tests=[]
+        @tools=OpenStruct.new
+        @paths=OpenStruct.new
+      end
       private 
       #Checks if a path exists and raises a ConfigurationException if not
       def check_path path
@@ -141,6 +145,7 @@
       attr_reader :logger,:filename,:cwd
       def initialize config_file,logger=nil
         @filename=config_file
+        init
         load_configuration(@filename)
       end
 

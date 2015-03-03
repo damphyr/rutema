@@ -9,6 +9,7 @@ module Rutema
       parse_command_line(command_line_args)
       begin
         @configuration=Rutema::Configuration.new(@config_file)
+        @configuration.context||={}
         @configuration.context[:config_file]=File.basename(@config_file)
         unless @silent
           @configuration.reporters||=[]
