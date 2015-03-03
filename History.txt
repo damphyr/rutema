@@ -1,6 +1,7 @@
-== 2.0.0 /2015-02-26
+== 2.0.0 /2015-03-03
  * Completely rewritten execution engine
    * dropped Ruby 1.8.x, 1.9.x support, added 2.x
+ * Rewritten configuration engine and new format for configuration files
  * Step by step status updates can now be sent to streaming reporters
  * Core separated from standard implementations
  * No database dependencies, no AR model. 

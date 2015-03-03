@@ -10,9 +10,9 @@ module Rutema
     include Messaging
     def initialize configuration
       @queue=Queue.new
-      @parser=instantiate_class(configuration.parser) if configuration.parser
+      @parser=instantiate_class(configuration.parser,configuration) if configuration.parser
       if configuration.runner
-        @runner=instantiate_class(configuration.runner) 
+        @runner=instantiate_class(configuration.runner,configuration) 
       else
         @runner=Rutema::Runners::Default.new(configuration.context,@queue)
       end
@@ -25,11 +25,17 @@ module Rutema
       #start
       message("start")
       check,setup,teardown,tests=*parse(test_identifier)
-      @runner.setup=setup
-      @runner.teardown=teardown
-      #running - at this point we've done any and all checks and we're stepping on the gas
-      message("running")
-      run_scenarios(tests,check)
+      if tests.empty?
+        error(test_identifier,"Did not parse any tests succesfully")
+        @dispatcher.exit
+        raise RutemaError,"Did not parse any tests succesfully"
+      else
+        @runner.setup=setup
+        @runner.teardown=teardown
+        #running - at this point we've done any and all checks and we're stepping on the gas
+        message("running")
+        run_scenarios(tests,check)
+      end
       message("end")
       @dispatcher.exit
     end
@@ -101,10 +107,10 @@ module Rutema
       end
       return status
     end
-    def instantiate_class definition
+    def instantiate_class definition,configuration
       if definition[:class]
         klass=definition[:class]
-        return klass.new(@configuration)
+        return klass.new(configuration)
       end
       return nil
     end

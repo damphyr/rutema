@@ -7,18 +7,16 @@ module Rutema
   class App
     def initialize command_line_args
       parse_command_line(command_line_args)
-      begin
-        @configuration=Rutema::Configuration.new(@config_file)
-        @configuration.context||={}
-        @configuration.context[:config_file]=File.basename(@config_file)
-        unless @silent
-          @configuration.reporters||=[]
-          @configuration.reporters<<{:class=>Rutema::Reporters::Console}
-        end
-        Dir.chdir(File.dirname(@config_file)) do 
-          @engine=Rutema::Engine.new(@configuration)
-          application_flow
-        end
+      @configuration=Rutema::Configuration.new(@config_file)
+      @configuration.context||={}
+      @configuration.context[:config_file]=File.basename(@config_file)
+      unless @silent
+        @configuration.reporters||=[]
+        @configuration.reporters<<{:class=>Rutema::Reporters::Console}
+      end
+      Dir.chdir(File.dirname(@config_file)) do 
+        @engine=Rutema::Engine.new(@configuration)
+        application_flow
       end
     end
     private

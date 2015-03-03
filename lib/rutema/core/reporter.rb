@@ -51,6 +51,8 @@ module Rutema
           puts "#{data["phase"]} #{data["test"]}"
         elsif data[:message]
           puts data[:message]
+        elsif data[:error]
+          puts "ERROR: #{data[:error]}"
         elsif data["status"]!=:error
           puts "#{data["test"]} #{data["number"]}-#{data["step_type"]}"
         elsif data["status"]==:error

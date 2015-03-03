@@ -142,8 +142,8 @@
 
     class Configuration
       include ConfigurationDirectives
-      attr_reader :logger,:filename,:cwd
-      def initialize config_file,logger=nil
+      attr_reader :filename
+      def initialize config_file
         @filename=config_file
         init
         load_configuration(@filename)
@@ -159,23 +159,25 @@
       #
       #Use this to chain configuration files together
       #==Example
-      #Say you have on configuration file "first.cfg" that contains all the generic directives and several others that change only one or two things. 
+      #Say you have on configuration file "first.rutema" that contains all the generic directives and several others that change only one or two things. 
       #
-      #You can 'include' the first.cfg file in the other configurations with
-      # load_from_file("first.cfg")
-      def load_from_file filename
-        fnm = File.exists?(filename) ? filename : File.join(@wd,filename)
-        load_configuration(fnm)
+      #You can import the first.rutema file in the other configurations with
+      # import("first.rutema")
+      def import filename
+        fnm = File.expand_path(filename)
+        if File.exists?(fnm)          
+          load_configuration(fnm)
+        else
+          raise ConfigurationException, "Import error: Can't find #{fnm}"
+        end
       end
       private
       def load_configuration filename
         begin 
           cfg_txt=File.read(filename)
-          @cwd=File.expand_path(File.dirname(filename))
-          #add the path to the require lookup path to allow require statements in the configuration files
-          $:.unshift @cwd
+          cwd=File.expand_path(File.dirname(filename))
           #evaluate in the working directory to enable relative paths in configuration
-          Dir.chdir(@cwd){eval(cfg_txt,binding(),filename,__LINE__)}
+          Dir.chdir(cwd){eval(cfg_txt,binding(),filename,__LINE__)}
         rescue ConfigurationException
           #pass it on, do not wrap again
           raise
