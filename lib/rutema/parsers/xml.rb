@@ -51,7 +51,6 @@ module Rutema
         spec=Rutema::Specification.new({})
         xmldoc=REXML::Document.new( xmltxt )
         validate_case(xmldoc)
-        el=xmldoc.elements[ELEM_SPEC]
         xmldoc.root.attributes.each do |attr,value|
           add_attribute(spec,attr,value)
         end

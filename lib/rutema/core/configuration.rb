@@ -1,6 +1,5 @@
   #  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
   require 'ostruct'
-  require 'patir/configuration'
   require_relative 'parser'
   require_relative 'reporter'
   module Rutema
@@ -14,7 +13,8 @@
     # require 'rake'
     # configuration.parser={:class=>Rutema::MinimalXMLParser}
     # configuration.tests=FileList['all/of/the/tests/**/*.*']
-    module Configuration
+    module ConfigurationDirectives
+      attr_reader :parser,:tools,:paths,:reporters,:tests,:context,:check,:setup,:teardown
       #Adds a hash of values to the tools hash of the configuration
       #
       #This hash is then accessible in the parser and reporters as a property of the configuration instance
@@ -22,15 +22,17 @@
       #Required keys:
       # :name - the name to use for accessing the path in code
       #Example:
-      # configuration.tool={:name=>"nunit",:path=>"/bin/nunit",:configuration=>{:important=>"info"}}
+      # configure do |cfg|
+      #  cfg.tool={:name=>"nunit",:path=>"/bin/nunit",:configuration=>{:important=>"info"}}
+      # end
       #
-      #The path to make can be accessed in the parser as
+      #The path to nunit can then be accessed in the parser as
       # @configuration.tools.nunit[:path]
       #
       #This way you can pass configuration information for the tools you use
       def tool= definition
-        @tools||=Hash.new
-        raise Patir::ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
+        @tools||=OpenStruct.new
+        raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
         @tools[definition[:name]]=definition
       end
       #Adds a path to the paths hash of the configuration
@@ -39,11 +41,11 @@
       # :name - the name to use for accessing the path in code
       # :path - the path
       #Example:
-      # configuration.path={:name=>"sources",:path=>"/src"}
+      # cfg.path={:name=>"sources",:path=>"/src"}
       def path= definition
-        @paths||=Hash.new
-        raise Patir::ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
-        raise Patir::ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
+        @paths||=OpenStruct.new
+        raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
+        raise ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
         @paths[definition[:name]]=definition[:path]
       end
       
@@ -74,8 +76,8 @@
       #values such as version numbers, tester names etc.
       def context= definition
         @context||=Hash.new
-        raise Patir::ConfigurationException,"Only accepting hash values as context_data" unless definition.kind_of?(Hash)
-        definition.each{ |k,v| @context[k]=v}
+        raise ConfigurationException,"Only accepting hash values as context_data" unless definition.kind_of?(Hash)
+        @context.merge!(definition)
       end
       
       #Adds the specification identifiers available to this instance of Rutema
@@ -84,7 +86,7 @@
       #Essentially this is an Array of strings that mean something to your parser
       def tests= array_of_identifiers
         @tests||=Array.new
-        @tests+=array_of_identifiers
+        @tests+=array_of_identifiers.map{|f| full_path(f)}
       end
       
       #A hash defining the parser to use.
@@ -94,9 +96,9 @@
       #The only required key from the configurator's point fo view is :class which should be set to the fully qualified name of the class to use.
       #
       #Example:
-      # configuration.parser={:class=>Rutema::MinimalXMLParser}
+      # cfg.parser={:class=>Rutema::MinimalXMLParser}
       def parser= definition
-        raise Patir::ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
+        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @parser=definition
       end
       
@@ -107,15 +109,15 @@
       #Unlike the parser, you can define multiple reporters.
       def reporter= definition
         @reporters||=Array.new
-        raise Patir::ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
+        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @reporters<<definition
       end
 
       private 
-      #Checks if a path exists and raises a Patir::ConfigurationException if not
+      #Checks if a path exists and raises a ConfigurationException if not
       def check_path path
         path=File.expand_path(path)
-        raise Patir::ConfigurationException,"#{path} does not exist" unless File.exists?(path)
+        raise ConfigurationException,"#{path} does not exist" unless File.exists?(path)
         return path
       end
       #Gives back a string of key=value,key=value for a hash
@@ -124,42 +126,63 @@
         definition.each{|k,v| msg<<"#{k}=#{v}"}
         return msg.join(",")
       end
+
+      def full_path filename
+        return File.expand_path(filename) if File.exists?(filename)
+        return filename
+      end
     end
 
-    #This class reads a Rutema configuration file
-    #
-    #See Rutema::RutemaConfiguration for configuration examples and directives
-    class Configurator<Patir::Configurator
-      include Rutema::Configuration
-      def initialize config_file
-        @reporters=Array.new
-        @context=Hash.new
-        @paths=Hash.new
-        @tools=Hash.new
-        @tests=Array.new
-        @setup=nil
-        @teardown=nil
-        @check=nil
-        super(config_file)
+    class ConfigurationException<RuntimeError
+    end
+
+    class Configuration
+      include ConfigurationDirectives
+      attr_reader :logger,:filename,:cwd
+      def initialize config_file,logger=nil
+        @filename=config_file
+        load_configuration(@filename)
       end
-      
-      def configuration
-        @configuration=OpenStruct.new
-        Dir.chdir(File.dirname(config_file)) do |path|
-          @configuration.tools=OpenStruct.new(@tools)
-          @configuration.paths=OpenStruct.new(@paths)
-          @configuration.setup=@setup
-          @configuration.teardown=@teardown
-          @configuration.check=@check
-          @configuration.context=@context
-          @configuration.parser=@parser
-          raise Patir::ConfigurationException,"No parser defined" unless @configuration.parser
-          raise Patir::ConfigurationException,"Syntax error in parser definition - missing :class" unless @configuration.parser[:class]
-          @configuration.reporters=@reporters
-          @configuration.tests=@tests.collect{ |t|  File.exists?(t) ? File.expand_path(t) : t }
-          @configuration.filename=@config_file
+
+      def configure
+        if block_given?
+          yield self
         end
-        return @configuration
+      end
+    
+      #Loads the configuration from a file
+      #
+      #Use this to chain configuration files together
+      #==Example
+      #Say you have on configuration file "first.cfg" that contains all the generic directives and several others that change only one or two things. 
+      #
+      #You can 'include' the first.cfg file in the other configurations with
+      # load_from_file("first.cfg")
+      def load_from_file filename
+        fnm = File.exists?(filename) ? filename : File.join(@wd,filename)
+        load_configuration(fnm)
+      end
+      private
+      def load_configuration filename
+        begin 
+          cfg_txt=File.read(filename)
+          @cwd=File.expand_path(File.dirname(filename))
+          #add the path to the require lookup path to allow require statements in the configuration files
+          $:.unshift @cwd
+          #evaluate in the working directory to enable relative paths in configuration
+          Dir.chdir(@cwd){eval(cfg_txt,binding(),config_file,__LINE__)}
+        rescue ConfigurationException
+          #pass it on, do not wrap again
+          raise
+        rescue SyntaxError
+          #Just wrap the exception so we can differentiate
+          raise ConfigurationException.new,"Syntax error in the configuration file '#{filename}':\n#{$!.message}"
+        rescue NoMethodError
+          raise ConfigurationException.new,"Encountered an unknown directive in configuration file '#{filename}':\n#{$!.message}"
+        rescue 
+          #Just wrap the exception so we can differentiate
+          raise ConfigurationException.new,"#{$!.message}"
+        end
       end
     end
   end

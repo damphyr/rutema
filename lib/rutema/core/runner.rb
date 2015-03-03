@@ -9,6 +9,8 @@ module Rutema
       attr_reader :context
       attr_accessor :setup,:teardown
       def initialize context,queue
+        @setup=nil
+        @teardown=nil
         @context=context || Hash.new
         @queue = queue
         @number_of_runs=0
@@ -67,7 +69,6 @@ module Rutema
       def run_step step,meta
         if step.has_cmd? && step.cmd.respond_to?(:run)
           step.cmd.run(meta)
-          msg=step.to_s
         else
           message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
         end

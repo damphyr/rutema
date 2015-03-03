@@ -5,24 +5,28 @@ require 'test/unit'
 require 'mocha/setup'
 
 FULL_CONFIG=<<-EOT
-configuration.parser={:class=>Rutema::Parsers::SpecificationParser}
-configuration.reporter={:class=>Rutema::Reporters::BlockReporter}
-configuration.tests=["T001.spec"]
-configuration.tool={:name=>"test",:path=>".",:configuration=>{:key=>"value"}}
-configuration.path={:name=>"test",:path=>"."}
-configuration.context={:key=>"value"}
-configuration.check="check.spec"
-configuration.teardown="teardown.spec"
-configuration.setup="setup.spec" 
+configure do |cfg|
+ cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
+ cfg.reporter={:class=>Rutema::Reporters::BlockReporter}
+ cfg.tests=["T001.spec"]
+ cfg.tool={:name=>"test",:path=>".",:configuration=>{:key=>"value"}}
+ cfg.path={:name=>"test",:path=>"."}
+ cfg.context={:key=>"value"}
+ cfg.check="check.spec"
+ cfg.teardown="teardown.spec"
+ cfg.setup="setup.spec" 
+end
 EOT
 
 IDENTIFIERS=<<-EOT
-configuration.parser={:class=>Rutema::Parsers::SpecificationParser}
-configuration.tests=[
-"../examples/specs/T001.spec",
-"22345",
-"../examples/specs/T003.spec",
-]
+configure do |cfg|
+  cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
+  cfg.tests=[
+  "../examples/specs/T001.spec",
+  "22345",
+  "../examples/specs/T003.spec",
+  ]
+end
 EOT
 
 module TestRutema
@@ -35,7 +39,7 @@ module TestRutema
       File.expects(:exists?).with(File.expand_path("setup.spec")).returns(true)
       File.expects(:exists?).with("T001.spec").returns(false)
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::Configurator.new("full.rutema").configuration}
+      assert_nothing_raised() { cfg=Rutema::Configurator.new("full.rutema")}
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -45,16 +49,13 @@ module TestRutema
       assert_equal("test", cfg.tools.test[:name])
       assert_not_nil(cfg.paths)
       assert_not_nil(cfg.paths.test)
-      assert_not_nil(cfg.setup)
-      assert_not_nil(cfg.teardown)
-      assert_not_nil(cfg.check)
       assert_not_nil(cfg.tests)
       assert_not_nil(cfg.context)
     end
-    
+
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
-      cfg=Rutema::Configurator.new("test_identifiers.rutema").configuration
+      cfg=Rutema::Configurator.new("test_identifiers.rutema")
       assert_not_nil(cfg.tests)
       assert_equal(3, cfg.tests.size)
       assert(cfg.tests.include?('22345'))

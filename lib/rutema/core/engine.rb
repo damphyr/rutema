@@ -56,7 +56,7 @@ module Rutema
     end
     def parse_specification spec_identifier
       begin
-        spec=@parser.parse_specification(spec_identifier)
+        @parser.parse_specification(spec_identifier)
       rescue Rutema::ParserError
         error(spec_identifier,$!.message)
         nil
@@ -117,7 +117,7 @@ module Rutema
       @streaming_reporters=[]
       @block_reporters=[]
       if configuration.reporters
-        @streaming_reporters,@block_reporters=configuration.reporters.collect{ |r| instantiate_reporter(r) }.compact.partition{|rep| rep.respond_to?(:update)}
+        @streaming_reporters,@block_reporters=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:update)}
       end
     end
     def subscribe identifier
@@ -125,8 +125,7 @@ module Rutema
       return @queues[identifier]
     end
     
-    def run! 
-      counter=0
+    def run!
       @streaming_reporters.each {|r| r.run!}
       @thread=Thread.new do
         while true do
@@ -147,10 +146,10 @@ module Rutema
       end
     end
     private
-    def instantiate_reporter definition
+    def instantiate_reporter definition,configuration
       if definition[:class]
         klass=definition[:class]
-        return klass.new(@configuration,self)
+        return klass.new(configuration,self)
       end
       return nil
     end
