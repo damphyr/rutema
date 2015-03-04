@@ -50,7 +50,7 @@ module TestRutema
       assert_nothing_raised() { step.reset }
       assert_equal(:not_executed, step.status)
       assert_equal("", step.output)
-      assert(/0 - step - .*DummyCommand.*- not_executed/=~step.to_s)
+      assert(/0 - .*DummyCommand.*/=~step.to_s)
     end
   end
   class TestScenario<Test::Unit::TestCase
