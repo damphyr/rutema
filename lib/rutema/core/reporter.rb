@@ -20,7 +20,7 @@ module Rutema
         @queue=dispatcher.subscribe(self.object_id)
       end
 
-      def run! 
+      def run!
         @thread=Thread.new do
           while true do
             if  @queue.size>0
@@ -50,13 +50,15 @@ module Rutema
         if data["test"] && data["phase"]
           puts ">#{data["phase"]} #{data["test"]}"
         elsif data[:message]
-          puts data[:message]
+          if data[:test]
+            puts ">#{data[:test]} step #{data[:message]}"
+          else
+            puts ">#{data[:message]}"
+          end
         elsif data[:error]
           puts ">ERROR: #{data[:error]}"
-        elsif data["status"]!=:error
-          puts ">#{data["test"]} #{data["number"]}-#{data["step_type"]}"
         elsif data["status"]==:error
-          puts ">FATAL: #{data["test"]} #{data["number"]}-#{data["step_type"]}"
+          puts ">FATAL: #{data["test"]}(#{data["number"]}) failed"
           puts  data.fetch("out","")
           puts data.fetch("error","")
         end
