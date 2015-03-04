@@ -198,9 +198,12 @@ module Rutema
     end
     def to_s#:nodoc:
       param=""
-      param=" - #{self.cmd.to_s}" if self.has_cmd?
-      msg="#{self.number} - #{self.step_type}#{param} - #{self.status}"
-      msg<<" in #{self.included_in}" if self.has_included_in?
+      if self.has_cmd?
+        msg="#{self.number} - #{self.cmd.to_s}"
+      else
+        msg="#{self.number} - #{self.name}"
+      end
+        msg<<" in #{self.included_in}" if self.has_included_in?
       return msg
     end
   end

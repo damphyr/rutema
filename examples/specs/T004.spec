@@ -3,6 +3,6 @@
 <title>T004</title>
 <description>An implicitly attended test</description>
 <scenario>
-	<prompt>Are you (implicitly) there?</prompt>
+	<prompt>Are you there?</prompt>
 </scenario>
 </specification>

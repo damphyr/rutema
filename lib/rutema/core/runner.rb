@@ -54,8 +54,9 @@ module Rutema
             status=:error
           else
             stps.each do |s| 
+              message('test'=>name,:message=>s.to_s)
               executed_steps<<run_step(s,meta)
-              message('test'=>name,'status'=>s.status,'number'=>s.number,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time,'step_type'=>s.step_type)
+              message('test'=>name,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
               status=s.status
               break if :error==s.status
             end
