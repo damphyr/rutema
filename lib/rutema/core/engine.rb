@@ -45,8 +45,10 @@ module Rutema
       #we're either parsing all of the tests, or just one
       #make sure the one test is on the list
       if test_identifier
-        if @configuration.tests.include?(test_identifier)
-          specs<<parse_specification(t)
+        p File.expand_path(test_identifier)
+        p @configuration.tests
+        if @configuration.tests.include?(File.expand_path(test_identifier))
+          specs<<parse_specification(File.expand_path(test_identifier))
         else
           error(test_identifier,"Does not exist in the configuration")  
         end
@@ -88,7 +90,7 @@ module Rutema
         error(nil,"No tests to run")
       else
         if check
-          if run_test(check).success?
+          if run_test(check)==:success
             specs.each{|s| run_test(s)}
           else
             error(nil,"Check test failed")
@@ -100,7 +102,7 @@ module Rutema
     end
     def run_test specification
       if specification.scenario
-        status=@runner.run(specification)
+        status=@runner.run(specification)["status"]
       else
         status=:not_executed
         message(:test=>specification.name,:message=>"No scenario", :status=>status)

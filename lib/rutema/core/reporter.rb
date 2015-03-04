@@ -48,15 +48,15 @@ module Rutema
     class Console<EventReporter
       def update data
         if data["test"] && data["phase"]
-          puts "#{data["phase"]} #{data["test"]}"
+          puts ">#{data["phase"]} #{data["test"]}"
         elsif data[:message]
           puts data[:message]
         elsif data[:error]
-          puts "ERROR: #{data[:error]}"
+          puts ">ERROR: #{data[:error]}"
         elsif data["status"]!=:error
-          puts "#{data["test"]} #{data["number"]}-#{data["step_type"]}"
+          puts ">#{data["test"]} #{data["number"]}-#{data["step_type"]}"
         elsif data["status"]==:error
-          puts "FATAL: #{data["test"]} #{data["number"]}-#{data["step_type"]}"
+          puts ">FATAL: #{data["test"]} #{data["number"]}-#{data["step_type"]}"
           puts  data.fetch("out","")
           puts data.fetch("error","")
         end

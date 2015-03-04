@@ -27,9 +27,10 @@ module Rutema
         opt.on("--config FILE", "-c FILE",String,"Loads the configuration from FILE") { |config_file| @config_file=config_file}
         opt.on("--check","Runs just the check test"){@check=true}
         opt.on("--step","Runs test cases step by step"){@step=true}
+        opt.on("--silent","Suppresses the Console reporter") { @silent=true}
+        opt.on("--color","Adds color to the Console reporter") { @color=true}
         opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
         opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
-        opt.on("--silent","Suppresses the Console reporter") { @silent=true}
         opt.on("You can provide a specification filename in order to run a single test")
         opt.parse!
         #and now the rest
