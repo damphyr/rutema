@@ -1,0 +1,5 @@
+require 'rutema/parsers/xml'
+configure do |cfg|
+  cfg.parser={:class=>Rutema::Parsers::XML}
+  cfg.tests=["../specs/*.spec"]
+end
