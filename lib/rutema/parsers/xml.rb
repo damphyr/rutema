@@ -31,7 +31,7 @@ module Rutema
       def parse_specification param
         @parsed||=[]
         begin
-          if File.exists?(param)
+          if File.exist?(param)
             txt=File.read(param)
             filename=File.expand_path(param)
           else
@@ -128,7 +128,7 @@ module Rutema
       #handles <include_scenario> elements, adding the steps to the current scenario
       def include_scenario step
         raise Rutema::ParserError,"missing required attribute file in #{step}" unless step.has_file?
-        raise Rutema::ParserError,"Cannot find #{File.expand_path(step.file)}" unless File.exists?(File.expand_path(step.file))
+        raise Rutema::ParserError,"Cannot find #{File.expand_path(step.file)}" unless File.exist?(File.expand_path(step.file))
         step.file=File.expand_path(step.file)
         include_content=File.read(step.file)
         return parse_scenario(include_content)
