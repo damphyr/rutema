@@ -1,5 +1,5 @@
 #  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
-
+require 'highline'
 module Rutema
   #The Elements module provides the namespace for the various modules adding parser functionality
   module Elements
