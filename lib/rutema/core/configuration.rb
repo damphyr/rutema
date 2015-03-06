@@ -107,11 +107,11 @@
       #Unlike the parser, you can define multiple reporters.
       def reporter= definition
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-        @reporters<<definition
+        @reporters[definition[:class]]=definition
       end
 
       def init
-        @reporters=[]
+        @reporters={}
         @context={}
         @tests=[]
         @tools=OpenStruct.new

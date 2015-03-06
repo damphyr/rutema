@@ -125,8 +125,9 @@ module Rutema
       @block_reporters=[]
       @collector=Rutema::Reporters::Collector.new(nil,self)
       if configuration.reporters
-        @streaming_reporters,_=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:update)}
-        @block_reporters,_=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:report)}
+        instances=configuration.reporters.keys{|r| instantiate_reporter(r,configuration) }.compact
+        @streaming_reporters,_=instances.partition{|rep| rep.respond_to?(:update)}
+        @block_reporters,_=instances.partition{|rep| rep.respond_to?(:report)}
       end
       @streaming_reporters<<@collector
     end
