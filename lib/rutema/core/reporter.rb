@@ -11,7 +11,7 @@ module Rutema
       def initialize configuration,dispatcher
         @configuration=configuration
       end
-      def report specifications,runner_states,parse_errors
+      def report specifications,states,errors
       end
     end
     class EventReporter
@@ -45,23 +45,52 @@ module Rutema
       end
     end
   
+    class Collector<EventReporter
+      attr_reader :errors,:states
+      def initialize params,dispatcher
+        super(params,dispatcher)
+        @errors=[]
+        @states={}
+      end
+
+      def update data
+        if data[:error]
+          @errors<<data
+        elsif data[:test] && data['status']
+          @states[data[:test]]||=[]
+          @states[data[:test]]<<data
+        end
+      end
+    end
+
     class Console<EventReporter
       def update data
-        if data["test"] && data["phase"]
-          puts ">#{data["phase"]} #{data["test"]}"
-        elsif data[:message]
-          if data[:test]
-            puts ">#{data[:test]} step #{data[:message]}"
-          else
-            puts ">#{data[:message]}"
-          end
-        elsif data[:error]
+        if data[:error]
           puts ">ERROR: #{data[:error]}"
-        elsif data["status"]==:error
-          puts ">FATAL: #{data["test"]}(#{data["number"]}) failed"
-          puts  data.fetch("out","")
-          puts data.fetch("error","")
+        elsif data[:test] 
+          if data["phase"]
+            puts ">#{data["phase"]} #{data[:test]}"
+          elsif data[:message]
+            puts ">#{data[:test]} step #{data[:message]}"
+          elsif data["status"]==:error
+            puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
+            puts data.fetch("out","")
+            puts data.fetch("error","")
+          end
+        elsif data[:message]
+          puts ">#{data[:message]}"
         end
+      end
+    end
+
+    class Summary<BlockReporter
+      def report specs,states,errors
+        failures=0
+        states.each do |k,v|
+          failures+=1 if v.last['status']==:error
+        end
+        puts "#{errors.size} errors. #{states.size} test cases executed. #{failures} failed"
+        return failures
       end
     end
   end

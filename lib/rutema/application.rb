@@ -48,13 +48,13 @@ module Rutema
       if @check
         #run just the check test
         if @configuration.check
-          @engine.run(@configuration.check)
+          exit @engine.run(@configuration.check)
         else
           raise Rutema::RutemaError,"There is no check test defined in the configuration."
         end
       else
         #run everything
-        @engine.run(@test_identifier)
+        exit @engine.run(@test_identifier)
       end
     end
   end

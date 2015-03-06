@@ -17,26 +17,26 @@ module Rutema
       end
 
       def run spec
-        state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,"test"=>spec.name}
+        state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,:test=>spec.name}
         steps=[]
         status=:success
-        message('test'=>spec.name,'phase'=>'started')
+        message(:test=>spec.name,'phase'=>'started')
         if @setup
-          message('test'=>spec.name,'phase'=>'setup')
+          message(:test=>spec.name,'phase'=>'setup')
           executed_steps,status=run_scenario("setup",@setup.scenario,@context)
           steps+=executed_steps
         end
         if status!=:error
-          message('test'=>spec.name,'phase'=>'running')
+          message(:test=>spec.name,'phase'=>'running')
           executed_steps,status=run_scenario(spec.name,spec.scenario,@context)
           steps+=executed_steps
         end
         state['status']=status
         if @teardown
-          message('test'=>spec.name,'phase'=>'teardown')
+          message(:test=>spec.name,'phase'=>'teardown')
           executed_steps,status=run_scenario("teardown",@teardown.scenario,@context)
         end
-        message('test'=>spec.name,'phase'=>'finished')
+        message(:test=>spec.name,'phase'=>'finished')
         state["stop_time"]=Time.now
         state['steps']=steps
         @number_of_runs+=1
@@ -54,9 +54,9 @@ module Rutema
             status=:error
           else
             stps.each do |s| 
-              message('test'=>name,:message=>s.to_s)
+              message(:test=>name,:message=>s.to_s)
               executed_steps<<run_step(s,meta)
-              message('test'=>name,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
+              message(:test=>name,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
               status=s.status
               break if :error==s.status
             end

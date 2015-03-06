@@ -38,6 +38,7 @@ module Rutema
       end
       message("end")
       @dispatcher.exit
+      @dispatcher.report(tests)
     end
     def parse test_identifier=nil
       specs=[]
@@ -45,8 +46,6 @@ module Rutema
       #we're either parsing all of the tests, or just one
       #make sure the one test is on the list
       if test_identifier
-        p File.expand_path(test_identifier)
-        p @configuration.tests
         if @configuration.tests.include?(File.expand_path(test_identifier))
           specs<<parse_specification(File.expand_path(test_identifier))
         else
@@ -118,15 +117,18 @@ module Rutema
     end
   end
   class Dispatcher
-    INTERVAL=0.1
+    INTERVAL=0.01
     def initialize queue,configuration
       @queue = queue
       @queues = {}
       @streaming_reporters=[]
       @block_reporters=[]
+      @collector=Rutema::Reporters::Collector.new(nil,self)
       if configuration.reporters
-        @streaming_reporters,@block_reporters=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:update)}
+        @streaming_reporters,_=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:update)}
+        @block_reporters,_=configuration.reporters.collect{ |r| instantiate_reporter(r,configuration) }.compact.partition{|rep| rep.respond_to?(:report)}
       end
+      @streaming_reporters<<@collector
     end
     def subscribe identifier
       @queues[identifier]=Queue.new
@@ -143,17 +145,29 @@ module Rutema
       end
     end
 
+    def report specs
+      flush
+      @block_reporters.each do |r|
+        r.report(specs,@collector.states,@collector.errors)
+      end
+      Reporters::Summary.new(nil,self).report(specs,@collector.states,@collector.errors)
+    end
     def exit
       if @thread
-        while @queue.size>0 do
-          dispatch()
-          sleep INTERVAL
-        end
+        flush
         @streaming_reporters.each {|r| r.exit}
         Thread.kill(@thread)
       end
     end
     private
+    def flush
+      if @thread
+        while @queue.size>0 do
+          dispatch()
+          sleep INTERVAL
+        end
+      end
+    end
     def instantiate_reporter definition,configuration
       if definition[:class]
         klass=definition[:class]
