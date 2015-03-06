@@ -51,10 +51,10 @@ module TestRutema
             "#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"],
           :context=>{})
       engine=nil
-      assert_nothing_raised() do 
+      #assert_nothing_raised() do 
         engine=Rutema::Engine.new(conf)
         engine.run
-      end
+      #end
       assert_equal(9, MockReporter.updates)
       #test for a spec that is not in the config and re-entry
       assert_raise(Rutema::RutemaError) { engine.run("foo")}

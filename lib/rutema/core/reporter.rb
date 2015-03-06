@@ -66,7 +66,7 @@ module Rutema
     class Console<EventReporter
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
-        @silent=configuration.reporters[self.class]["silent"]
+        @silent=configuration.reporters.fetch(self.class,{})["silent"]
       end
       def update data
         unless @silent
@@ -92,7 +92,7 @@ module Rutema
     class Summary<BlockReporter
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
-        @silent=configuration.reporters[self.class]["silent"]
+        @silent=configuration.reporters.fetch(self.class,{})["silent"]
       end
       def report specs,states,errors
         failures=0
