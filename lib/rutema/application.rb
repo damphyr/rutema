@@ -10,7 +10,7 @@ module Rutema
       @configuration=Rutema::Configuration.new(@config_file)
       @configuration.context||={}
       @configuration.context[:config_file]=File.basename(@config_file)
-      unless @silent
+      unless @bare
         @configuration.reporters||={}
         @configuration.reporters[Rutema::Reporters::Console]||={:class=>Rutema::Reporters::Console, "silent"=>@silent}
         @configuration.reporters[Rutema::Reporters::Summary]||={:class=>Rutema::Reporters::Summary, "silent"=>@silent}
@@ -29,6 +29,7 @@ module Rutema
         opt.on("--check","Runs just the check test"){@check=true}
         #opt.on("--step","Runs test cases step by step"){@step=true}
         opt.on("--silent","Suppresses console output (only for the default reporters)") { @silent=true}
+        opt.on("--bare","No default reporters whatsoever") { @bare=true}
         #opt.on("--color","Adds color to the Console reporter") { @color=true}
         opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
         opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
