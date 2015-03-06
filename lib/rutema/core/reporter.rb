@@ -64,32 +64,42 @@ module Rutema
     end
 
     class Console<EventReporter
+      def initialize configuration,dispatcher
+        super(configuration,dispatcher)
+        @silent=configuration.reporters[self.class]["silent"]
+      end
       def update data
-        if data[:error]
-          puts ">ERROR: #{data[:error]}"
-        elsif data[:test] 
-          if data["phase"]
-            puts ">#{data["phase"]} #{data[:test]}"
+        unless @silent
+          if data[:error]
+            puts ">ERROR: #{data[:error]}"
+          elsif data[:test] 
+            if data["phase"]
+              puts ">#{data["phase"]} #{data[:test]}"
+            elsif data[:message]
+              puts ">#{data[:test]} #{data[:message]}"
+            elsif data["status"]==:error
+              puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
+              puts data.fetch("out","")
+              puts data.fetch("error","")
+            end
           elsif data[:message]
-            puts ">#{data[:test]} #{data[:message]}"
-          elsif data["status"]==:error
-            puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
-            puts data.fetch("out","")
-            puts data.fetch("error","")
+            puts ">#{data[:message]}"
           end
-        elsif data[:message]
-          puts ">#{data[:message]}"
         end
       end
     end
 
     class Summary<BlockReporter
+      def initialize configuration,dispatcher
+        super(configuration,dispatcher)
+        @silent=configuration.reporters[self.class]["silent"]
+      end
       def report specs,states,errors
         failures=0
         states.each do |k,v|
           failures+=1 if v.last['status']==:error
         end
-        puts "#{errors.size} errors. #{states.size} test cases executed. #{failures} failed"
+        puts "#{errors.size} errors. #{states.size} test cases executed. #{failures} failed" unless @silent
         return failures
       end
     end

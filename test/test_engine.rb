@@ -44,7 +44,7 @@ module TestRutema
 
     def test_run
       conf=OpenStruct.new(:parser=>{:class=>Rutema::Parsers::XML},
-          :reporters=>[{:class=>MockReporter}],
+          :reporters=>{MockReporter=>{:class=>MockReporter}},
           :tools=>{},
           :paths=>{},
           :tests=>["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec",

@@ -125,11 +125,12 @@ module Rutema
       @block_reporters=[]
       @collector=Rutema::Reporters::Collector.new(nil,self)
       if configuration.reporters
-        instances=configuration.reporters.keys{|r| instantiate_reporter(r,configuration) }.compact
+        instances=configuration.reporters.values.map{|v| instantiate_reporter(v,configuration) if v[:class] != Reporters::Summary}.compact
         @streaming_reporters,_=instances.partition{|rep| rep.respond_to?(:update)}
         @block_reporters,_=instances.partition{|rep| rep.respond_to?(:report)}
       end
       @streaming_reporters<<@collector
+      @configuration=configuration
     end
     def subscribe identifier
       @queues[identifier]=Queue.new
@@ -147,11 +148,10 @@ module Rutema
     end
 
     def report specs
-      flush
       @block_reporters.each do |r|
         r.report(specs,@collector.states,@collector.errors)
       end
-      Reporters::Summary.new(nil,self).report(specs,@collector.states,@collector.errors)
+      Reporters::Summary.new(@configuration,self).report(specs,@collector.states,@collector.errors)
     end
     def exit
       if @thread
