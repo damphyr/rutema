@@ -69,22 +69,20 @@ module Rutema
         @silent=configuration.reporters.fetch(self.class,{})["silent"]
       end
       def update data
-        unless @silent
-          if data[:error]
-            puts ">ERROR: #{data[:error]}"
-          elsif data[:test] 
-            if data["phase"]
-              puts ">#{data["phase"]} #{data[:test]}"
-            elsif data[:message]
-              puts ">#{data[:test]} #{data[:message]}"
-            elsif data["status"]==:error
-              puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
-              puts data.fetch("out","")
-              puts data.fetch("error","")
-            end
+        if data[:error]
+          puts ">ERROR: #{data[:error]}"
+        elsif data[:test] 
+          if data["phase"]
+            puts ">#{data["phase"]} #{data[:test]}" unless @silent
           elsif data[:message]
-            puts ">#{data[:message]}"
+            puts ">#{data[:test]} #{data[:message]}" unless @silent
+          elsif data["status"]==:error
+            puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
+            puts data.fetch("out","")
+            puts data.fetch("error","")
           end
+        elsif data[:message] 
+          puts ">#{data[:message]}" unless @silent
         end
       end
     end
