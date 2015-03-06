@@ -71,7 +71,7 @@ module Rutema
           if data["phase"]
             puts ">#{data["phase"]} #{data[:test]}"
           elsif data[:message]
-            puts ">#{data[:test]} step #{data[:message]}"
+            puts ">#{data[:test]} #{data[:message]}"
           elsif data["status"]==:error
             puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
             puts data.fetch("out","")

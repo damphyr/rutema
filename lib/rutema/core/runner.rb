@@ -23,18 +23,20 @@ module Rutema
         message(:test=>spec.name,'phase'=>'started')
         if @setup
           message(:test=>spec.name,'phase'=>'setup')
-          executed_steps,status=run_scenario("setup",@setup.scenario,@context)
+          executed_steps,status=run_scenario("_setup_",@setup.scenario,@context)
           steps+=executed_steps
         end
         if status!=:error
           message(:test=>spec.name,'phase'=>'running')
           executed_steps,status=run_scenario(spec.name,spec.scenario,@context)
           steps+=executed_steps
+        else
+          message(:test=>spec.name,'number'=>0,'status'=>:error,'out'=>"Setup failed",'err'=>"",'duration'=>0)
         end
         state['status']=status
         if @teardown
           message(:test=>spec.name,'phase'=>'teardown')
-          executed_steps,status=run_scenario("teardown",@teardown.scenario,@context)
+          executed_steps,status=run_scenario("_teardown_",@teardown.scenario,@context)
         end
         message(:test=>spec.name,'phase'=>'finished')
         state["stop_time"]=Time.now
