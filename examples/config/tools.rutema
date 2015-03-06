@@ -1,4 +1,8 @@
 require 'rutema/parsers/xml'
 configure do |cfg|
   cfg.parser={:class=>Rutema::Parsers::XML}
+  #the default reporter definitions. They can be overwritten
+  #only one reporter of each class can be defined, last definition wins
+  #cfg.reporter={:class=>Rutema::Reporters::Console "silent"=>false}
+  #cfg.reporter={:class=>Rutema::Reporters::Summary}
 end
