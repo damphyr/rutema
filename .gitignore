@@ -9,7 +9,6 @@ temp/
 tmp/
 log/
 pkg/
-doc/
 rubyforge_site/
 test/coverage/
 coverage/
