@@ -1,4 +1,4 @@
-== 2.0.0 /2015-03-03
+== 2.0.0 /2015-03-09
  * Completely rewritten execution engine
    * dropped Ruby 1.8.x, 1.9.x support, added 2.x
  * Rewritten configuration engine and new format for configuration files
