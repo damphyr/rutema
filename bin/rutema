@@ -1,8 +1,8 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-require 'rubygems'
-require 'rutema/system'
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+require 'rutema/application'
 begin
-	Rutema::RutemaX.new(ARGV)
-rescue
-	exit 1
+	Rutema::App.new(ARGV)
+rescue Rutema::RutemaError
+ puts $!.message
+ exit 1
 end

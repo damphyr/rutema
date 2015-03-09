@@ -9,7 +9,6 @@ temp/
 tmp/
 log/
 pkg/
-doc/
 rubyforge_site/
 test/coverage/
 coverage/
@@ -18,3 +17,5 @@ coverage.info
 #!foo.html
 # Ignore objects and archives.
 #*.[oa]
+
+Gemfile.lock

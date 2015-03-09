@@ -1,0 +1,8 @@
+require 'rake/file_list'
+configure do |cfg|
+  cfg.import("../config/tools.rutema")
+  cfg.tests=Rake::FileList["../specs/T0*.spec"].existing
+  cfg.check="../specs/check.spec"
+  cfg.setup="../specs/setup.spec"
+  cfg.teardown="../specs/teardown.spec"
+end

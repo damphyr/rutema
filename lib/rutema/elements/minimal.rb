@@ -1,5 +1,5 @@
-#  Copyright (c) 2007-2011 Vassilis Rizopoulos. All rights reserved.
-$:.unshift File.join(File.dirname(__FILE__),'..','..')
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+require 'highline'
 module Rutema
   #The Elements module provides the namespace for the various modules adding parser functionality
   module Elements
@@ -15,6 +15,7 @@ module Rutema
       # <echo>A meaningful message</echo>
       def element_echo step
         step.cmd=Patir::RubyCommand.new("echo"){|cmd| cmd.error="";cmd.output="#{step.text}";$stdout.puts(cmd.output) ;:success}
+        return step
       end
       #prompt asks the user a yes/no question. Answering yes means the step is succesful.
       # <prompt text="Do you want fries with that?"/>
@@ -31,6 +32,7 @@ module Rutema
             raise "n"
           end#if
         end#do rubycommand
+        return step
       end
       #command executes a shell command
       # <command cmd="useful_command.exe with parameters", working_directory="some/directory"/>
@@ -38,7 +40,8 @@ module Rutema
         raise ParserError,"missing required attribute cmd in #{step}" unless step.has_cmd?
         wd=Dir.pwd
         wd=step.working_directory if step.has_working_directory?
-        step.cmd=Patir::ShellCommand.new(:cmd=>step.cmd,:working_directory=>File.expand_path(wd))      
+        step.cmd=Patir::ShellCommand.new(:cmd=>step.cmd,:working_directory=>File.expand_path(wd))
+        return step  
       end
     end
   end

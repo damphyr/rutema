@@ -1,21 +1,12 @@
-$:.unshift File.join(File.dirname(__FILE__),'..','lib')
 require 'test/unit'
 require 'ostruct'
 require 'mocha/setup'
-require 'rutema/parsers/xml'
+require_relative '../lib/rutema/parsers/xml'
+
 
 #$DEBUG=true
 module TestRutema
-  class TestSpecificationParser<Test::Unit::TestCase
-    def test_specification_parser
-      parser=nil
-      assert_nothing_raised() { parser=Rutema::SpecificationParser.new({}) }
-      assert_not_nil(parser)
-      assert(!parser.configuration.empty?)
-      assert_raise(Rutema::ParserError) { parser.parse_specification("foo") }
-    end
-  end
-  class TestBaseXMlParser<Test::Unit::TestCase
+  module Samples
     SAMPLE_SPEC=<<-EOT
     <specification name="sample">
     <title>Title</title>
@@ -32,7 +23,7 @@ module TestRutema
     <description>Description</description>
     <scenario>
     <step/>
-    <include_scenario file="#{File.expand_path(File.dirname(__FILE__))}/../examples/specs/include.scenario"/>
+    <include_scenario file="#{File.expand_path(File.dirname(__FILE__))}/data/include.scenario"/>
     </scenario>
     </specification>
     EOT
@@ -41,7 +32,7 @@ module TestRutema
     <title>Title</title>
     <description>Description</description>
     <scenario>
-    <include_scenario file=unknown.scenario"/>
+    <include_scenario file="unknown.scenario"/>
     </scenario>
     </specification>
     EOT
@@ -54,10 +45,37 @@ module TestRutema
     </scenario>
     </specification>
     EOT
-
+    MINIMAL_SPEC=<<-EOT
+    <specification name="sample">
+    <title>Title</title>
+    <description>Description</description>
+    <scenario>
+    <echo/>
+    <command cmd="l"/>
+    </scenario>
+    </specification>
+    EOT
+    INCLUDE_SCENARIO=<<-EOT
+    <?xml version="1.0" encoding="UTF-8"?>
+    <scenario>
+      <echo>This is a step from an included scenario</echo>
+      <echo>And another step from the included scenario</echo>
+    </scenario>
+    EOT
+  end
+  class TestSpecificationParser<Test::Unit::TestCase
+    def test_specification_parser
+      parser=nil
+      assert_nothing_raised() { parser=Rutema::Parsers::SpecificationParser.new({}) }
+      assert_not_nil(parser)
+      assert(parser.configuration.empty?,"Configuration is not empty")
+      assert_raise(Rutema::ParserError) { parser.parse_specification("foo") }
+    end
+  end
+  class TestXMLParser<Test::Unit::TestCase
     def test_parse_specification
-      parser=Rutema::BaseXMLParser.new({})
-      specification=parser.parse_specification(SAMPLE_SPEC)
+      parser=Rutema::Parsers::XML.new(nil)
+      specification=parser.parse_specification(Samples::SAMPLE_SPEC)
       assert_equal("sample",specification.name)
       assert_equal("Description", specification.description)
       assert_equal("Title", specification.title)
@@ -70,62 +88,19 @@ module TestRutema
       assert_raise(Rutema::ParserError) { parser.parse_specification("") }
       assert_raise(Rutema::ParserError) { parser.parse_specification("missing.spec") }
     end
-
     def test_include
-      parser=Rutema::BaseXMLParser.new({})
-      specification=parser.parse_specification(INCLUDE_SPEC)
+      parser=Rutema::Parsers::XML.new(nil)
+      specification=parser.parse_specification(Samples::INCLUDE_SPEC)
       assert_equal(3, specification.scenario.steps.size)
       assert(specification.scenario.steps[2].has_included_in?)
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(BAD_INCLUDE_SPEC) }
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(MISSING_INCLUDE_SPEC) }
-    end
-
-  end
-  class TestExtensibleXMlParser<Test::Unit::TestCase
-    SAMPLE_SPEC=<<-EOT
-    <specification name="sample">
-    <title>Title</title>
-    <description>Description</description>
-    <scenario>
-    <step/>
-    <another_step script="script"/>
-    </scenario>
-    </specification>
-    EOT
-    def test_parse_specification
-      parser=Rutema::ExtensibleXMLParser.new({})
-      assert_not_nil(parser.configuration)
-      specification=nil
-      assert_nothing_raised() { specification=parser.parse_specification(SAMPLE_SPEC) }
-      assert_equal(2, specification.scenario.steps.size)
+      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
+      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
     end
     def test_parse_error
-      parser=Rutema::ExtensibleXMLParser.new({})
+      parser=Rutema::Parsers::XML.new(nil)
       assert_not_nil(parser.configuration)
       specification=nil
       assert_raise(Rutema::ParserError) { specification=parser.parse_specification("<") }
-    end
-  end
-  class TestMinimalXMlParser<Test::Unit::TestCase
-    SAMPLE_SPEC=<<-EOT
-    <specification name="sample">
-    <title>Title</title>
-    <description>Description</description>
-    <scenario>
-    <echo/>
-    <command cmd="l"/>
-    </scenario>
-    </specification>
-    EOT
-    def test_parse_specification
-      parser=Rutema::MinimalXMLParser.new({})
-      specification=nil
-      assert_nothing_raised() { specification=parser.parse_specification(SAMPLE_SPEC) }
-      assert_not_nil(specification)
-      assert_equal(2, specification.scenario.steps.size)
-      assert_equal("Description", specification.description)
-      assert_equal("Title", specification.title)
-      assert_equal("sample", specification.name)
     end
   end
 end

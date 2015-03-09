@@ -1,30 +1,35 @@
-#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
 # -*- ruby -*-
 $:.unshift File.join(File.dirname(__FILE__),"lib")
 require 'hoe'
-require 'rutema/system'
+require 'rutema/version'
 
-Hoe.spec('rutema') do |p|
-  p.version=Rutema::Version::STRING
-  p.rubyforge_name = 'patir'
-  p.author = "Vassilis Rizopoulos"
-  p.email = "vassilisrizopoulos@gmail.com"
-  p.summary = 'rutema is a test execution and management framework for heterogeneous testing environments'
-  p.description = p.paragraphs_of('README.md', 1..4).join("\n\n")
-  p.urls= ["http://github.com/damphyr/rutema"]
-  p.changes = p.paragraphs_of('History.txt', 0..1).join("\n\n")
-  p.extra_deps<<["patir", "~>0.8.0"]
-  p.extra_deps<<["highline","~>1.6.15"]
-  p.extra_deps<<["mailfactory","~>1.4.0"]
-  p.spec_extras={:executables=>["rutema"]}
+Hoe.spec "rutema" do |prj|
+  developer("Vassilis Rizopoulos", "vassilisrizopoulos@gmail.com")
+  license "MIT"
+  prj.version = Rutema::Version::STRING
+  prj.summary='rutema is a test execution and management framework for heterogeneous testing environments'
+  prj.urls=["http://github.com/damphyr/rutema"]
+  prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
+  prj.local_rdoc_dir='doc/rdoc'
+  prj.readme_file="README.md"
+  prj.extra_deps<<["patir", "~>0.8.0"]
+  prj.extra_deps<<["highline","~>1.7.0"]
+  prj.spec_extras={:executables=>["rutema"],:default_executable=>"rutema"}
 end
 
-task :default =>[:test,:system_tests]
+Rake::Task[:default].clear()
 
-task :system_tests do 
-  Dir.chdir(File.join(File.dirname(__FILE__),'examples')) do 
-    sh('./system_test.sh')
+task :default =>[:"test:coverage"]
+
+task :"test:coverage" do
+  require 'coveralls'
+  Coveralls.wear!
+  require 'minitest/autorun'
+  Rake::FileList["#{File.dirname(__FILE__)}/test/test_*.rb"].each do |test_file|
+    require_relative "test/#{test_file.pathmap('%n')}"
   end
 end
+
 # vim: syntax=Ruby
 

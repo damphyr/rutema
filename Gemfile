@@ -1,13 +1,12 @@
-source :rubygems
+source "https://rubygems.org"
 
-gem "patir", "~>0.8.0"
-gem "highline","~>1.6.15"
+gem "patir", "~>0.8"
+gem "highline","~>1.7.0"
 
 group :development do
-	gem "hoe",'~>3.1'
-	gem 'rdoc','~>3.12'
-	gem "mocha","~>0.13.0"
-	gem "sqlite3","~>1.3.6"
-	gem "activerecord","~>3.2.9"
-	gem "mailfactory","~>1.4.0"
+  gem 'coveralls', :require => false
+	gem "hoe",'~>3.13'
+	gem 'rdoc','~>4.0.1'
+	gem "mocha","~>0.14.0", :require => false
+  gem "pry"
 end
