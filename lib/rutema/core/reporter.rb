@@ -95,12 +95,18 @@ module Rutema
         @silent=configuration.reporters.fetch(self.class,{})["silent"]
       end
       def report specs,states,errors
-        failures=0
+        failures=[]
         states.each do |k,v|
-          failures+=1 if v.last['status']==:error
+          failures<<k if v.last['status']==:error
         end
-        puts "#{errors.size} errors. #{states.size} test cases executed. #{failures} failed" unless @silent
-        return failures
+        unless @silent
+          puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"
+          unless failures.empty?
+            puts "Failures:"
+            puts specs.map{|spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name)}.compact.join("\n")
+          end
+        end
+        return failures.size
       end
     end
   end
