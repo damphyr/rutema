@@ -66,23 +66,25 @@ module Rutema
     class Console<EventReporter
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
-        @silent=configuration.reporters.fetch(self.class,{})["silent"]
+        @mode=configuration.reporters.fetch(self.class,{})["mode"]
       end
       def update data
         if data[:error]
-          puts ">ERROR: #{data[:error]}"
+          puts ">ERROR: #{data[:error]}" unless @mode=="off"
         elsif data[:test] 
           if data["phase"]
-            puts ">#{data["phase"]} #{data[:test]}" unless @silent
+            puts ">#{data["phase"]} #{data[:test]}" unless @mode=="silent" || @mode=="off"
           elsif data[:message]
-            puts ">#{data[:test]} #{data[:message]}" unless @silent
+            puts ">#{data[:test]} #{data[:message]}" unless @mode=="silent" || @mode=="off"
           elsif data["status"]==:error
-            puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
-            puts data.fetch("out","")
-            puts data.fetch("error","")
+            if @mode!="off"
+              puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
+              puts data.fetch("out","")
+              puts data.fetch("error","")
+            end
           end
         elsif data[:message] 
-          puts ">#{data[:message]}" unless @silent
+          puts ">#{data[:message]}" unless @mode=="silent" || @mode=="off"
         end
       end
     end
