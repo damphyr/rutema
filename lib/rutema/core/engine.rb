@@ -54,6 +54,7 @@ module Rutema
       else
         specs=parse_specifications(@configuration.tests)
       end
+      specs.compact!
       check,setup,teardown=parse_specials(@configuration)
       return [check,setup,teardown,specs]
     end
