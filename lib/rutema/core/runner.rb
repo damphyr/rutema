@@ -74,8 +74,9 @@ module Rutema
           step.cmd.run(meta)
         else
           message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
+          step.status=:warning
         end
-        step.status=:success if step.status==:error && step.ignore?
+        step.status=:success step.ignore?
         return step
       end
     end
