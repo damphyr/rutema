@@ -80,7 +80,7 @@ module Rutema
             if @mode!="off"
               puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
               puts data.fetch("out","")
-              puts data.fetch("error","")
+              puts data.fetch("err","")
             end
           end
         elsif data[:message] 
