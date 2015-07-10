@@ -13,8 +13,8 @@ Hoe.spec "rutema" do |prj|
   prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
   prj.local_rdoc_dir='doc/rdoc'
   prj.readme_file="README.md"
-  prj.extra_deps<<["patir", "~>0.8.0"]
-  prj.extra_deps<<["highline","~>1.7.0"]
+  prj.extra_deps<<["patir", "~>0.8"]
+  prj.extra_deps<<["highline","~>1.7"]
   prj.spec_extras={:executables=>["rutema"],:default_executable=>"rutema"}
 end
 
