@@ -3,7 +3,7 @@ module Rutema
   module Version
     MAJOR=2
     MINOR=0
-    TINY="0.pre"
+    TINY="0.pre2"
     STRING=[ MAJOR, MINOR, TINY ].join( "." )
   end
 end
