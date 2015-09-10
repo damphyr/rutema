@@ -26,7 +26,6 @@ module Rutema
       message("start")
       check,setup,teardown,tests=*parse(test_identifier)
       if tests.empty?
-        error(test_identifier,"Did not parse any tests succesfully")
         @dispatcher.exit
         raise RutemaError,"Did not parse any tests succesfully"
       else
@@ -49,7 +48,7 @@ module Rutema
         if @configuration.tests.include?(File.expand_path(test_identifier))
           specs<<parse_specification(File.expand_path(test_identifier))
         else
-          error(test_identifier,"Does not exist in the configuration")  
+          error(File.expand_path(test_identifier),"Does not exist in the configuration")  
         end
       else
         specs=parse_specifications(@configuration.tests)
