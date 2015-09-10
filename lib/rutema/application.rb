@@ -13,10 +13,8 @@ module Rutema
       @configuration.reporters||={}
       @configuration.reporters[Rutema::Reporters::Console]||={:class=>Rutema::Reporters::Console, "silent"=>@silent} unless @bare
       @configuration.reporters[Rutema::Reporters::Summary]||={:class=>Rutema::Reporters::Summary, "silent"=>(@silent||@bare)}
-      Dir.chdir(File.dirname(@config_file)) do 
-        @engine=Rutema::Engine.new(@configuration)
-        application_flow
-      end
+      @engine=Rutema::Engine.new(@configuration)
+      application_flow
     end
     private
     def parse_command_line args

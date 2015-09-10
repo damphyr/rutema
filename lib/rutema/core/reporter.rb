@@ -70,7 +70,7 @@ module Rutema
       end
       def update data
         if data[:error]
-          puts ">ERROR: #{data[:error]}" unless @mode=="off"
+          puts ">ERROR: #{data.fetch(:test,"")} #{data[:error]}" unless @mode=="off"
         elsif data[:test] 
           if data["phase"]
             puts ">#{data["phase"]} #{data[:test]}" unless @mode=="silent" || @mode=="off"
@@ -106,7 +106,7 @@ module Rutema
             puts specs.map{|spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name)}.compact.join("\n")
           end
         end
-        return failures.size
+        return failures.size+errors.size
       end
     end
   end

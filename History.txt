@@ -1,4 +1,4 @@
-== 2.0.0 /2015-03-09
+== 2.0.0 /2015-09-10
  * Completely rewritten execution engine
    * dropped Ruby 1.8.x, 1.9.x support, added 2.x
  * Rewritten configuration engine and new format for configuration files
@@ -6,6 +6,9 @@
  * Core separated from standard implementations
  * No database dependencies, no AR model. 
  * No more disk IO in unit tests
+ * pre3: 
+    * errors now affect the rutema exit code (before it was only test failures)
+    * single test execution works with expected relative paths
 
 == 1.3.0 /2012-11-28
 * remove most of the gem dependencies by not requiring parsers and reporters in the core
