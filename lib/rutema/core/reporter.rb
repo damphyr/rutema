@@ -57,8 +57,16 @@ module Rutema
         if data[:error]
           @errors<<data
         elsif data[:test] && data['status']
-          @states[data[:test]]||=[]
-          @states[data[:test]]<<data
+          test_state=@states.fetch(data[:test],{})
+          test_state["timestamp"]||=data[:timestamp]
+          duration=test_state.fetch("duration",0)+data["duration"]
+          test_state["duration"]=duration
+          test_state["status"]= data["status"]
+          steps=test_state.fetch("steps",[])
+          steps<<data
+          test_state["steps"]=steps
+          
+          @states[data[:test]]=test_state
         end
       end
     end
@@ -97,7 +105,7 @@ module Rutema
       def report specs,states,errors
         failures=[]
         states.each do |k,v|
-          failures<<k if v.last['status']==:error
+          failures<<k if v.fetch("steps",[]).last['status']==:error
         end
         unless @silent
           puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"

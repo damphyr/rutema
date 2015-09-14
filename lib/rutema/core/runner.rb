@@ -17,9 +17,9 @@ module Rutema
       end
 
       def run spec
-        state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,:test=>spec.name}
         steps=[]
         status=:success
+        state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,:test=>spec.name}
         message(:test=>spec.name,'phase'=>'started')
         if @setup
           message(:test=>spec.name,'phase'=>'setup')
