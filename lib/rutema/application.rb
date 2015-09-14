@@ -9,7 +9,9 @@ module Rutema
       parse_command_line(command_line_args)
       @configuration=Rutema::Configuration.new(@config_file)
       @configuration.context||={}
-      @configuration.context[:config_file]=File.basename(@config_file)
+      @configuration.context[:config_file]=File.expand_path(@config_file)
+      @configuration.context[:config_name]=File.basename(@config_file)
+      @configuration.context[:start_time]=Time.now
       @configuration.reporters||={}
       @configuration.reporters[Rutema::Reporters::Console]||={:class=>Rutema::Reporters::Console, "silent"=>@silent} unless @bare
       @configuration.reporters[Rutema::Reporters::Summary]||={:class=>Rutema::Reporters::Summary, "silent"=>(@silent||@bare)}
