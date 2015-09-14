@@ -12,4 +12,6 @@ lib/rutema/core/reporter.rb
 lib/rutema/core/runner.rb
 lib/rutema/elements/minimal.rb
 lib/rutema/parsers/xml.rb
+lib/rutema/reporters/json.rb
+lib/rutema/reporters/nunit.rb
 lib/rutema/version.rb
