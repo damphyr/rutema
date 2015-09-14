@@ -6,9 +6,16 @@ module Rutema
   module Reporters
     #This reporter generates an NUnit style XML result file based on http://nunit.org/files/testresult_30.txt
     #
+    #Be careful, most of the CI plugins do not understand this NUnit format.
+    #
     #The following configuration keys are used by Rutema::Reporters::NUnit
     #
-    # filename - the filename to use to save the report. Default is 'rutema.results.nunit.xml'
+    # filename - the filename to use when saving the report. Default is 'rutema.results.nunit.xml'
+    #
+    #Example configuration:
+    #
+    # require "rutema/reporters/nunit"
+    # cfg.reporter={:class=>Rutema::Reporters::NUnit,"filename"=>"rutema.nunit.xml"}
     class NUnit<BlockReporter
       DEFAULT_FILENAME="rutema.results.nunit.xml"
     
