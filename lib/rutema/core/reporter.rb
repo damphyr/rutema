@@ -118,4 +118,12 @@ module Rutema
       end
     end
   end
+
+  module Utilities
+    require "fileutils"
+    def self.write_file filename,content
+      FileUtils.mkdir_p(File.dirname(filename),:verbose=>false)
+      File.open(filename, 'wb') {|f| f.write(content) }
+    end  
+  end
 end

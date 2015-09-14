@@ -6,9 +6,9 @@ module Rutema
   module Reporters
     #The following configuration keys are used by Reporters::NUnit
     #
-    # filename - the filename to use to save the report. Default is 'rutema.nunit.xml'
+    # filename - the filename to use to save the report. Default is 'rutema.resutls.nunit.xml'
     class NUnit<BlockReporter
-      DEFAULT_FILENAME="rutema.nunit.xml"
+      DEFAULT_FILENAME="rutema.results.nunit.xml"
     
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
@@ -49,7 +49,7 @@ module Rutema
         xmldoc=REXML::Document.new
         xmldoc.add_element(element_run)
         
-        File.open(@filename,"wb") {|f| f.write( xmldoc.to_s)}
+        Rutema::Utilities.write_file(@filename,xmldoc.to_s)
       end
       private
       def test_case name,state
