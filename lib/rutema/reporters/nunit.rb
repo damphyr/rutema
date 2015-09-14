@@ -56,6 +56,7 @@ module Rutema
         tests.each{|t| element_suite.add_element(t)}
         element_run.add_element(element_suite)
         xmldoc=REXML::Document.new
+        xmldoc<<REXML::XMLDecl.new
         xmldoc.add_element(element_run)
         
         Rutema::Utilities.write_file(@filename,xmldoc.to_s)
