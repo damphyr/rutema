@@ -4,9 +4,11 @@ require_relative "../core/reporter"
 
 module Rutema
   module Reporters
-    #The following configuration keys are used by Reporters::NUnit
+    #This reporter generates an NUnit style XML result file based on http://nunit.org/files/testresult_30.txt
     #
-    # filename - the filename to use to save the report. Default is 'rutema.resutls.nunit.xml'
+    #The following configuration keys are used by Rutema::Reporters::NUnit
+    #
+    # filename - the filename to use to save the report. Default is 'rutema.results.nunit.xml'
     class NUnit<BlockReporter
       DEFAULT_FILENAME="rutema.results.nunit.xml"
     
@@ -28,20 +30,27 @@ module Rutema
         failures=errors.map{|error| failure("In #{error[:test]}\n#{error[:error]}")}
         run_status=:error unless failures.empty?
 
+        attributes={"name"=>@configuration.context["config_name"],
+          "fullname"=>@configuration.context["config_file"],
+          "testcasecount"=>specs.size,
+          "result"=>nunit_result(run_status),
+          "total"=>specs.size,
+          "passed"=>specs.size-number_of_failed-failures.size,
+          "failed"=>number_of_failed,
+          "skipped"=>failures.size
+        }
         #<test-run id="" name="" fullname=""  testcasecount="" 
         #result="" time="" run-date="YYYY-MM-DD" start-time="HH:MM:SS">
         #total="18" passed="12" failed="2" inconclusive="1" skipped="3"
         element_run=REXML::Element.new("test-run")
-        element_run.add_attributes("name"=>@configuration.context["config_file"],"testcasecount"=>specs.size,"result"=>nunit_result(run_status),
-          "total"=>specs.size,"passed"=>specs.size-number_of_failed-failures.size,"failed"=>number_of_failed,"skipped"=>failures.size)
+        element_run.add_attributes(attributes)
         
         #<test-suite type="rutema" id="" name="" fullname="" testcasecount="" result="" time="">
         #<failure>
         #  <message></message>
         #</failure>
         element_suite=REXML::Element.new("test-suite")
-        element_suite.add_attributes("name"=>@configuration.context["config_file"],"testcasecount"=>specs.size,"result"=>nunit_result(run_status),
-          "total"=>specs.size,"passed"=>specs.size-number_of_failed-failures.size,"failed"=>number_of_failed,"skipped"=>failures.size)
+        element_suite.add_attributes(attributes)
         
         failures.each{|t| element_suite.add_element(t)}
         tests.each{|t| element_suite.add_element(t)}
