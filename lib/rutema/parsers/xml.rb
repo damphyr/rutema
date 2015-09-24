@@ -43,6 +43,8 @@ module Rutema
           raise Rutema::ParserError,"Duplicate test name '#{spec.name}' in #{filename}" if @parsed.include?(spec.name)
           @parsed<<spec.name
           extension_handling(spec)
+        rescue REXML::ParseException
+          raise Rutema::ParserError,$!.message
         end
       end
       private
