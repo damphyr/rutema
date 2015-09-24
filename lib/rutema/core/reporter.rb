@@ -25,7 +25,12 @@ module Rutema
           while true do
             if  @queue.size>0
               data=@queue.pop
-              update(data) if data
+              begin
+                update(data) if data
+              rescue
+                puts "#{self.class} failed with #{$!.message}"
+                raise
+              end
             end
             sleep 0.1
           end
@@ -36,8 +41,10 @@ module Rutema
       end
 
       def exit
+        puts "Exiting #{self.class}" if $DEBUG
         if @thread
-          while @queue.size>0 do
+          puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
+          while @queue.size>0 && @thread.alive? do
             sleep 0.1
           end
           Thread.kill(@thread)
@@ -53,20 +60,20 @@ module Rutema
         @states={}
       end
 
-      def update data
-        if data[:error]
-          @errors<<data
-        elsif data[:test] && data['status']
-          test_state=@states.fetch(data[:test],{})
-          test_state["timestamp"]||=data[:timestamp]
-          duration=test_state.fetch("duration",0)+data["duration"]
+      def update message
+        case message
+        when RunnerMessage
+          test_state=@states.fetch(message.test,{})
+          test_state["timestamp"]||=message.timestamp
+          duration=test_state.fetch("duration",0)+message.duration
           test_state["duration"]=duration
-          test_state["status"]= data["status"]
+          test_state["status"]= message.status
           steps=test_state.fetch("steps",[])
-          steps<<data
+          steps<<message
           test_state["steps"]=steps
-          
-          @states[data[:test]]=test_state
+          @states[message.test]=test_state
+        when ErrorMessage
+          @errors<<message
         end
       end
     end
@@ -76,23 +83,20 @@ module Rutema
         super(configuration,dispatcher)
         @mode=configuration.reporters.fetch(self.class,{})["mode"]
       end
-      def update data
-        if data[:error]
-          puts ">ERROR: #{data.fetch(:test,"")} #{data[:error]}" unless @mode=="off"
-        elsif data[:test] 
-          if data["phase"]
-            puts ">#{data["phase"]} #{data[:test]}" unless @mode=="silent" || @mode=="off"
-          elsif data[:message]
-            puts ">#{data[:test]} #{data[:message]}" unless @mode=="silent" || @mode=="off"
-          elsif data["status"]==:error
-            if @mode!="off"
-              puts ">FATAL: #{data[:test]}(#{data["number"]}) failed"
-              puts data.fetch("out","")
-              puts data.fetch("err","")
+      def update message
+        unless @mode=="off"
+          case message
+          when RunnerMessage
+            if message.status == :error
+              puts "FATAL|#{message.to_s}"
+            else
+              puts message.to_s if @mode=="verbose"
             end
+          when ErrorMessage
+            puts message.to_s 
+          when Message
+            puts message.to_s if @mode=="verbose"
           end
-        elsif data[:message] 
-          puts ">#{data[:message]}" unless @mode=="silent" || @mode=="off"
         end
       end
     end
@@ -105,7 +109,7 @@ module Rutema
       def report specs,states,errors
         failures=[]
         states.each do |k,v|
-          failures<<k if v.fetch("steps",[]).last['status']==:error
+          failures<<k if v.fetch("steps",[]).last.status==:error
         end
         unless @silent
           puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"

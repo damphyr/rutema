@@ -104,7 +104,7 @@ module Rutema
         status=@runner.run(specification)["status"]
       else
         status=:not_executed
-        message(:test=>specification.name,:message=>"No scenario", :status=>status)
+        message(:test=>specification.name,:text=>"No scenario", :status=>status)
       end
       return status
     end
