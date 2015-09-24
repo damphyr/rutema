@@ -55,10 +55,9 @@ module Rutema
             error(name,"Scenario #{name} contains no steps")
             status=:error
           else
-            stps.each do |s| 
-              message(:test=>name,:text=>s.to_s)
+            stps.each do |s|
               executed_steps<<run_step(s,meta)
-              message(:test=>name,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
+              message(:test=>name,:text=>s.to_s,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
               status=s.status
               break if :error==s.status
             end

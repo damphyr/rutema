@@ -43,10 +43,10 @@ module Rutema
     end
 
     def to_s
-      msg="#{@test}:#{@number}"
-      msg<<" #{@text}." unless @text.empty?
+      msg="#{@test}:"
+      msg<<"#{@text}." unless @text.empty?
       outpt=output()
-      msg<<" Output:\n#{outpt}" unless outpt.empty?
+      msg<<" Output:\n#{outpt}" unless outpt.empty? || @status!=:error
       return msg
     end
 
@@ -54,7 +54,7 @@ module Rutema
       msg=""
       msg<<"#{@out}\n" unless @out.empty?
       msg<<@err unless @err.empty?
-      return msg
+      return msg.chomp
     end
   end
 
