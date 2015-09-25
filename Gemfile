@@ -9,5 +9,5 @@ group :development do
 	gem 'rdoc','~>4.2.0'
 	gem "mocha","~>0.14.0", :require => false
   gem "pry"
-  gem "test-unit", "~>2.1.5", :require => false
+  gem "test-unit", "~>3.1.3", :require => false
 end
