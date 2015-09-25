@@ -121,7 +121,7 @@
       #Checks if a path exists and raises a ConfigurationException if not
       def check_path path
         path=File.expand_path(path)
-        raise ConfigurationException,"#{path} does not exist" unless File.exists?(path)
+        raise ConfigurationException,"#{path} does not exist" unless File.exist?(path)
         return path
       end
       #Gives back a string of key=value,key=value for a hash
@@ -132,7 +132,7 @@
       end
 
       def full_path filename
-        return File.expand_path(filename) if File.exists?(filename)
+        return File.expand_path(filename) if File.exist?(filename)
         return filename
       end
     end
@@ -165,7 +165,7 @@
       # import("first.rutema")
       def import filename
         fnm = File.expand_path(filename)
-        if File.exists?(fnm)          
+        if File.exist?(fnm)          
           load_configuration(fnm)
         else
           raise ConfigurationException, "Import error: Can't find #{fnm}"

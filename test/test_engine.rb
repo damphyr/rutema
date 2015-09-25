@@ -55,10 +55,10 @@ module TestRutema
         engine=Rutema::Engine.new(conf)
         engine.run
       #end
-      assert_equal(9, MockReporter.updates)
+      assert_equal(5, MockReporter.updates)
       #test for a spec that is not in the config and re-entry
       assert_raise(Rutema::RutemaError) { engine.run("foo")}
-      assert_equal(2, MockReporter.updates)
+      assert_equal(1, MockReporter.updates)
     end
   end
 end

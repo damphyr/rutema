@@ -31,6 +31,7 @@ module Rutema
         #opt.on("--color","Adds color to the Console reporter") { @color=true}
         opt.on("-v", "--version","Displays the version") { $stdout.puts("rutema v#{Version::STRING}");exit 0 }
         opt.on("--help", "-h", "-?", "This text") { $stdout.puts opt; exit 0 }
+        opt.on("--debug", "-d", "Turn on debug messages") { $DEBUG=true }
         opt.on("You can provide a specification filename in order to run a single test")
         opt.parse!
         #and now the rest

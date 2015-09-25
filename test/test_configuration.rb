@@ -34,10 +34,10 @@ module TestRutema
     def test_rutema_configuration
       cfg="foo.cfg"
       File.expects(:read).with("full.rutema").returns(FULL_CONFIG)
-      File.expects(:exists?).with(File.expand_path("check.spec")).returns(true)
-      File.expects(:exists?).with(File.expand_path("teardown.spec")).returns(true)
-      File.expects(:exists?).with(File.expand_path("setup.spec")).returns(true)
-      File.expects(:exists?).with("T001.spec").returns(false)
+      File.expects(:exist?).with(File.expand_path("check.spec")).returns(true)
+      File.expects(:exist?).with(File.expand_path("teardown.spec")).returns(true)
+      File.expects(:exist?).with(File.expand_path("setup.spec")).returns(true)
+      File.expects(:exist?).with("T001.spec").returns(false)
       #load the valid configuration
       assert_nothing_raised() { cfg=Rutema::Configuration.new("full.rutema")}
       assert_not_nil(cfg.parser)

@@ -104,7 +104,7 @@ module Rutema
         status=@runner.run(specification)["status"]
       else
         status=:not_executed
-        message(:test=>specification.name,:message=>"No scenario", :status=>status)
+        message(:test=>specification.name,:text=>"No scenario", :status=>status)
       end
       return status
     end
@@ -138,6 +138,7 @@ module Rutema
     end
     
     def run!
+      puts "Running #{@streaming_reporters.size} streaming reporters" if $DEBUG
       @streaming_reporters.each {|r| r.run!}
       @thread=Thread.new do
         while true do
@@ -154,6 +155,7 @@ module Rutema
       Reporters::Summary.new(@configuration,self).report(specs,@collector.states,@collector.errors)
     end
     def exit
+      puts "Exiting main dispatcher" if $DEBUG
       if @thread
         flush
         @streaming_reporters.each {|r| r.exit}
@@ -162,6 +164,7 @@ module Rutema
     end
     private
     def flush
+      puts "Flushing queues" if $DEBUG
       if @thread
         while @queue.size>0 do
           dispatch()
