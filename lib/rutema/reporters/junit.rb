@@ -25,6 +25,10 @@ module Rutema
       end
       #We get all the data from a test run in here.
       def report specs,states,errors
+        cnt=process_data(specs,states,errors)
+        Rutema::Utilities.write_file(@filename,cnt)
+      end
+      def process_data specs,states,errors
         tests=[]
         number_of_failed=0
         total_duration=0
@@ -33,29 +37,17 @@ module Rutema
           number_of_failed+=1 if v['status']!=:success
           total_duration+=v["duration"].to_f
         end
-        crashes=errors.map{|error| crash(error[:test],error[:error])}
-
-        
         #<testsuite disabled="0" errors="0" failures="1" hostname="" id=""
         #name="" package="" skipped="" tests="" time="" timestamp="">
         attributes={"id"=>@configuration.context[:config_name],
           "name"=>@configuration.context[:config_name],
-          "errors"=>crashes.size,
+          "errors"=>errors.size,
           "failures"=>number_of_failed,
           "tests"=>specs.size,
           "time"=>total_duration,
           "timestamp"=>@configuration.context[:start_time]
         }
-        element_suite=REXML::Element.new("testsuite")
-        element_suite.add_attributes(attributes)        
-        
-        crashes.each{|t| element_suite.add_element(t)}
-        tests.each{|t| element_suite.add_element(t)}
-        xmldoc=REXML::Document.new
-        xmldoc<<REXML::XMLDecl.new
-        xmldoc.add_element(element_suite)
-        
-        Rutema::Utilities.write_file(@filename,xmldoc.to_s)
+        return junit_content(specs,attributes,errors)
       end
       private
       def test_case name,state
@@ -82,7 +74,6 @@ module Rutema
         end
         return element_test
       end
-      
       def crash name,message
         failed=REXML::Element.new("testcase")
         failed.add_attributes("name"=>name,"classname"=>@configuration.context[:config_name],"time"=>0)
@@ -91,6 +82,19 @@ module Rutema
         msg.text=message
         failed.add_element(msg)
         return failed
+      end
+      def junit_content tests,attributes,errors
+        element_suite=REXML::Element.new("testsuite")
+        element_suite.add_attributes(attributes)        
+        errors.each{|error| element_suite.add_element(crash(error.test,error.text))}
+        tests.each{|t| element_suite.add_element(t)}
+        return document(element_suite).to_s
+      end
+      def document suite
+        xmldoc=REXML::Document.new
+        xmldoc<<REXML::XMLDecl.new
+        xmldoc.add_element(suite)
+        return xmldoc
       end
     end
   end
