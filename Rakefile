@@ -23,9 +23,9 @@ Rake::Task[:default].clear()
 task :default =>[:"test:coverage"]
 
 task :"test:coverage" do
+  require "test-unit"
   require 'coveralls'
   Coveralls.wear!
-  require 'minitest/autorun'
   Rake::FileList["#{File.dirname(__FILE__)}/test/test_*.rb"].each do |test_file|
     require_relative "test/#{test_file.pathmap('%n')}"
   end
