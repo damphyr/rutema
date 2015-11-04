@@ -7,7 +7,7 @@ group :development do
   gem 'coveralls', :require => false
 	gem "hoe",'~>3.14.2'
 	gem 'rdoc','~>4.2.0'
-	gem "mocha","~>0.14.0", :require => false
+	gem "mocha","~>1.1.0", :require => false
   gem "pry"
   gem "test-unit", "~>3.1.3", :require => false
 end
