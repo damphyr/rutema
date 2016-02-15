@@ -79,5 +79,16 @@ module Rutema
         return step
       end
     end
+
+    class NoOp<Default
+      def run_step step,meta
+        unless step.has_cmd? && step.cmd.respond_to?(:run)
+          message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")
+          step.status=:warning
+        end
+        step.status=:success if step.ignore?
+        return step
+      end
+    end
   end
 end

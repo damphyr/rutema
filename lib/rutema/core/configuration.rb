@@ -99,6 +99,19 @@
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @parser=definition
       end
+
+      #A hash defining the runner to use.
+      #
+      #The hash is passed as is to the runner constructor and each runner should define the necessary configuration keys.
+      #
+      #The only required key from the configurator's point fo view is :class which should be set to the fully qualified name of the class to use.
+      #
+      #Example:
+      # cfg.runner={:class=>Rutema::Runners::NoOp}
+      def runner= definition
+        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
+        @runner=definition
+      end
       
       #Adds a reporter to the configuration.
       #
