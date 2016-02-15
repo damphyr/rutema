@@ -12,7 +12,11 @@ module Rutema
       @queue=Queue.new
       @parser=instantiate_class(configuration.parser,configuration) if configuration.parser
       if configuration.runner
-        @runner=instantiate_class(configuration.runner,configuration) 
+        if configuration.runner[:class]
+         @runner=configuration.runner[:class].new(configuration.context,@queue)
+        else
+          raise RutemaError,"Runner settting overriden, but missing :class"
+        end
       else
         @runner=Rutema::Runners::Default.new(configuration.context,@queue)
       end

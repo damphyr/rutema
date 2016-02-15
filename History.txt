@@ -1,8 +1,10 @@
-== 2.0.0.pre6 /2015-09-25
+== 2.0.0.pre6 /2016-02-15
  * Switch the reporter interface to using types instead of hashes
  * Fix Ruby deprecation warnings
  * Reduced message output
  * Console reporter now has a verbosity setting
+ * Configuration setting for switching runners added
+ * NoOp Runner added
 == 2.0.0.pre5 /2015-09-14
  * Add JUnit format reporter
  * The NUnit format is v3, which means it won't work for most CI plugins
@@ -12,9 +14,9 @@
  * Rewritten configuration engine and new format for configuration files
  * Step by step status updates can now be sent to streaming reporters
  * Core separated from standard implementations
- * No database dependencies, no AR model. 
+ * No database dependencies, no AR model.
  * No more disk IO in unit tests
- * pre3: 
+ * pre3:
     * errors now affect the rutema exit code (before it was only test failures)
     * single test execution works with expected relative paths
  * pre4:
@@ -58,7 +60,7 @@
 * Added Rutema::RakeTask class to allow integration of the test runner with rake
 * Email reporting now suppresses _setup and _teardown entries unless it's configured as verbose. To do this add a :verbose=>true entry in the reporter configuration
 * Fixed a bug, where on a setup spec failure the state of the actual spec was nil
-* added YAML dump reporter	
+* added YAML dump reporter
 * Fixed a bug in the initialization of StepRunner that prevented use of --step
 == 1.0.9 / 2010-03-22
 * Fixed (hopefully) a nagging bug in activerecord reporter where it would crash if a step had status nil.
@@ -75,7 +77,7 @@
 * activerecord dependency is now 2.3.4
 == 1.0.6 / 2009-09-04
 * The run context is now passed to the runner and subsequently to the TestStep#run method
-	This way you can pass informaton to the command being run (context contains information on the start time of the run, the spec filename as well as any information added in the configuration) 
+	This way you can pass informaton to the command being run (context contains information on the start time of the run, the spec filename as well as any information added in the configuration)
 * Minor bugfix in the activerecord reporter to avoid crashes due to nil runner states
 * The runner adds the current scenario name to the context passed
 == 1.0.5 / 2009-07-16
@@ -116,7 +118,7 @@
 * Fixed check test behaviour (was not running even when specified in the configuration)
 * Fixed bungled emailing when using multiple addresses in the config
 == 0.9.1 / 2008-09-09
-* Modularisation of element parsing methods introduced. 
+* Modularisation of element parsing methods introduced.
 * MinimalXMLParser refactored as example.
 * Extra element parser modules available in the rutema_elements gem
 * Cleaned up EmailReporter. Unit tests with Mocha, text report has a better layout
@@ -131,7 +133,7 @@
 
 == 0.7.1 / 2008-06-12
 * Added the ruport_formatter.rb file to the manifest (and consequently to the gem)
-* Locked down the active record and ramaze versions to avoid the String#start_with? alias bug from active support 2.1.0 and the Ramaze.start! change 
+* Locked down the active record and ramaze versions to avoid the String#start_with? alias bug from active support 2.1.0 and the Ramaze.start! change
 == 0.7.0 / 2008-05-16
 * Support for tools, paths and context information in the configuration solidified (http://patir.rubyforge.org/rutema/tool_configuration.html for more)
 * Changes in the configuration for Historian and ActiveRecordReporter. Check the distro_test samples
@@ -163,7 +165,7 @@
 * Added Rutema::ExtensibleXMLParser - this parser simplifies parser creation immensely. Check the documentation for details
 * "Howto create a parser v0.5.0" officially the fastest deprecation of a document ever. http://patir.rubyforge.org/rutema/parser.html is the new black.
 * Corrected some english spelling mistakes (hey, we're not native speakers)
-* Fixed an issue with AR cached connections that interfered with unit tests 
+* Fixed an issue with AR cached connections that interfered with unit tests
 
 == 0.5.0 / 2008-02-26
 * activerecord reporter is now loaded by default (no need to require it in the configuration file)
@@ -176,7 +178,7 @@
 == 0.4.3 / 2008-02-25
 * fixed bug in rutemax when the activerecord reporter is used, where the database was not created relative to the configuration entry
 * fixed bug in rutemah where the report was not printed (doh!)
-* added active record reporter configuration and rutemah configuration to distro test 
+* added active record reporter configuration and rutemah configuration to distro test
 == 0.4.2 / 2007-12-05
 * rutemah code cleaned up
 * Bugfix: MinimalXMLParser now handles relative paths in command elements correctly
