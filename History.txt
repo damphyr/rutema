@@ -1,3 +1,5 @@
+== 2.0.0.pre7 /2016-02-29
+ * Bugfix: --check was not working
 == 2.0.0.pre6 /2016-02-15
  * Switch the reporter interface to using types instead of hashes
  * Fix Ruby deprecation warnings
