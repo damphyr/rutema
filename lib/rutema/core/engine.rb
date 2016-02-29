@@ -30,8 +30,12 @@ module Rutema
       message("start")
       check,setup,teardown,tests=*parse(test_identifier)
       if tests.empty?
-        @dispatcher.exit
-        raise RutemaError,"Did not parse any tests succesfully"
+        if is_special?(test_identifier)
+          run_scenarios([check],nil)
+        else
+          @dispatcher.exit
+          raise RutemaError,"Did not parse any tests succesfully"
+        end
       else
         @runner.setup=setup
         @runner.teardown=teardown
@@ -49,10 +53,10 @@ module Rutema
       #we're either parsing all of the tests, or just one
       #make sure the one test is on the list
       if test_identifier
-        if @configuration.tests.include?(File.expand_path(test_identifier))
-          specs<<parse_specification(File.expand_path(test_identifier))
+        if  is_spec_included?(test_identifier)
+          specs<<parse_specification(File.expand_path(test_identifier)) unless is_special?(test_identifier)
         else
-          error(File.expand_path(test_identifier),"Does not exist in the configuration")  
+          error(File.expand_path(test_identifier),"does not exist in the configuration")  
         end
       else
         specs=parse_specifications(@configuration.tests)
@@ -118,6 +122,16 @@ module Rutema
         return klass.new(configuration)
       end
       return nil
+    end
+    def is_spec_included? test_identifier
+      full_path=File.expand_path(test_identifier)
+      return @configuration.tests.include?(full_path) || is_special?(test_identifier) 
+    end
+    def is_special? test_identifier
+      full_path=File.expand_path(test_identifier)
+      return full_path==@configuration.check ||
+      full_path==@configuration.setup ||
+      full_path==@configuration.teardown 
     end
   end
   class Dispatcher
