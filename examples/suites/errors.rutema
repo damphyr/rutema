@@ -1,0 +1,6 @@
+configure do |cfg|
+  cfg.import("../config/tools.rutema")
+  cfg.reporter={:class=>Rutema::Reporters::Console,"mode"=>"verbose"}
+  cfg.tests=["../specs/T001.spec"]
+  cfg.check="../specs/parse_error.spec"
+end

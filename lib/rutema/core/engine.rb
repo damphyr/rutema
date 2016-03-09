@@ -74,6 +74,7 @@ module Rutema
         @parser.parse_specification(spec_identifier)
       rescue Rutema::ParserError
         error(spec_identifier,$!.message)
+        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" if is_special?(spec_identifier)
         nil
       end
     end
