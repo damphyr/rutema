@@ -47,7 +47,7 @@ module Rutema
           "time"=>total_duration,
           "timestamp"=>@configuration.context[:start_time]
         }
-        return junit_content(specs,attributes,errors)
+        return junit_content(tests,attributes,errors)
       end
       private
       def test_case name,state
@@ -62,14 +62,14 @@ module Rutema
         element_test.add_attributes("name"=>name,"time"=>state["duration"],"classname"=>@configuration.context[:config_name])
         if state['status']!=:success
           fail=REXML::Element.new("failure")
-          fail.add_attribute("message","Step #{state["steps"].last["number"]} failed.")
-          fail.text="Step #{state["steps"].last["number"]} failed."
+          fail.add_attribute("message","Step #{state["steps"].last.number} failed.")
+          fail.add_text "Step #{state["steps"].last.number} failed."
           element_test.add_element(fail)
           out=REXML::Element.new("system-out")
-          out.text=state["steps"].last["out"]
+          out.add_text state["steps"].last.out
           element_test.add_element(out)
           err=REXML::Element.new("system-err")
-          err.text=state["steps"].last["err"]
+          err.add_text state["steps"].last.err
           element_test.add_element(err)
         end
         return element_test
@@ -79,7 +79,7 @@ module Rutema
         failed.add_attributes("name"=>name,"classname"=>@configuration.context[:config_name],"time"=>0)
         msg=REXML::Element.new("error")
         msg.add_attribute("message",message)
-        msg.text=message
+        msg.add_text=message
         failed.add_element(msg)
         return failed
       end

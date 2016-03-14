@@ -1,7 +1,9 @@
 require 'rake/file_list'
+require 'rutema/reporters/junit'
 configure do |cfg|
   cfg.import("../config/tools.rutema")
   cfg.reporter={:class=>Rutema::Reporters::Console,"mode"=>"verbose"}
+  cfg.reporter={:class=>Rutema::Reporters::JUnit,"filename"=>File.join("out","example.junit.xml")}
   cfg.tests=Rake::FileList["../specs/T0*.spec"].existing
   cfg.check="../specs/check.spec"
   cfg.setup="../specs/setup.spec"
