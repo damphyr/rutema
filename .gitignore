@@ -9,6 +9,7 @@ temp/
 tmp/
 log/
 pkg/
+out/
 rubyforge_site/
 test/coverage/
 coverage/
