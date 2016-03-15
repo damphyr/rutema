@@ -13,6 +13,7 @@ module TestRutema
       dispatcher=mock()
       junit_reporter=Rutema::Reporters::JUnit.new(configuration,dispatcher)
       assert_equal("<?xml version='1.0'?><testsuite errors='0' failures='0' tests='0' time='0'/>", junit_reporter.process_data([],[],[]))
+      assert_equal("<?xml version='1.0'?><testsuite errors='0' failures='0' tests='0' time='0.000157'><testcase name='_setup_' time='0.000157'/></testsuite>", junit_reporter.process_data([],{"_setup_"=>{"timestamp"=>Time.now, "duration"=>0.000157, "status"=>:success, "steps"=>[]}},[]))
     end
   end
 end
