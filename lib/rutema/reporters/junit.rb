@@ -34,8 +34,8 @@ module Rutema
         total_duration=0
         states.each do |k,v|
           tests<<test_case(k,v)
-          number_of_failed+=1 if v['status']!=:success
-          total_duration+=v["duration"].to_f
+          number_of_failed+=1 if v.status!=:success
+          total_duration+=v.duration.to_f
         end
         #<testsuite disabled="0" errors="0" failures="1" hostname="" id=""
         #name="" package="" skipped="" tests="" time="" timestamp="">
@@ -59,17 +59,17 @@ module Rutema
         #  <error>       => test encountered an error
         #</testcase>
         element_test=REXML::Element.new("testcase")
-        element_test.add_attributes("name"=>name,"time"=>state["duration"],"classname"=>@configuration.context[:config_name])
-        if state['status']!=:success
+        element_test.add_attributes("name"=>name,"time"=>state.duration,"classname"=>@configuration.context[:config_name])
+        if state.status!=:success
           fail=REXML::Element.new("failure")
-          fail.add_attribute("message","Step #{state["steps"].last.number} failed.")
-          fail.add_text "Step #{state["steps"].last.number} failed."
+          fail.add_attribute("message","Step #{state.steps.last.number} failed.")
+          fail.add_text "Step #{state.steps.last.number} failed."
           element_test.add_element(fail)
           out=REXML::Element.new("system-out")
-          out.add_text state["steps"].last.out
+          out.add_text state.steps.last.out
           element_test.add_element(out)
           err=REXML::Element.new("system-err")
-          err.add_text state["steps"].last.err
+          err.add_text state.steps.last.err
           element_test.add_element(err)
         end
         return element_test
