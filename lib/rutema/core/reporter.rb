@@ -51,7 +51,9 @@ module Rutema
         end
       end
     end
-  
+    #This reporter is always instantiated and collects all messages fired by the rutema engine
+    #
+    #The collections of errors and states are then at the end of a run fed to the block reporters
     class Collector<EventReporter
       attr_reader :errors,:states
       def initialize params,dispatcher
@@ -75,7 +77,12 @@ module Rutema
         end
       end
     end
-
+    #A very simple event reporter that outputs to the console
+    #
+    #It has three settings: off, normal and verbose.
+    #
+    #Example configuration:
+    # cfg.reporter={:class=>Rutema::Reporters::Console, "mode"=>"verbose"}
     class Console<EventReporter
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
