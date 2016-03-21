@@ -11,7 +11,7 @@ module Rutema
     def initialize params
       @test=params.fetch(:test,"")
       @text=params.fetch(:text,"")
-      @timestamp=params.fetch(:timestamp,0)
+      @timestamp=params.fetch(:timestamp,Time.now)
     end
 
     def to_s
@@ -31,6 +31,10 @@ module Rutema
     end
   end
 
+  #The Runner continuously sends these when executing tests
+  #
+  #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
+  #you will get a RunnerMessage with :error in the status.
   class RunnerMessage<Message
     attr_accessor :duration,:status,:number,:out,:err
     def initialize params
@@ -55,6 +59,30 @@ module Rutema
       msg<<"#{@out}\n" unless @out.empty?
       msg<<@err unless @err.empty?
       return msg.chomp
+    end
+  end
+
+  #While executing tests the state of each test is collected in an 
+  #instance of ReportState and the collection is at the end passed to the available block reporters
+  #
+  #ReportState assumes the timestamp of the first message, the status of the last message
+  #and accumulates the duration reported by all messages in it's collection.
+  class ReportState
+    attr_accessor :steps
+    attr_reader :test,:timestamp,:duration,:status
+    
+    def initialize message
+      @test=message.test
+      @timestamp=message.timestamp
+      @duration=message.duration
+      @status=message.status
+      @steps=[message]
+    end
+
+    def <<(message)
+      @steps<<message
+      @duration+=message.duration
+      @status=message.status
     end
   end
 

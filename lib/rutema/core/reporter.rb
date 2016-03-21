@@ -63,14 +63,12 @@ module Rutema
       def update message
         case message
         when RunnerMessage
-          test_state=@states.fetch(message.test,{})
-          test_state["timestamp"]||=message.timestamp
-          duration=test_state.fetch("duration",0)+message.duration
-          test_state["duration"]=duration
-          test_state["status"]= message.status
-          steps=test_state.fetch("steps",[])
-          steps<<message
-          test_state["steps"]=steps
+          test_state=@states[message.test]
+          if test_state
+            test_state<<message
+          else
+            test_state=Rutema::ReportState.new(message)
+          end
           @states[message.test]=test_state
         when ErrorMessage
           @errors<<message
@@ -108,9 +106,8 @@ module Rutema
       end
       def report specs,states,errors
         failures=[]
-        states.each do |k,v|
-          failures<<k if v.fetch("steps",[]).last.status==:error
-        end
+        states.each{|k,v| failures<<v.test if v.status==:error}
+
         unless @silent
           puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"
           unless failures.empty?
