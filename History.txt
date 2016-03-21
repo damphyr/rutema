@@ -1,3 +1,5 @@
+== 2.0.0.pre10 /2016-03-21
+ * Typed collection for states in block reporters
 == 2.0.0.pre9 /2016-03-14
  * Bugfix: JUnit reporter works again
 == 2.0.0.pre8 /2016-03-09
