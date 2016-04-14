@@ -79,7 +79,7 @@ module Rutema
         failed.add_attributes("name"=>name,"classname"=>@configuration.context[:config_name],"time"=>0)
         msg=REXML::Element.new("error")
         msg.add_attribute("message",message)
-        msg.add_text=message
+        msg.add_text message
         failed.add_element(msg)
         return failed
       end
