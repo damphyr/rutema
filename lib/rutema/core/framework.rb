@@ -10,6 +10,7 @@ module Rutema
     # timestamp
     def initialize params
       @test=params.fetch(:test,"")
+      @test||=""
       @text=params.fetch(:text,"")
       @timestamp=params.fetch(:timestamp,Time.now)
     end
