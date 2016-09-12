@@ -14,7 +14,7 @@
     # configuration.parser={:class=>Rutema::MinimalXMLParser}
     # configuration.tests=FileList['all/of/the/tests/**/*.*']
     module ConfigurationDirectives
-      attr_reader :parser,:runner,:tools,:paths,:tests,:context,:check,:setup,:teardown
+      attr_reader :parser,:runner,:tools,:paths,:tests,:context,:setup,:teardown,:suite_setup,:suite_teardown
       attr_accessor :reporters
       #Adds a hash of values to the tools hash of the configuration
       #
@@ -62,15 +62,27 @@
         @teardown=check_path(path)
       end
       
-      #Path to the check specification. (optional)
+      #Path to the suite setup specification. (optional)
       #
-      #The check test runs once in the beginning before all the tests.
+      #The suite setup test runs once in the beginning of a test run before all the tests.
       #
       #If it fails no tests are run.
-      def check= path
-        @check=check_path(path)
+      #
+      #This is also aliased as check= for backwards compatibility
+      def suite_setup= path
+        @suite_setup=check_path(path)
       end
+
+      alias_method :check,:suite_setup
+      alias_method :check=,:suite_setup=
       
+      #Path to the suite teardown specification. (optional)
+      #
+      #The suite teardown test runs after all the tests.
+      def suite_teardown= path
+        @suite_teardown=check_path(path)
+      end
+
       #Hash values for passing data to the system. It's supposed to be used in the reporters and contain 
       #values such as version numbers, tester names etc.
       def context= definition
