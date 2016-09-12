@@ -145,8 +145,10 @@ module Rutema
                 self.send(:"element_#{step.step_type}",step)
               rescue
                 raise ParserError, $!.message
-              end
-            end#begin
+              end#begin
+            elsif configuration.fetch("strict_mode",false)
+              raise ParserError,"No command element associated with #{step.step_type}. Missing element_#{step.step_type}"
+            end
           end#each
         end#chdir
         return spec
