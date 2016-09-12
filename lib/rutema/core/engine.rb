@@ -28,10 +28,10 @@ module Rutema
       @dispatcher.run!
       #start
       message("start")
-      check,setup,teardown,tests=*parse(test_identifier)
+      suite_setup,suite_teardown,setup,teardown,tests=*parse(test_identifier)
       if tests.empty?
         if is_special?(test_identifier)
-          run_scenarios([check],nil)
+          run_scenarios([suite_setup],nil)
         else
           @dispatcher.exit
           raise RutemaError,"Did not parse any tests succesfully"
@@ -41,7 +41,7 @@ module Rutema
         @runner.teardown=teardown
         #running - at this point we've done any and all checks and we're stepping on the gas
         message("running")
-        run_scenarios(tests,check)
+        run_scenarios(tests,suite_setup,suite_teardown)
       end
       message("end")
       @dispatcher.exit
@@ -62,8 +62,8 @@ module Rutema
         specs=parse_specifications(@configuration.tests)
       end
       specs.compact!
-      check,setup,teardown=parse_specials(@configuration)
-      return [check,setup,teardown,specs]
+      suite_setup,suite_teardown,setup,teardown=parse_specials(@configuration)
+      return [suite_setup,suite_teardown,setup,teardown,specs]
     end
     private
     def parse_specifications tests
@@ -79,11 +79,15 @@ module Rutema
       end
     end
     def parse_specials configuration
-      check=nil
+      suite_setup=nil
+      suite_teardown=nil
       setup=nil
       teardown=nil
-      if configuration.check
-        check=parse_specification(configuration.check)
+      if configuration.suite_setup
+        suite_setup=parse_specification(configuration.suite_setup)
+      end
+      if configuration.suite_teardown
+        suite_teardown=parse_specification(configuration.suite_teardown)
       end
       if configuration.setup
         setup=parse_specification(configuration.setup)
@@ -91,20 +95,23 @@ module Rutema
       if configuration.teardown
         teardown=parse_specification(configuration.teardown)
       end
-      return check,setup,teardown
+      return suite_setup,suite_teardown,setup,teardown
     end
-    def run_scenarios specs,check
+    def run_scenarios specs,suite_setup,suite_teardown
       if specs.empty?
         error(nil,"No tests to run")
       else
-        if check
-          if run_test(check)==:success
+        if suite_setup
+          if run_test(suite_setup)==:success
             specs.each{|s| run_test(s)}
           else
-            error(nil,"Check test failed")
+            error(nil,"Suite setup test failed")
           end
         else
           specs.each{|spec| run_test(spec)}
+        end
+        if suite_teardown
+          run_test(suite_teardown)
         end
       end
     end
@@ -130,7 +137,8 @@ module Rutema
     end
     def is_special? test_identifier
       full_path=File.expand_path(test_identifier)
-      return full_path==@configuration.check ||
+      return full_path==@configuration.suite_setup ||
+      full_path==@configuration.suite_teardown ||
       full_path==@configuration.setup ||
       full_path==@configuration.teardown 
     end

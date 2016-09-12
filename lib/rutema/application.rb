@@ -24,7 +24,7 @@ module Rutema
         opt.on("rutema v#{Version::STRING}")
         opt.on("Options:")
         opt.on("--config FILE", "-c FILE",String,"Loads the configuration from FILE") { |config_file| @config_file=config_file}
-        opt.on("--check","Runs just the check test"){@check=true}
+        opt.on("--check","Runs just the suite setup test"){@check=true}
         #opt.on("--step","Runs test cases step by step"){@step=true}
         opt.on("--silent","Suppresses console output (only for the default reporters)") { @silent=true}
         opt.on("--bare","No default reporters whatsoever") { @bare=true}
@@ -47,11 +47,11 @@ module Rutema
     end
     def application_flow
       if @check
-        #run just the check test
-        if @configuration.check
-          exit @engine.run(@configuration.check)
+        #run just the suite setup test
+        if @configuration.suite_setup
+          exit @engine.run(@configuration.suite_setup)
         else
-          raise Rutema::RutemaError,"There is no check test defined in the configuration."
+          raise Rutema::RutemaError,"There is no suite setup test defined in the configuration."
         end
       else
         #run everything
