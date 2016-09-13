@@ -74,7 +74,9 @@ module TestRutema
   end
   class TestXMLParser<Test::Unit::TestCase
     def test_parse_specification
-      parser=Rutema::Parsers::XML.new(nil)
+      config=stub()
+      config.stubs(:parser).returns({})
+      parser=Rutema::Parsers::XML.new(config)
       specification=parser.parse_specification(Samples::SAMPLE_SPEC)
       assert_equal("sample",specification.name)
       assert_equal("Description", specification.description)
@@ -89,7 +91,9 @@ module TestRutema
       assert_raise(Rutema::ParserError) { parser.parse_specification("missing.spec") }
     end
     def test_include
-      parser=Rutema::Parsers::XML.new(nil)
+      config=stub()
+      config.stubs(:parser).returns({})
+      parser=Rutema::Parsers::XML.new(config)
       specification=parser.parse_specification(Samples::INCLUDE_SPEC)
       assert_equal(3, specification.scenario.steps.size)
       assert(specification.scenario.steps[2].has_included_in?)
@@ -97,7 +101,9 @@ module TestRutema
       assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
     end
     def test_parse_error
-      parser=Rutema::Parsers::XML.new(nil)
+      config=stub()
+      config.stubs(:parser).returns({})
+      parser=Rutema::Parsers::XML.new(config)
       assert_not_nil(parser.configuration)
       specification=nil
       assert_raise(Rutema::ParserError) { specification=parser.parse_specification("<") }
