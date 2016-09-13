@@ -146,7 +146,7 @@ module Rutema
               rescue
                 raise ParserError, $!.message
               end#begin
-            elsif configuration.fetch("strict_mode",false)
+            elsif @configuration.parser["strict_mode"]
               raise ParserError,"No command element associated with #{step.step_type}. Missing element_#{step.step_type}"
             end
           end#each

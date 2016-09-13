@@ -1,0 +1,4 @@
+require 'rutema/parsers/xml'
+configure do |cfg|
+  cfg.parser={:class=>Rutema::Parsers::XML,"strict_mode"=>true}
+end

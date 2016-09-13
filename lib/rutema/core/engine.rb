@@ -30,7 +30,7 @@ module Rutema
       message("start")
       suite_setup,suite_teardown,setup,teardown,tests=*parse(test_identifier)
       if tests.empty?
-        if is_special?(test_identifier)
+        if test_identifier && is_special?(test_identifier)
           run_scenarios([suite_setup],nil)
         else
           @dispatcher.exit

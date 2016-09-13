@@ -1,0 +1,6 @@
+require 'rake/file_list'
+configure do |cfg|
+  cfg.import("../config/strict.rutema")
+  cfg.reporter={:class=>Rutema::Reporters::Console,"mode"=>"verbose"}
+  cfg.tests=Rake::FileList["../specs/unknown_step.spec"].existing
+end
