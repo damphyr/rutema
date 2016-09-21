@@ -42,13 +42,28 @@ module TestRutema
       assert_raise(Rutema::RutemaError){Rutema::Engine.new(conf)}
     end
 
-    def test_run
+    def test_parserError
       conf=OpenStruct.new(:parser=>{:class=>Rutema::Parsers::XML},
           :reporters=>{MockReporter=>{:class=>MockReporter}},
           :tools=>{},
           :paths=>{},
           :tests=>["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec",
             "#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"],
+          :context=>{})
+      engine=nil
+      assert_raise ::Rutema::ParserError do
+        engine=Rutema::Engine.new(conf)
+        engine.run
+      end
+      assert_equal(0, MockReporter.updates)
+    end
+
+    def test_run
+      conf=OpenStruct.new(:parser=>{:class=>Rutema::Parsers::XML},
+          :reporters=>{MockReporter=>{:class=>MockReporter}},
+          :tools=>{},
+          :paths=>{},
+          :tests=>["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec"],
           :context=>{})
       engine=nil
       #assert_nothing_raised() do 
@@ -60,5 +75,6 @@ module TestRutema
       assert_raise(Rutema::RutemaError) { engine.run("foo")}
       assert_equal(1, MockReporter.updates)
     end
+
   end
 end
