@@ -202,8 +202,7 @@
           cfg_txt=File.read(filename)
           cwd=File.expand_path(File.dirname(filename))
           #WORKAROUND for ruby 2.3.1
-          fname=filename.dup
-          fname.rstrip!
+          fname=File.basename(filename)
           #evaluate in the working directory to enable relative paths in configuration
           Dir.chdir(cwd){eval(cfg_txt,binding(),fname,__LINE__)}
         rescue ConfigurationException
