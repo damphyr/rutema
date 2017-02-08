@@ -1,7 +1,7 @@
 
 require_relative '../lib/rutema/core/configuration'
 #$DEBUG=true
-require 'test/unit'
+require 'minitest'
 require 'mocha/setup'
 
 FULL_CONFIG=<<-EOT
@@ -30,7 +30,7 @@ end
 EOT
 
 module TestRutema
-  class TestRutemaConfiguration<Test::Unit::TestCase
+  class TestRutemaConfiguration<Minitest::Test
     def test_rutema_configuration
       cfg="foo.cfg"
       File.expects(:read).with("full.rutema").returns(FULL_CONFIG)
@@ -39,24 +39,24 @@ module TestRutema
       File.expects(:exist?).with(File.expand_path("setup.spec")).returns(true)
       File.expects(:exist?).with("T001.spec").returns(false)
       #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::Configuration.new("full.rutema")}
-      assert_not_nil(cfg.parser)
-      assert_not_nil(cfg.reporters)
+      cfg=Rutema::Configuration.new("full.rutema")
+      refute_nil(cfg.parser)
+      refute_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
-      assert_not_nil(cfg.tools)
-      assert_not_nil(cfg.tools.test[:configuration])
-      assert_not_nil(cfg.tools.test[:path])
+      refute_nil(cfg.tools)
+      refute_nil(cfg.tools.test[:configuration])
+      refute_nil(cfg.tools.test[:path])
       assert_equal("test", cfg.tools.test[:name])
-      assert_not_nil(cfg.paths)
-      assert_not_nil(cfg.paths.test)
-      assert_not_nil(cfg.tests)
-      assert_not_nil(cfg.context)
+      refute_nil(cfg.paths)
+      refute_nil(cfg.paths.test)
+      refute_nil(cfg.tests)
+      refute_nil(cfg.context)
     end
 
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
       cfg=Rutema::Configuration.new("test_identifiers.rutema")
-      assert_not_nil(cfg.tests)
+      refute_nil(cfg.tests)
       assert_equal(3, cfg.tests.size)
       assert(cfg.tests.include?('22345'))
     end

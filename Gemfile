@@ -5,9 +5,9 @@ gem "highline","~>1.7"
 
 group :development do
   gem 'coveralls', :require => false
-	gem "hoe",'~>3.14.2'
-	gem 'rdoc','~>4.2.0'
-	gem "mocha","~>1.1.0", :require => false
-  gem "pry"
-  gem "test-unit", "~>3.1.3", :require => false
+	gem "hoe",'~>3.16.0', :require => false
+	gem 'rdoc','~>5.0.0', :require => false
+	gem "mocha","~>1.2.1", :require => false
+  gem "pry", :require => false
+  gem 'minitest','~>5.10.1',:require => false
 end

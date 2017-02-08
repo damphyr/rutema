@@ -1,4 +1,4 @@
-require 'test/unit'
+require 'minitest'
 require 'ostruct'
 require 'mocha/setup'
 require_relative '../lib/rutema/core/engine'
@@ -34,12 +34,12 @@ module TestRutema
     end
   end
 
-  class TestEngine<Test::Unit::TestCase
+  class TestEngine<Minitest::Test
     def test_checks
       conf={}
-      assert_raise(NoMethodError){Rutema::Engine.new(conf)}
+      assert_raises(NoMethodError){Rutema::Engine.new(conf)}
       conf=OpenStruct.new(:parser=>{},:runner=>{})
-      assert_raise(Rutema::RutemaError){Rutema::Engine.new(conf)}
+      assert_raises(Rutema::RutemaError){Rutema::Engine.new(conf)}
     end
 
     def test_run
@@ -51,13 +51,11 @@ module TestRutema
             "#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"],
           :context=>{})
       engine=nil
-      #assert_nothing_raised() do 
-        engine=Rutema::Engine.new(conf)
-        engine.run
-      #end
+      engine=Rutema::Engine.new(conf)
+      engine.run
       assert_equal(5, MockReporter.updates)
       #test for a spec that is not in the config and re-entry
-      assert_raise(Rutema::RutemaError) { engine.run("foo")}
+      assert_raises(Rutema::RutemaError) { engine.run("foo")}
       assert_equal(1, MockReporter.updates)
     end
   end
