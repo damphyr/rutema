@@ -1,9 +1,9 @@
-require 'test/unit'
+require 'minitest'
 require_relative '../lib/rutema/reporters/junit'
 require 'mocha/setup'
 
 module TestRutema
-  class TestReporters<Test::Unit::TestCase
+  class TestReporters<Minitest::Test
     def test_junit
       #Rutema::Utilities.expects(:write_file).returns("OK")
       configuration = mock()
