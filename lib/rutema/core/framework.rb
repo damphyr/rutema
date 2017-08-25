@@ -37,7 +37,7 @@ module Rutema
   #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
   #you will get a RunnerMessage with :error in the status.
   class RunnerMessage<Message
-    attr_accessor :duration,:status,:number,:out,:err
+    attr_accessor :duration,:status,:number,:out,:err,:is_special
     def initialize params
       super(params)
       @duration=params.fetch("duration",0)
@@ -45,6 +45,8 @@ module Rutema
       @number=params.fetch("number",1)
       @out=params.fetch("out","")
       @err=params.fetch("err","")
+      @backtrace=params.fetch("backtrace","")
+      @is_special=params.fetch("is_special","")
     end
 
     def to_s
@@ -59,6 +61,7 @@ module Rutema
       msg=""
       msg<<"#{@out}\n" unless @out.empty?
       msg<<@err unless @err.empty?
+      msg<<"\n" + @backtrace.join("\n") unless @backtrace.empty? 
       return msg.chomp
     end
   end
@@ -70,7 +73,7 @@ module Rutema
   #and accumulates the duration reported by all messages in it's collection.
   class ReportState
     attr_accessor :steps
-    attr_reader :test,:timestamp,:duration,:status
+    attr_reader :test,:timestamp,:duration,:status,:is_special
     
     def initialize message
       @test=message.test
@@ -78,6 +81,7 @@ module Rutema
       @duration=message.duration
       @status=message.status
       @steps=[message]
+      @is_special=message.is_special
     end
 
     def <<(message)
