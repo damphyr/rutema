@@ -91,8 +91,10 @@ module Rutema
           when RunnerMessage
             if message.status == :error
               puts "FATAL|#{message.to_s}"
+            elsif message.status == :warning
+              puts "WARNING|#{message.to_s}"
             else
-              puts message.to_s if @mode=="verbose"
+              puts message.to_s if @mode=="verbose" && message.status == :started
             end
           when ErrorMessage
             puts message.to_s 
