@@ -17,6 +17,7 @@ module Rutema
       end
 
       def run spec, is_special = false
+        @context["spec_name"]=spec.name
         steps=[]
         status=:success
         state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,:test=>spec.name}

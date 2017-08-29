@@ -32,7 +32,6 @@ module Rutema
                 raise
               end
             end
-            sleep 0.1
           end
         end
       end
