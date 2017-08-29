@@ -23,14 +23,12 @@ module Rutema
       def run!
         @thread=Thread.new do
           while true do
-            if  @queue.size>0
-              data=@queue.pop
-              begin
-                update(data) if data
-              rescue
-                puts "#{self.class} failed with #{$!.message}"
-                raise
-              end
+            data=@queue.pop
+            begin
+              update(data) if data
+            rescue
+              puts "#{self.class} failed with #{$!.message}"
+              raise
             end
           end
         end
