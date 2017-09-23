@@ -6,10 +6,11 @@ require_relative 'runner'
 require_relative '../version'
 
 module Rutema
-  #Rutema::Engine implements the rutema workflow:
+  #Rutema::Engine implements the rutema workflow.
   #
   #It instantiates the configured parser, runner and reporter instances and wires them together via Rutema::Dispatcher
-  #and then initiates a test run
+  #
+  #The full workflow is Parse->Run->Report and corresponds to one call of the Engine#run method
   class Engine
     include Messaging
     def initialize configuration
@@ -28,6 +29,7 @@ module Rutema
       @dispatcher=Dispatcher.new(@queue,configuration)
       @configuration=configuration
     end
+    #Parse, run, report
     def run test_identifier=nil
       @dispatcher.run!
       #start
@@ -47,6 +49,7 @@ module Rutema
       @dispatcher.exit
       @dispatcher.report(tests)
     end
+    #Parse a single test spec or all the specs listed in the configuration
     def parse test_identifier=nil
       specs=[]
       #so, while we are parsing, we have a list of tests
@@ -166,6 +169,7 @@ module Rutema
       @streaming_reporters<<@collector
       @configuration=configuration
     end
+    #Call this to establish a queue with the given identifier
     def subscribe identifier
       @queues[identifier]=Queue.new
       return @queues[identifier]
