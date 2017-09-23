@@ -47,18 +47,20 @@ module TestRutema
           :reporters=>{MockReporter=>{:class=>MockReporter}},
           :tools=>{},
           :paths=>{},
-          :tests=>["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec",
-            "#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"],
+          :tests=>["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec"],
           :context=>{})
       engine=nil
-      #assert_nothing_raised() do 
-        engine=Rutema::Engine.new(conf)
-        engine.run
-      #end
-      assert_equal(5, MockReporter.updates)
-      #test for a spec that is not in the config and re-entry
-      assert_raise(Rutema::RutemaError) { engine.run("foo")}
-      assert_equal(1, MockReporter.updates)
+      engine=Rutema::Engine.new(conf)
+      engine.run
+      assert_equal(4, MockReporter.updates)
+
+
+      conf[:tests]=["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec","#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"]
+      assert_raise(Rutema::ParserError){
+          engine=Rutema::Engine.new(conf)
+          engine.run
+      }
+      assert_equal(0, MockReporter.updates)
     end
   end
 end

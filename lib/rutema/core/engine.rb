@@ -1,4 +1,4 @@
-#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
 require 'thread'
 require_relative 'parser'
 require_relative 'reporter'
@@ -6,6 +6,10 @@ require_relative 'runner'
 require_relative '../version'
 
 module Rutema
+  #Rutema::Engine implements the rutema workflow:
+  #
+  #It instantiates the configured parser, runner and reporter instances and wires them together via Rutema::Dispatcher
+  #and then initiates a test run
   class Engine
     include Messaging
     def initialize configuration
@@ -67,15 +71,16 @@ module Rutema
     end
     private
     def parse_specifications tests
-      tests.map{|t| parse_specification(t)}.compact
+      tests.map do |t| 
+        parse_specification(t)
+      end.compact
     end
     def parse_specification spec_identifier
       begin
         @parser.parse_specification(spec_identifier)
       rescue Rutema::ParserError
         error(spec_identifier,$!.message)
-        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" if is_special?(spec_identifier)
-        nil
+        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" 
       end
     end
     def parse_specials configuration
@@ -143,7 +148,13 @@ module Rutema
       full_path==@configuration.teardown 
     end
   end
+  #The Rutema::Dispatcher functions as a demultiplexer between Rutema::Engine and the various reporters.
+  #
+  #In stream mode the incoming queue is popped periodically and the messages are destributed to the queues of any subscribed event reporters.
+  #
+  #By default this includes Rutema::Reporters::Collector which is then used at the end of a run to provide the collected data to all registered block mode reporters 
   class Dispatcher
+    #The interval between queue operations
     INTERVAL=0.01
     def initialize queue,configuration
       @queue = queue
