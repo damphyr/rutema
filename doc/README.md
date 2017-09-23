@@ -24,7 +24,7 @@ To be of any use the format of the specification must be machine readable but al
 
 The core implementation presents a simple XML format that can be extended easily. XML in this case fullfills a role very close to it's original: annotate and structure text.
 
-It should be noted that over the years there have been several different rutema specifiction formats in use (YAML, JSON, a DIY text format etc.) but the XML format offered in the core has been by far the easiest to manage and extend.
+It should be noted that over the years there have been several different rutema specification formats in use (YAML, JSON, a DIY text format etc.) but the XML format offered in the core has been by far the easiest to manage and extend.
 
 ## Testing language
 
