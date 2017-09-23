@@ -38,7 +38,7 @@ module Rutema
           run_scenarios([suite_setup],nil)
         else
           @dispatcher.exit
-          raise RutemaError,"Did not parse any tests succesfully"
+          raise RutemaError,"No tests to run!"
         end
       else
         @runner.setup=setup

@@ -61,6 +61,12 @@ module TestRutema
           engine.run
       }
       assert_equal(0, MockReporter.updates)
+
+      conf[:tests]=[]
+      assert_raise(Rutema::RutemaError){
+        engine=Rutema::Engine.new(conf)
+        engine.run
+      }
     end
   end
 end
