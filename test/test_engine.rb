@@ -67,6 +67,11 @@ module TestRutema
         engine=Rutema::Engine.new(conf)
         engine.run
       }
+
+      conf[:tests]=["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec"]
+      conf[:setup]="#{File.expand_path(File.dirname(__FILE__))}/data/setup.spec"
+      engine=Rutema::Engine.new(conf)
+      engine.run("#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec")
     end
   end
 end

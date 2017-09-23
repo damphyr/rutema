@@ -33,13 +33,9 @@ module Rutema
       #start
       message("start")
       suite_setup,suite_teardown,setup,teardown,tests=*parse(test_identifier)
-      if tests.empty?
-        if test_identifier && is_special?(test_identifier)
-          run_scenarios([suite_setup],nil)
-        else
-          @dispatcher.exit
-          raise RutemaError,"No tests to run!"
-        end
+      if tests.empty?  
+        @dispatcher.exit
+        raise RutemaError,"No tests to run!"
       else
         @runner.setup=setup
         @runner.teardown=teardown
@@ -57,8 +53,8 @@ module Rutema
       #we're either parsing all of the tests, or just one
       #make sure the one test is on the list
       if test_identifier
-        if  is_spec_included?(test_identifier)
-          specs<<parse_specification(File.expand_path(test_identifier)) unless is_special?(test_identifier)
+        if is_spec_included?(test_identifier)
+          specs<<parse_specification(File.expand_path(test_identifier))
         else
           error(File.expand_path(test_identifier),"does not exist in the configuration")  
         end
