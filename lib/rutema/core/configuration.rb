@@ -1,4 +1,4 @@
-  #  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+  #  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
   require 'ostruct'
   require_relative 'parser'
   require_relative 'reporter'
@@ -47,21 +47,18 @@
         raise ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
         @paths[definition[:name]]=definition[:path]
       end
-      
       #Path to the setup specification. (optional)
       #
       #The setup test runs before every test.
       def setup= path
         @setup=check_path(path)
       end
-      
       #Path to the teardown specification. (optional)
       #
       #The teardown test runs after every test.    
       def teardown= path
         @teardown=check_path(path)
       end
-      
       #Path to the suite setup specification. (optional)
       #
       #The suite setup test runs once in the beginning of a test run before all the tests.
@@ -75,14 +72,12 @@
 
       alias_method :check,:suite_setup
       alias_method :check=,:suite_setup=
-      
       #Path to the suite teardown specification. (optional)
       #
       #The suite teardown test runs after all the tests.
       def suite_teardown= path
         @suite_teardown=check_path(path)
       end
-
       #Hash values for passing data to the system. It's supposed to be used in the reporters and contain 
       #values such as version numbers, tester names etc.
       def context= definition
@@ -90,7 +85,6 @@
         raise ConfigurationException,"Only accepting hash values as context_data" unless definition.kind_of?(Hash)
         @context.merge!(definition)
       end
-      
       #Adds the specification identifiers available to this instance of Rutema
       #
       #These will usually be files, but they can be anything.
@@ -98,7 +92,6 @@
       def tests= array_of_identifiers
         @tests+=array_of_identifiers.map{|f| full_path(f)}
       end
-      
       #A hash defining the parser to use.
       #
       #The hash is passed as is to the parser constructor and each parser should define the necessary configuration keys.
@@ -111,7 +104,6 @@
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @parser=definition
       end
-
       #A hash defining the runner to use.
       #
       #The hash is passed as is to the runner constructor and each runner should define the necessary configuration keys.
@@ -124,7 +116,6 @@
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @runner=definition
       end
-      
       #Adds a reporter to the configuration.
       #
       #As with the parser, the only required configuration key is :class and the definition hash is passed to the class' constructor.
@@ -134,7 +125,7 @@
         raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
         @reporters[definition[:class]]=definition
       end
-
+      #:stopdoc
       def init
         @reporters={}
         @context={}
@@ -142,6 +133,7 @@
         @tools=OpenStruct.new
         @paths=OpenStruct.new
       end
+      #:startdoc
       private 
       #Checks if a path exists and raises a ConfigurationException if not
       def check_path path
@@ -164,7 +156,9 @@
 
     class ConfigurationException<RuntimeError
     end
-
+    #The object we pass around after we load the configuration from file
+    #
+    #All relevant methods are in Rutema::ConfigurationDirectives
     class Configuration
       include ConfigurationDirectives
       attr_reader :filename
@@ -179,7 +173,6 @@
           yield self
         end
       end
-    
       #Loads the configuration from a file
       #
       #Use this to chain configuration files together

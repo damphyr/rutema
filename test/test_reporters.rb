@@ -1,4 +1,5 @@
 require 'test/unit'
+require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/reporters/junit'
 require 'mocha/setup'
 

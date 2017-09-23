@@ -1,4 +1,4 @@
-#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
 require 'patir/command'
 
 module Rutema
@@ -197,7 +197,6 @@ module Rutema
       return "#{@attributes[:step_type]}#{param}"
     end
     def to_s#:nodoc:
-      param=""
       if self.has_cmd?
         msg="#{self.number} - #{self.cmd.to_s}"
       else

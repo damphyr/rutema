@@ -1,4 +1,4 @@
-#  Copyright (c) 2007-2015 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
 require 'thread'
 require_relative 'parser'
 require_relative 'reporter'
@@ -6,6 +6,11 @@ require_relative 'runner'
 require_relative '../version'
 
 module Rutema
+  #Rutema::Engine implements the rutema workflow.
+  #
+  #It instantiates the configured parser, runner and reporter instances and wires them together via Rutema::Dispatcher
+  #
+  #The full workflow is Parse->Run->Report and corresponds to one call of the Engine#run method
   class Engine
     include Messaging
     def initialize configuration
@@ -24,18 +29,15 @@ module Rutema
       @dispatcher=Dispatcher.new(@queue,configuration)
       @configuration=configuration
     end
+    #Parse, run, report
     def run test_identifier=nil
       @dispatcher.run!
       #start
       message("start")
       suite_setup,suite_teardown,setup,teardown,tests=*parse(test_identifier)
-      if tests.empty?
-        if test_identifier && is_special?(test_identifier)
-          run_scenarios([suite_setup],nil)
-        else
-          @dispatcher.exit
-          raise RutemaError,"Did not parse any tests succesfully"
-        end
+      if tests.empty?  
+        @dispatcher.exit
+        raise RutemaError,"No tests to run!"
       else
         @runner.setup=setup
         @runner.teardown=teardown
@@ -47,14 +49,15 @@ module Rutema
       @dispatcher.exit
       @dispatcher.report(tests)
     end
+    #Parse a single test spec or all the specs listed in the configuration
     def parse test_identifier=nil
       specs=[]
       #so, while we are parsing, we have a list of tests
       #we're either parsing all of the tests, or just one
       #make sure the one test is on the list
       if test_identifier
-        if  is_spec_included?(test_identifier)
-          specs<<parse_specification(File.expand_path(test_identifier)) unless is_special?(test_identifier)
+        if is_spec_included?(test_identifier)
+          specs<<parse_specification(File.expand_path(test_identifier))
         else
           error(File.expand_path(test_identifier),"does not exist in the configuration")  
         end
@@ -67,15 +70,16 @@ module Rutema
     end
     private
     def parse_specifications tests
-      tests.map{|t| parse_specification(t)}.compact
+      tests.map do |t| 
+        parse_specification(t)
+      end.compact
     end
     def parse_specification spec_identifier
       begin
         @parser.parse_specification(spec_identifier)
       rescue Rutema::ParserError
         error(spec_identifier,$!.message)
-        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" if is_special?(spec_identifier)
-        nil
+        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" 
       end
     end
     def parse_specials configuration
@@ -143,7 +147,13 @@ module Rutema
       full_path==@configuration.teardown 
     end
   end
+  #The Rutema::Dispatcher functions as a demultiplexer between Rutema::Engine and the various reporters.
+  #
+  #In stream mode the incoming queue is popped periodically and the messages are destributed to the queues of any subscribed event reporters.
+  #
+  #By default this includes Rutema::Reporters::Collector which is then used at the end of a run to provide the collected data to all registered block mode reporters 
   class Dispatcher
+    #The interval between queue operations
     INTERVAL=0.01
     def initialize queue,configuration
       @queue = queue
@@ -159,6 +169,7 @@ module Rutema
       @streaming_reporters<<@collector
       @configuration=configuration
     end
+    #Call this to establish a queue with the given identifier
     def subscribe identifier
       @queues[identifier]=Queue.new
       return @queues[identifier]

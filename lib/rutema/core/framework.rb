@@ -22,7 +22,7 @@ module Rutema
       return msg
     end
   end
-
+  #What it says on the tin.
   class ErrorMessage<Message
     def to_s
       msg="ERROR - "
@@ -31,7 +31,6 @@ module Rutema
       return msg
     end
   end
-
   #The Runner continuously sends these when executing tests
   #
   #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
@@ -62,7 +61,6 @@ module Rutema
       return msg.chomp
     end
   end
-
   #While executing tests the state of each test is collected in an 
   #instance of ReportState and the collection is at the end passed to the available block reporters
   #
@@ -88,9 +86,11 @@ module Rutema
   end
 
   module Messaging
+    #Signal an error - use the test name/id as the identifier
     def error identifier,message
       @queue.push(ErrorMessage.new(:test=>identifier,:text=>message,:timestamp=>Time.now))
     end
+    #Informational message during test runs
     def message message
       case message
       when String
