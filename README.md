@@ -10,6 +10,7 @@ It enables the combination of different test tools while it takes care of loggin
 It's purpose is to make testing in heterogeneous environments easier. 
 
 ### Why?
+
 Require consistency, repeatability and reliability from your test infrastructure while gathering data on every run.
 
 Whether running through a checklist of manual steps, or executing a sequence of fully automated commands we always want to know if a test has failed, where it failed and what was the state of the system at that time.
@@ -19,19 +20,29 @@ rutema will gather all logs, timestamp them, store them and report on them.
 Rutema core provides a reference implementation of a parser for a simple but extensible XML test specification format which works well out of the box but the framework provides clearly defined interfaces so you can write the parser for your own format and add reporters that log wherever is needed.
 
 ### The dry stuff
+
 * Unified test execution environment for automated and manual tests
 * Extensible reports and notifications in various formats (email, rss, pdf, html etc.)
 * A well defined way to create a project specific test specification format
 
+### Further Reading
+
+* [Configuring rutema](doc/CONFIGURATION.md)
+* An [example](doc/EXAMPLE.md) of a (very simple) testing DSL with rutema 
+* High level [description](README.md) of the concepts behind rutema
+
 ## Installation:
+
 * gem install rutema
 
 ## Dependencies
+
 The core functionality of rutema depends on the following gems:
  * [patir](http://github.com/damphyr/patir)
  * [highline](http://highline.rubyforge.org/)
 
 ## License:
+
 (The MIT License)
 
 Copyright (c) 2007-2015 Vassilis Rizopoulos
