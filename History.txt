@@ -1,3 +1,5 @@
+== 2.0.0/ 2017-09-23
+ * Parsing behaviour has changed, parsing errors are not accepted and the run fails immediately
 == 2.0.0.pre15 /2017-02-08
  * Update gem dependencies
 == 2.0.0.pre14 /2017-01-11
@@ -27,7 +29,7 @@
 == 2.0.0.pre5 /2015-09-14
  * Add JUnit format reporter
  * The NUnit format is v3, which means it won't work for most CI plugins
-== 2.0.0 /2015-09-10
+== 2.0.0.pre2 /2015-09-10
  * Completely rewritten execution engine
    * dropped Ruby 1.8.x, 1.9.x support, added 2.x
  * Rewritten configuration engine and new format for configuration files
