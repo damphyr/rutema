@@ -1,6 +1,6 @@
 ## rutema examples
 
-Were would we be without working examples. All working examples are configured in [suites/](suites).
+Where would we be without working examples. All working examples are configured in [suites/](suites).
 
 
 To run rutema's own system tests do
@@ -21,9 +21,12 @@ suites/
 ````
 
 Configuration files are stored in config/ and suites/ and have per convention the extension .rutema.
-Tool, path and test environment specific configuration is saved in config/ and the collection of tests to run per configuration in suites/
 
-##rutema tooling
+Note that there is no difference between a configuration file with tool parameters and a configuration file that defines a test suite. The difference is by convention:
+
+*Tool, path and test environment specific configuration is saved in config/ and the collection of tests to run per configuration in suites/*
+
+## rutema tooling
 
 The configuration system allows us to replace every part of the rutema engine. They are only three major parts anyway: the parser, the runner and the reporter. The parser must be specified, it handles the specific testing language you will develop for the project. 
 
@@ -40,4 +43,4 @@ configure do |cfg|
 end
 ```` 
 
-Every parser, runner or reporter will receive the complete rutema configuration as a parameter upon instantiation. This means that whatever you add to the Hash will be accessible within the class' constructor. It comes handy.
+Every parser, runner or reporter will receive the complete rutema configuration as a parameter upon instantiation. This means that whatever you add to the Hash will be accessible within the class' constructor. 
