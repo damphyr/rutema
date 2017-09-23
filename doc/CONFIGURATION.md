@@ -1,8 +1,8 @@
 # Configuration
 
-rutema's configuration files serve as a means to decouple the DSL from the specific parameters. In this way we can change the adapt the behaviour of the tools without having to update the specifications.
+rutema's configuration files serve as a means to decouple the DSL from the specific parameters. In this way we can change and adapt the behaviour of the tools without having to update the specifications.
 
-The configuration files are legal Ruby, but don't let that scare you. While following the standard "rutema Way" you won't have to learn a new programming language, just a bit of wigly syntax.
+The configuration files are Ruby, but don't let that scare you. While following the standard "rutema Way" you won't have to learn a new programming language, just a bit of wigly syntax.
 
 The example below documents all options available:
 
@@ -33,7 +33,7 @@ end
 ```
 
 There is a major flaw in the above configuration file and it becomes immediately obvious once you have a few dozen test specifications. You can't possibly expect us to force you to add every single test specification filename by hand?!
-            
+
 Well...ofcourse not. Here is where using Ruby as a configuration language shines:
 ```ruby
 require 'rake'

@@ -51,6 +51,6 @@ This happens in the configuration file, e.g.
 
 ```ruby
 configure do |cfg|
-  cfg.tool={"name"=>"flash",exe=>"c:\tools\flash\flasher.exe",address"=>"0x8000FFFF","port"=>"COM4"}
+  cfg.tool={"name"=>"flash",exe=>"c:\\tools\flash\\flasher.exe",address"=>"0x8000FFFF","port"=>"COM4"}
 end
 ```
