@@ -1,5 +1,5 @@
 ## rutema
-[![Build Status](https://secure.travis-ci.org/damphyr/rutema.png)](http://travis-ci.org/damphyr/rutema) [![Coverage Status](https://coveralls.io/repos/damphyr/rutema/badge.svg)](https://coveralls.io/r/damphyr/rutema) [![Code Climate](https://codeclimate.com/github/damphyr/rutema.png)](https://codeclimate.com/github/damphyr/rutema) ![doc status](http://inch-ci.org/github/damphyr/rutema.svg?branch=master)
+[![Build Status](https://secure.travis-ci.org/damphyr/rutema.png)](http://travis-ci.org/damphyr/rutema) [![Coverage Status](https://coveralls.io/repos/damphyr/rutema/badge.svg)](https://coveralls.io/r/damphyr/rutema) [![Code Climate](https://codeclimate.com/github/damphyr/rutema.png)](https://codeclimate.com/github/damphyr/rutema) ![doc status](http://inch-ci.org/github/damphyr/rutema.svg?branch=master) [![Gem Version](https://badge.fury.io/rb/rutema.svg)](https://badge.fury.io/rb/rutema)
 
 rutema [http://github.com/damphyr/rutema](http://github.com/damphyr/rutema)
 
