@@ -31,7 +31,7 @@ Rutema core provides a reference implementation of a parser for a simple but ext
 * An [example](doc/EXAMPLE.md) of a (very simple) testing DSL with rutema 
 * High level [description](README.md) of the concepts behind rutema
 
-## Installation:
+## Installation
 
 * gem install rutema
 
@@ -41,7 +41,7 @@ The core functionality of rutema depends on the following gems:
  * [patir](http://github.com/damphyr/patir)
  * [highline](http://highline.rubyforge.org/)
 
-## License:
+## License
 
 (The MIT License)
 
