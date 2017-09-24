@@ -10,7 +10,11 @@ Hoe.spec "rutema" do |prj|
   prj.version = Rutema::Version::STRING
   prj.summary='rutema is a test execution and management framework for heterogeneous testing environments'
   prj.urls=["http://github.com/damphyr/rutema"]
-  prj.description=prj.paragraphs_of('README.md',1..5).join("\n\n")
+  prj.description <<-EOT rutema is a test execution tool and a framework for organizing and managing test execution across different tools.
+  
+It enables the combination of different test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
+  
+It's purpose is to make testing in heterogeneous environments easier. EOT
   prj.local_rdoc_dir='doc/rdoc'
   prj.readme_file="README.md"
   prj.extra_deps<<["patir", "~>0.8"]
