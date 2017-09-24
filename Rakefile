@@ -14,7 +14,8 @@ Hoe.spec "rutema" do |prj|
   
 It enables the combination of different test tools while it takes care of logging, reporting, archiving of results and formalizes execution of automated and manual tests.
   
-It's purpose is to make testing in heterogeneous environments easier. EOT
+It's purpose is to make testing in heterogeneous environments easier. 
+EOT
   prj.local_rdoc_dir='doc/rdoc'
   prj.readme_file="README.md"
   prj.extra_deps<<["patir", "~>0.8"]
