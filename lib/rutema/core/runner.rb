@@ -71,7 +71,7 @@ module Rutema
       private
       def run_scenario name,scenario,meta,is_special
         executed_steps=[]
-        status=:warning
+        status=:skipped
         begin 
           stps=scenario.steps
           if stps.empty?
