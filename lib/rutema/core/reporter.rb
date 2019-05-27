@@ -94,11 +94,7 @@ module Rutema
             elsif message.status == :warning
               puts "WARNING|#{message.to_s}"
             else
-                if message.status == :started
-                  puts "#{message.to_s} Started." if @mode=="verbose"
-                else
-                  puts message.to_s if @mode=="verbose"
-                end 
+              puts "#{message.to_s} #{message.status}." if @mode=="verbose"
             end
           when ErrorMessage
             puts message.to_s 

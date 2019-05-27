@@ -4,6 +4,7 @@ require_relative "framework"
 
 module Rutema
   module Runners
+    STATUS_CODES=[:skipped,:success,:warning,:error]    
     class Default
       include Rutema::Messaging
       attr_reader :context
@@ -92,7 +93,7 @@ module Rutema
                   s.status = :error                
                 end
                 message(:test=>name,:text=>s.to_s,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'backtrace'=>s.backtrace,'duration'=>s.exec_time,'is_special'=>is_special)
-                status=s.status
+                status=s.status unless STATUS_CODES.find_index(s.status) < STATUS_CODES.find_index(status)
                 break if :error==s.status and !s.continue?
               end
             end
