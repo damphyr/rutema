@@ -147,7 +147,7 @@ module Rutema
     end
   end
   class Dispatcher
-    INTERVAL=0.01
+    INTERVAL=0.1
     def initialize queue,configuration
       @queue = queue
       @queues = {}
