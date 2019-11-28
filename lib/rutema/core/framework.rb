@@ -1,4 +1,7 @@
 module Rutema
+
+  STATUS_CODES=[:started,:skipped,:success,:warning,:error]
+
   #Represents the data beeing shunted between the components in lieu of logging.
   #
   #This is the primary type passed to the event reporters
@@ -88,7 +91,7 @@ module Rutema
     def <<(message)
       @steps<<message
       @duration+=message.duration
-      @status=message.status
+      @status=message.status unless message.status.nil? || (!@status.nil? && STATUS_CODES.find_index(message.status) < STATUS_CODES.find_index(@status))
     end
   end
 

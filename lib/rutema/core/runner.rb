@@ -3,8 +3,7 @@
 require_relative "framework"
 
 module Rutema
-  module Runners
-    STATUS_CODES=[:skipped,:success,:warning,:error]    
+  module Runners    
     class Default
       include Rutema::Messaging
       attr_reader :context
@@ -27,12 +26,14 @@ module Rutema
           message(:test=>spec.name,:text=>'started')
           if @setup
             message(:test=>spec.name,:text=>'setup')
-            executed_steps,status=run_scenario("_setup_",@setup.scenario,@context,true)
+            executed_steps,setup_status=run_scenario("_setup_",@setup.scenario,@context,true)
+            status=setup_status unless STATUS_CODES.find_index(setup_status) < STATUS_CODES.find_index(status)
             steps+=executed_steps
           end
           if status!=:error
             message(:test=>spec.name,:text=>'running')
-            executed_steps,status=run_scenario(spec.name,spec.scenario,@context,is_special)
+            executed_steps,testspec_status=run_scenario(spec.name,spec.scenario,@context,is_special)
+            status=testspec_status unless STATUS_CODES.find_index(testspec_status) < STATUS_CODES.find_index(status)
             steps+=executed_steps
           else
             message(:test=>spec.name,'number'=>0,'status'=>:error,'out'=>"Setup failed",'err'=>"",'duration'=>0)
@@ -40,7 +41,8 @@ module Rutema
           @context['rutema_status']=status
           if @teardown
             message(:test=>spec.name,:text=>'teardown')
-            executed_steps,status=run_scenario("_teardown_",@teardown.scenario,@context,true)
+            executed_steps,teardown_status=run_scenario("_teardown_",@teardown.scenario,@context,true)
+            status=teardown_status unless STATUS_CODES.find_index(teardown_status) < STATUS_CODES.find_index(status)
           end
           @context['rutema_status']=status
           message(:test=>spec.name,:text=>'finished')
