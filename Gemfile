@@ -10,7 +10,7 @@ group :development do
   gem 'hoe', '~> 3.22.1', require: false
   gem 'mocha', '~> 1.11.2', require: false
   gem 'pry', '~> 0.13.1', require: false
-  gem 'rdoc', '~>5.0.0', require: false
+  gem 'rdoc', '~>5.1.0', require: false
   gem 'rubocop', '~>0.89.1', require: false
   gem 'test-unit', '~>3.2.3', require: false
 end
