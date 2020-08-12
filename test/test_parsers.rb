@@ -64,15 +64,20 @@ module TestRutema
     </scenario>
     EOT
   end
-  class TestSpecificationParser<Test::Unit::TestCase
+
+  class TestSpecificationParser < Test::Unit::TestCase
     def test_specification_parser
-      parser=nil
-      assert_nothing_raised() { parser=Rutema::Parsers::SpecificationParser.new({}) }
+      parser = nil
+      assert_nothing_raised { parser = Rutema::Parsers::SpecificationParser.new({}) }
       assert_not_nil(parser)
-      assert(parser.configuration.empty?,"Configuration is not empty")
-      assert_raise(Rutema::ParserError) { parser.parse_specification("foo") }
+      assert(parser.configuration.empty?, 'Configuration is not empty')
+      assert_raise(Rutema::ParserError) { parser.parse_specification('foo') }
+      assert_raise(Rutema::ParserError) { parser.parse_setup('foo') }
+      assert_raise(Rutema::ParserError) { parser.parse_teardown('foo') }
+      assert_nothing_raised { parser.validate_configuration }
     end
   end
+
   class TestXMLParser<Test::Unit::TestCase
     def test_parse_specification
       config=stub()
