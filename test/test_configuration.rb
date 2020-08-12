@@ -12,12 +12,14 @@ FULL_CONFIG =<<-EOT
     cfg.check = 'check.spec'
     cfg.context = { key: 'value' }
     cfg.parser = { class: Rutema::Parsers::SpecificationParser }
-    cfg.path = { name: 'test', path: '.' }
+    cfg.path = { name: 'doc', path: '/usr/share/doc' }
+    cfg.path = { name: 'src', path: '/usr/src' }
     cfg.reporter = { class: Rutema::Reporters::BlockReporter }
     cfg.tests = ['T001.spec']
     cfg.setup = 'setup.spec'
     cfg.teardown = 'teardown.spec'
-    cfg.tool = { name: 'test', path: '.', configuration: { key: 'value' } }
+    cfg.tool = { name: 'cat', path: '/usr/bin/cat', configuration: {} }
+    cfg.tool = { name: 'echo', path: '/usr/bin/echo', configuration: { param: '-n' } }
   end
   EOT
 
@@ -46,14 +48,16 @@ module TestRutema
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
-      assert_not_nil(cfg.tools)
-      assert_not_nil(cfg.tools.test[:configuration])
-      assert_not_nil(cfg.tools.test[:path])
-      assert_equal('test', cfg.tools.test[:name])
-      assert_not_nil(cfg.paths)
-      assert_not_nil(cfg.paths.test)
       assert_not_nil(cfg.tests)
       assert_not_nil(cfg.context)
+      assert_instance_of(OpenStruct, cfg.paths)
+      assert_equal('/usr/share/doc', cfg.paths.doc)
+      assert_equal('/usr/src', cfg.paths.src)
+      assert_instance_of(OpenStruct, cfg.tools)
+      assert_equal({ name: 'cat', path: '/usr/bin/cat', configuration: {} },
+                   cfg.tools.cat)
+      assert_equal({ name: 'echo', path: '/usr/bin/echo', configuration: { param: '-n' } },
+                   cfg.tools.echo)
     end
 
     def test_specification_paths
