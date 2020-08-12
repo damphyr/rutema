@@ -21,7 +21,7 @@ GEM
       ast (~> 2.4.1)
     patir (0.9.0)
       systemu (~> 2.6)
-    power_assert (1.1.0)
+    power_assert (1.2.0)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -51,7 +51,7 @@ GEM
     systemu (2.6.5)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
-    test-unit (3.2.6)
+    test-unit (3.3.6)
       power_assert
     thor (1.0.1)
     tins (1.24.1)
@@ -70,7 +70,7 @@ DEPENDENCIES
   pry (~> 0.13.1)
   rdoc (~> 5.1.0)
   rubocop (~> 0.89.1)
-  test-unit (~> 3.2.3)
+  test-unit (~> 3.3.6)
 
 BUNDLED WITH
    1.17.3
