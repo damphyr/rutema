@@ -68,7 +68,7 @@ DEPENDENCIES
   highline (~> 1.7.10)
   hoe (~> 3.16.1)
   mocha (~> 1.2.1)
-  patir (~> 0.8)
+  patir (~> 0.9.0)
   pry
   rdoc (~> 5.0.0)
   rubocop (~> 0.89.1)
