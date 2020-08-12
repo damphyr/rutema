@@ -1,8 +1,8 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
-require 'test/unit'
 require 'ostruct'
+require 'test/unit'
+require 'mocha/test_unit'
 require 'patir/command'
-require 'mocha/setup'
 
 require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/core/runner'

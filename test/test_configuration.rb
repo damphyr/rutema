@@ -5,7 +5,7 @@
 require_relative '../lib/rutema/core/configuration'
 # $DEBUG=true
 require 'test/unit'
-require 'mocha/setup'
+require 'mocha/test_unit'
 
 FULL_CONFIG =<<-EOT
   configure do |cfg|

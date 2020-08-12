@@ -1,8 +1,8 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'test/unit'
+require 'mocha/test_unit'
 require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/reporters/junit'
-require 'mocha/setup'
 
 module TestRutema
   class TestReporters<Test::Unit::TestCase
