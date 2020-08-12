@@ -23,7 +23,7 @@ FULL_CONFIG =<<-EOT
     cfg.suite_setup = 'suite_setup.spec'
     cfg.suite_teardown = 'suite_teardown.spec'
     cfg.teardown = 'teardown.spec'
-    cfg.tests = ['T001.spec']
+    cfg.tests = ['T001.spec', 'T002.spec', 'T003.spec', 'T004.spec']
     cfg.tool = { name: 'cat', path: '/usr/bin/cat', configuration: {} }
     cfg.tool = { name: 'echo', path: '/usr/bin/echo', configuration: { param: '-n' } }
   end
@@ -51,6 +51,9 @@ module TestRutema
       File.expects(:exist?).with(File.expand_path('suite_teardown.spec')).returns(true)
       File.expects(:exist?).with(File.expand_path('teardown.spec')).returns(true)
       File.expects(:exist?).with('T001.spec').returns(false)
+      File.expects(:exist?).with('T002.spec').returns(true)
+      File.expects(:exist?).with('T003.spec').returns(true)
+      File.expects(:exist?).with('T004.spec').returns(true)
       # load the valid configuration
       assert_nothing_raised { cfg = Rutema::Configuration.new('full.rutema') }
       assert_instance_of(Hash, cfg.context)
@@ -68,7 +71,12 @@ module TestRutema
       assert_instance_of(Hash, cfg.runner)
       assert_equal(1, cfg.runner.size)
       assert_equal({ class: Rutema::Runners::Default }, cfg.runner)
-      assert_not_nil(cfg.tests)
+      assert_instance_of(Array, cfg.tests)
+      puts cfg.tests
+      assert_equal(['T001.spec',
+                    File.expand_path('T002.spec'),
+                    File.expand_path('T003.spec'),
+                    File.expand_path('T004.spec')], cfg.tests)
       assert_instance_of(OpenStruct, cfg.paths)
       assert_equal('/usr/share/doc', cfg.paths.doc)
       assert_equal('/usr/src', cfg.paths.src)
