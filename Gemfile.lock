@@ -64,7 +64,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  coveralls (>= 0.8.21)
+  coveralls (~> 0.8.23)
   highline (~> 1.7.10)
   hoe (~> 3.16.1)
   mocha (~> 1.2.1)
