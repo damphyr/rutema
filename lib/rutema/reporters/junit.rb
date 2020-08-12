@@ -1,4 +1,4 @@
-#  Copyright (c) 2015 Vassilis Rizopoulos. All rights reserved.
+# Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'rexml/document'
 require_relative "../core/reporter"
 

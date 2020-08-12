@@ -45,7 +45,7 @@ The core functionality of rutema depends on the following gems:
 
 (The MIT License)
 
-Copyright (c) 2007-2017 Vassilis Rizopoulos
+Copyright (c) 2007-2020 Vassilis Rizopoulos
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

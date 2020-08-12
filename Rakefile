@@ -1,4 +1,4 @@
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+# Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 # -*- ruby -*-
 $:.unshift File.join(File.dirname(__FILE__),"lib")
 require 'hoe'
