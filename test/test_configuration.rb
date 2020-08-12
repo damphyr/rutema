@@ -9,15 +9,15 @@ require 'mocha/test_unit'
 
 FULL_CONFIG =<<-EOT
   configure do |cfg|
-    cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
-    cfg.reporter={:class=>Rutema::Reporters::BlockReporter}
-    cfg.tests=["T001.spec"]
-    cfg.tool={:name=>"test",:path=>".",:configuration=>{:key=>"value"}}
-    cfg.path={:name=>"test",:path=>"."}
-    cfg.context={:key=>"value"}
-    cfg.check="check.spec"
-    cfg.teardown="teardown.spec"
-    cfg.setup="setup.spec"
+    cfg.check = 'check.spec'
+    cfg.context = { key: 'value' }
+    cfg.parser = { class: Rutema::Parsers::SpecificationParser }
+    cfg.path = { name: 'test', path: '.' }
+    cfg.reporter = { class: Rutema::Reporters::BlockReporter }
+    cfg.tests = ['T001.spec']
+    cfg.setup = 'setup.spec'
+    cfg.teardown = 'teardown.spec'
+    cfg.tool = { name: 'test', path: '.', configuration: { key: 'value' } }
   end
   EOT
 
