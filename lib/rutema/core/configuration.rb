@@ -1,20 +1,31 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
+
+# frozen_string_literal: false
+
 require 'ostruct'
 require_relative 'parser'
 require_relative 'reporter'
 module Rutema
-  #This module defines the "configuration directives" used in the configuration of Rutema
+  ##
+  # This module defines the configuration directives used for the configuration
+  # of Rutema and test suites.
   #
-  #Example
-  #A configuration file needs as a minimum to define which parser to use and which tests to run.
+  # A configuration file needs as a minimum to define which parser to use and
+  # which tests to run.
   #
-  #Since rutema configuration files are valid Ruby code, you can use the full power of the Ruby language including require directives
+  # Since rutema configuration files are valid Ruby code, you can use the full
+  # power of the Ruby language including require directives
   #
-  # require 'rake'
-  # configuration.parser={:class=>Rutema::MinimalXMLParser}
-  # configuration.tests=FileList['all/of/the/tests/**/*.*']
+  # Example:
+  #
+  #     require 'rake'
+  #     configure do |cfg|
+  #       cfg.parser = { class: Rutema::Parsers::SpecificationParser }
+  #       cfg.tests = ['../specs/T001.spec', '../specs/T002.spec']
+  #     end
   module ConfigurationDirectives
-    attr_reader :parser,:runner,:tools,:paths,:tests,:context,:setup,:teardown,:suite_setup,:suite_teardown
+    attr_reader :parser, :runner, :tools, :paths, :tests, :context, :setup, \
+                :teardown, :suite_setup, :suite_teardown
     attr_accessor :reporters
 
     ##
@@ -32,9 +43,11 @@ module Rutema
     #       cfg.context = { key_b: 'Another value' }
     #       cfg.context = { key_a: 'This value will override', key_c: 'One more value' }
     #     end
-    def context= definition
-      @context||=Hash.new
-      raise ConfigurationException,"Only accepting hash values as context_data" unless definition.kind_of?(Hash)
+    def context=(definition)
+      @context ||= {}
+      raise ConfigurationException,
+            'Only accepting hash values as context argument' unless definition.is_a?(Hash)
+
       @context.merge!(definition)
     end
 
@@ -52,9 +65,11 @@ module Rutema
     #     configure do |cfg|
     #       { class: Rutema::Parsers::SpecificationParser }
     #     end
-    def parser= definition
-      raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-      @parser=definition
+    def parser=(definition)
+      raise ConfigurationException,
+            "Required key :class is missing from #{definition} for parser" unless definition[:class]
+
+      @parser = definition
     end
 
     ##
@@ -70,10 +85,12 @@ module Rutema
     #       cfg.path = { name: 'doc', path: '/usr/share/doc' }
     #       cfg.path = { name: 'src', path: '/usr/src' }
     #     end
-    def path= definition
-      raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
-      raise ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
-      @paths[definition[:name]]=definition[:path]
+    def path=(definition)
+      raise ConfigurationException,
+            "Required key :name is missing from #{definition} of path" unless definition[:name]
+      raise ConfigurationException,
+            "Required key :path is missing from #{definition} of path" unless definition[:path]
+      @paths[definition[:name]] = definition[:path]
     end
 
     ##
@@ -90,9 +107,11 @@ module Rutema
     #       cfg.reporter = { class: Rutema::Reporters::BlockReporter }
     #       cfg.reporter = { class: Rutema::Reporters::EventReporter }
     #     end
-    def reporter= definition
-      raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-      @reporters[definition[:class]]=definition
+    def reporter=(definition)
+      raise ConfigurationException,
+            "Required key :class is missing from #{definition} of reporter" unless definition[:class]
+
+      @reporters[definition[:class]] = definition
     end
 
     ##
@@ -109,9 +128,11 @@ module Rutema
     #     configure do |cfg|
     #       cfg.runner = { class: Rutema::Runners::Default }
     #     end
-    def runner= definition
-      raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-      @runner=definition
+    def runner=(definition)
+      raise ConfigurationException,
+            "Required key :class is missing from #{definition} of runner" unless definition[:class]
+
+      @runner = definition
     end
 
     ##
@@ -124,8 +145,8 @@ module Rutema
     #     configure do |cfg|
     #       cfg.setup = 'setup.spec'
     #     end
-    def setup= path
-      @setup=check_path(path)
+    def setup=(path)
+      @setup = check_path(path)
     end
 
     ##
@@ -143,12 +164,12 @@ module Rutema
     #     configure do |cfg|
     #       cfg.suite_setup = 'suite_setup.spec'
     #     end
-    def suite_setup= path
-      @suite_setup=check_path(path)
+    def suite_setup=(path)
+      @suite_setup = check_path(path)
     end
 
-    alias_method :check,:suite_setup
-    alias_method :check=,:suite_setup=
+    alias check suite_setup
+    alias check= suite_setup=
 
     ##
     # Path to a test suite teardown specification. (optional)
@@ -160,8 +181,8 @@ module Rutema
     #     configure do |cfg|
     #       cfg.suite_teardown = 'suite_teardown.spec'
     #     end
-    def suite_teardown= path
-      @suite_teardown=check_path(path)
+    def suite_teardown=(path)
+      @suite_teardown = check_path(path)
     end
 
     ##
@@ -174,8 +195,8 @@ module Rutema
     #     configure do |cfg|
     #       cfg.teardown = 'teardown.spec'
     #     end
-    def teardown= path
-      @teardown=check_path(path)
+    def teardown=(path)
+      @teardown = check_path(path)
     end
 
     ##
@@ -189,8 +210,8 @@ module Rutema
     #     configure do |cfg|
     #       cfg.tests = ['../specs/T001.spec', '../specs/T002.spec']
     #     end
-    def tests= array_of_identifiers
-      @tests+=array_of_identifiers.map{|f| full_path(f)}
+    def tests=(array_of_identifiers)
+      @tests += array_of_identifiers.map { |f| full_path(f) }
     end
 
     ##
@@ -214,16 +235,18 @@ module Rutema
     #     @configuration.tools.echo[:path]
     #
     # This way you can pass configuration information for the tools you use
-    def tool= definition
-      raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
-      @tools[definition[:name]]=definition
+    def tool=(definition)
+      raise ConfigurationException,
+            "Required key :name is missing from #{definition} of tool" unless definition[:name]
+
+      @tools[definition[:name]] = definition
     end
 
     #Adds the specification identifiers available to this instance of Rutema
     #
     #These will usually be files, but they can be anything.
     #Essentially this is an Array of strings that mean something to your parser
-    def tests= array_of_identifiers
+    def tests=(array_of_identifiers)
       @tests+=array_of_identifiers.map{|f| full_path(f)}
     end
     #:stopdoc
