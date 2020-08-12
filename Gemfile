@@ -7,7 +7,7 @@ gem 'patir', '~>0.9.0', require: false
 
 group :development do
   gem 'coveralls', '~> 0.8.23', require: false
-  gem 'hoe', '~> 3.16.1', require: false
+  gem 'hoe', '~> 3.22.1', require: false
   gem 'mocha', '~>1.2.1', require: false
   gem 'pry', require: false
   gem 'rdoc', '~>5.0.0', require: false
