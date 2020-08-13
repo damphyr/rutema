@@ -242,13 +242,6 @@ module Rutema
       @tools[definition[:name]] = definition
     end
 
-    #Adds the specification identifiers available to this instance of Rutema
-    #
-    #These will usually be files, but they can be anything.
-    #Essentially this is an Array of strings that mean something to your parser
-    def tests=(array_of_identifiers)
-      @tests+=array_of_identifiers.map{|f| full_path(f)}
-    end
     #:stopdoc
     def init
       @reporters={}
