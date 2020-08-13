@@ -7,6 +7,13 @@ require_relative '../lib/rutema/core/configuration'
 require 'test/unit'
 require 'mocha/test_unit'
 
+BASE_CONFIG_EXTENSION =<<-EOT
+  configure do |cfg|
+    cfg.reporter = { class: Rutema::Reporters::BlockReporter }
+    cfg.runner = { class: Rutema::Runners::Default }
+  end
+  EOT
+
 FULL_CONFIG =<<-EOT
   configure do |cfg|
     cfg.check = 'check.spec'
@@ -61,7 +68,28 @@ module TestRutema
   end
 
   class TestRutemaConfiguration < Test::Unit::TestCase
-    def test_rutema_configuration
+    def test_rutema_configuration_configure
+      File.expects(:read).with('test_identifiers.rutema').returns(IDENTIFIERS)
+      cfg = Rutema::Configuration.new('test_identifiers.rutema')
+      cfg.configure { |conf| conf.context = { key_a: 'A value' } }
+      assert_equal({ key_a: 'A value' }, cfg.context)
+    end
+
+    def test_rutema_configuration_import
+      File.expects(:exist?).with(File.expand_path('base_config.rutema')).returns(true)
+      File.expects(:exist?).with('../examples/specs/T001.spec').returns(true)
+      File.expects(:exist?).with('22345').returns(true)
+      File.expects(:exist?).with('../examples/specs/T003.spec').returns(true)
+      File.expects(:read).with(File.expand_path('base_config.rutema')).returns(BASE_CONFIG_EXTENSION)
+      File.expects(:read).with('test_identifiers.rutema').returns(IDENTIFIERS)
+      cfg = Rutema::Configuration.new('test_identifiers.rutema')
+      cfg.import('base_config.rutema')
+      assert_equal({ Rutema::Reporters::BlockReporter => \
+                     { class: Rutema::Reporters::BlockReporter } }, cfg.reporters)
+      assert_equal({ class: Rutema::Runners::Default }, cfg.runner)
+    end
+
+    def test_rutema_configuration_initialize
       cfg = 'foo.cfg'
       File.expects(:read).with('full.rutema').returns(FULL_CONFIG)
       File.expects(:exist?).with(File.expand_path('check.spec')).returns(true)
@@ -75,6 +103,7 @@ module TestRutema
       File.expects(:exist?).with('T004.spec').returns(true)
       # load the valid configuration
       assert_nothing_raised { cfg = Rutema::Configuration.new('full.rutema') }
+      assert_equal('full.rutema', cfg.filename)
       assert_instance_of(Hash, cfg.context)
       assert_equal({ key_a: 'Oops', key_b: 'Another value',
                      key_c: 'One more value' }, cfg.context)
