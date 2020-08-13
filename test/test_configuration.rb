@@ -40,7 +40,26 @@ IDENTIFIERS =<<-EOT
   end
   EOT
 
+class InitTestClass
+  include Rutema::ConfigurationDirectives
+
+  def initialize
+    init
+  end
+end
+
 module TestRutema
+  class TestConfigurationDirectives < Test::Unit::TestCase
+    def test_init
+      test_instance = InitTestClass.new
+      assert_instance_of(Hash, test_instance.context)
+      assert_instance_of(OpenStruct, test_instance.paths)
+      assert_instance_of(Hash, test_instance.reporters)
+      assert_instance_of(Array, test_instance.tests)
+      assert_instance_of(OpenStruct, test_instance.tools)
+    end
+  end
+
   class TestRutemaConfiguration < Test::Unit::TestCase
     def test_rutema_configuration
       cfg = 'foo.cfg'
