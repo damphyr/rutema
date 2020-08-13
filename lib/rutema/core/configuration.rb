@@ -2,6 +2,7 @@
 
 # frozen_string_literal: false
 
+require 'English'
 require 'ostruct'
 require_relative 'parser'
 require_relative 'reporter'
@@ -283,60 +284,79 @@ module Rutema
   class ConfigurationException < RuntimeError
   end
 
-  #The object we pass around after we load the configuration from file
+  ##
+  # Class for loading configuration files and storing and manipulating configuration options
   #
-  #All relevant methods are in Rutema::ConfigurationDirectives
+  # All relevant local variables and methods are in Rutema::ConfigurationDirectives
   class Configuration
     include ConfigurationDirectives
     attr_reader :filename
-    def initialize config_file
-      @filename=config_file
+
+    ##
+    # Load the passed configuration file and initialize from contained configuration
+    def initialize(config_file)
+      @filename = config_file
       init
       load_configuration(@filename)
     end
 
+    ##
+    # Pass a block with configuration directives to modify the instance
+    #
+    # If no block is given this does nothing.
+    #
+    # Example:
+    #
+    #     cfg.configure { |conf| conf.context = { key_a: 'A value' } }
     def configure
-      if block_given?
-        yield self
-      end
+      return unless block_given?
+
+      yield self
     end
-    #Loads the configuration from a file
+
+    ##
+    # Load additional configuration from another file
     #
-    #Use this to chain configuration files together
-    #==Example
-    #Say you have on configuration file "first.rutema" that contains all the generic directives and several others that change only one or two things. 
+    # This can be used to accumulate information from multiple configuration
+    # files. If the options from the second file accumulate with or replace
+    # existing options from previous files can be checked through the respective
+    # Rutema::ConfigurationDirectives method explanations.
     #
-    #You can import the first.rutema file in the other configurations with
-    # import("first.rutema")
-    def import filename
+    # Example:
+    #
+    # General configuration directives could be stored in a file
+    # +base_config.rutema+ and further test suite specific information in
+    # +test_suite_a.rutema+. They could be combined in the following way:
+    #
+    #     cfg = Rutema::Configuration.new('base_config.rutema')
+    #     cfg.import('test_suite_a.rutema')
+    def import(filename)
       fnm = File.expand_path(filename)
-      if File.exist?(fnm)          
-        load_configuration(fnm)
-      else
-        raise ConfigurationException, "Import error: Can't find #{fnm}"
-      end
+      raise ConfigurationException, "Import error: Can't find #{fnm}" unless File.exist?(fnm)
+
+      load_configuration(fnm)
     end
+
     private
-    def load_configuration filename
-      begin 
-        cfg_txt=File.read(filename)
-        cwd=File.expand_path(File.dirname(filename))
-        #WORKAROUND for ruby 2.3.1
-        fname=File.basename(filename)
-        #evaluate in the working directory to enable relative paths in configuration
-        Dir.chdir(cwd){eval(cfg_txt,binding(),fname,__LINE__)}
-      rescue ConfigurationException
-        #pass it on, do not wrap again
-        raise
-      rescue SyntaxError
-        #Just wrap the exception so we can differentiate
-        raise ConfigurationException.new,"Syntax error in the configuration file '#{filename}':\n#{$!.message}"
-      rescue NoMethodError
-        raise ConfigurationException.new,"Encountered an unknown directive in configuration file '#{filename}':\n#{$!.message}"
-      rescue 
-        #Just wrap the exception so we can differentiate
-        raise ConfigurationException.new,"#{$!.message}"
-      end
+
+    def load_configuration(filename)
+      cfg_txt = File.read(filename)
+      cwd = File.expand_path(File.dirname(filename))
+      # WORKAROUND for ruby 2.3.1
+      fname = File.basename(filename)
+      # evaluate in the working directory to enable relative paths in configuration
+      Dir.chdir(cwd) { eval(cfg_txt, binding(), fname, __LINE__) }
+    rescue ConfigurationException
+      # pass it on, do not wrap again
+      raise
+    rescue SyntaxError
+      # Just wrap the exception so we can differentiate
+      raise ConfigurationException.new, "Syntax error in the configuration file '#{filename}':\n#{$ERROR_INFO.message}"
+    rescue NoMethodError
+      raise ConfigurationException.new, "Encountered an unknown directive in configuration file '#{filename}':\n#{$ERROR_INFO.message}"
+    rescue
+      # Just wrap the exception so we can differentiate
+      raise ConfigurationException.new, $ERROR_INFO.message.to_s
     end
   end
 end
