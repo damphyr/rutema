@@ -18,26 +18,61 @@ module TestRutema
   class TestSpecificationElement < Test::Unit::TestCase
     def test_attribute
       obj = Dummy.new
+
+      # Atribute with a String value
       assert_raise(NoMethodError) { obj.name }
       obj.attribute(:name, 'name')
       assert(obj.has_name?)
+      assert(obj.name?)
       assert_equal(obj.name, 'name')
+      obj.name = 'Another name'
+      assert_equal('Another name', obj.name)
+
+      # Attribute with a boolean value
       assert_raise(NoMethodError) { obj.bool }
       obj.attribute(:bool, true)
+      assert(obj.has_bool?)
       assert(obj.bool?)
       assert_equal(true, obj.bool)
+      obj.bool = false
+      assert_equal(false, obj.bool)
+
+      # Attribute with a textual representation of a boolean value
       assert_raise(NoMethodError) { obj.text_bool }
       obj.attribute(:text_bool, 'true')
+      assert(obj.has_text_bool?)
       assert(obj.text_bool?)
-      assert_not_equal(true, obj.text_bool)
+      assert_equal('true', obj.text_bool)
+      obj.text_bool = 'false'
+      assert_equal('false', obj.text_bool)
     end
 
     def test_method_missing
       obj = Dummy.new
       assert_raise(NoMethodError) { obj.name }
-      obj.name = 'name'
+      obj.name = 'Some name'
       assert(obj.has_name?)
-      assert_equal(obj.name, 'name')
+      assert(obj.name?)
+      assert_equal(obj.name, 'Some name')
+    end
+
+    def test_respond_to
+      obj = Dummy.new
+      [false, true].each do |include_all|
+        assert_false(obj.respond_to?(:has_a_name, include_all))
+        assert_false(obj.respond_to?(:a_name, include_all))
+        assert_false(obj.respond_to?(:a_name=, include_all))
+        assert_false(obj.respond_to?(:a_name?, include_all))
+      end
+
+      obj.attribute(:a_name, 'Some name')
+
+      [false, true].each do |include_all|
+        assert(obj.respond_to?(:has_a_name, include_all))
+        assert(obj.respond_to?(:a_name, include_all))
+        assert(obj.respond_to?(:a_name=, include_all))
+        assert(obj.respond_to?(:a_name?, include_all))
+      end
     end
   end
 
