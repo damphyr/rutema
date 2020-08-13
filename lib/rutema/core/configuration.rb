@@ -211,7 +211,7 @@ module Rutema
     #       cfg.tests = ['../specs/T001.spec', '../specs/T002.spec']
     #     end
     def tests=(array_of_identifiers)
-      @tests += array_of_identifiers.map { |f| full_path(f) }
+      @tests += array_of_identifiers.map { |f| full_path_or_filename(f) }
     end
 
     ##
@@ -242,37 +242,47 @@ module Rutema
       @tools[definition[:name]] = definition
     end
 
-    #:stopdoc
+    ##
+    # Initialize mandatory local variables
     def init
-      @reporters={}
-      @context={}
-      @tests=[]
-      @tools=OpenStruct.new
-      @paths=OpenStruct.new
-    end
-    #:startdoc
-    private 
-    #Checks if a path exists and raises a ConfigurationException if not
-    def check_path path
-      path=File.expand_path(path)
-      raise ConfigurationException,"#{path} does not exist" unless File.exist?(path)
-      return path
-    end
-    #Gives back a string of key=value,key=value for a hash
-    def definition_string definition
-      msg=Array.new
-      definition.each{|k,v| msg<<"#{k}=#{v}"}
-      return msg.join(",")
+      @context = {}
+      @paths = OpenStruct.new
+      @reporters = {}
+      @tests = []
+      @tools = OpenStruct.new
     end
 
-    def full_path filename
+    private
+
+    ##
+    # Check if a path exists and raise a ConfigurationException if it does not
+    def check_path(path)
+      path = File.expand_path(path)
+      raise ConfigurationException, "#{path} does not exist" unless File.exist?(path)
+
+      path
+    end
+
+    ##
+    # Return a string of key=value,key=value for a hash
+    def definition_string(definition)
+      msg = []
+      definition.each { |k, v| msg << "#{k}=#{v}" }
+      msg.join(',')
+    end
+
+    def full_path_or_filename(filename)
       return File.expand_path(filename) if File.exist?(filename)
-      return filename
+
+      filename
     end
   end
 
-  class ConfigurationException<RuntimeError
+  ##
+  # An exception that is being raised on errors processing a _rutema_ configuration
+  class ConfigurationException < RuntimeError
   end
+
   #The object we pass around after we load the configuration from file
   #
   #All relevant methods are in Rutema::ConfigurationDirectives
