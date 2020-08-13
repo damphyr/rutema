@@ -2,47 +2,55 @@
 require 'patir/command'
 
 module Rutema
-  #This module adds functionality that allows us to 
-  #arbitrarily add attributes to a class and then have 
-  #the accessor methods for these attributes appear automagically.
-  #
-  #It will also add a has_attribute? method to query if _attribute_ is part of the object or not.
+  ##
+  # This module adds functionality that allows to arbitrarily add attributes to
+  # a class and then have the accessor methods for these attributes
+  # automagically appear.
   module SpecificationElement
-    #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, 
-    #the rest are silently ignored
-    def attribute symbol,value
-      @attributes||=Hash.new
+    ##
+    # Adds an attribute with the given +value+ to the class. +symbol+ can be a
+    # Symbol or a String, the rest are silently ignored
+    def attribute(symbol, value)
+      @attributes ||= {}
       case symbol
-        when String then @attributes[:"#{symbol}"]=value
-        when Symbol then @attributes[symbol]=value
-      end
-    end
-    #allows us to call object.attribute, object.attribute=, object.attribute? and object.has_attribute?
-    #
-    #object.attribute and object.attribute? will throw NoMethodError if no attribute is set.
-    #
-    #object.attribute= will set the attribute to the right operand and
-    #object.has_attribute? returns false or true according to the existence of the attribute.
-    def method_missing symbol,*args
-      @attributes||=Hash.new
-      key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
-      @attributes[:"#{key}"]=args[0] if key+"="==symbol.id2name
-      if @attributes.has_key?(:"#{key}")
-          return true if "has_"+key+"?"==symbol.id2name
-          return @attributes[:"#{key}"]
-      else
-        return false if "has_"+key+"?"==symbol.id2name
-        super(symbol,*args)
+      when String then @attributes[:"#{symbol}"] = value
+      when Symbol then @attributes[symbol] = value
       end
     end
 
-    def respond_to? symbol,include_all
-      @attributes||=Hash.new
-      key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
-      if @attributes.has_key?(:"#{key}")
-          return true
+    ##
+    # Allows to call +object.attribute+, +object.attribute=+, +object.attribute?+
+    # and +object.has_attribute?+
+    #
+    # +object.attribute+ and +object.attribute?+ will throw +NoMethodError+ if
+    # attribute is not set.
+    #
+    # +object.attribute=+ will set the value of the attribute to the right
+    # operand.
+    def method_missing(symbol, *args)
+      @attributes ||= {}
+      key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+      @attributes[:"#{key}"] = args[0] if key + '=' == symbol.id2name
+      if @attributes.key?(:"#{key}")
+        return true if 'has_' + key + '?' == symbol.id2name
+
+        @attributes[:"#{key}"]
       else
-        super(symbol,include_all)
+        return false if 'has_' + key + '?' == symbol.id2name
+
+        super(symbol, *args)
+      end
+    end
+
+    ##
+    # Refer to (Ruby-Doc.org)[https://ruby-doc.org/core-2.7.1/Object.html#method-i-respond_to-3F]
+    def respond_to?(symbol, include_all)
+      @attributes ||= {}
+      key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+      if @attributes.key?(:"#{key}")
+        true
+      else
+        super(symbol, include_all)
       end
     end
   end

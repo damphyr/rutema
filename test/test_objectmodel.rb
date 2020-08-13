@@ -21,6 +21,7 @@ module TestRutema
 
       # Atribute with a String value
       assert_raise(NoMethodError) { obj.name }
+      assert_raise(NoMethodError) { obj.name? }
       obj.attribute(:name, 'name')
       assert(obj.has_name?)
       assert(obj.name?)
@@ -30,6 +31,7 @@ module TestRutema
 
       # Attribute with a boolean value
       assert_raise(NoMethodError) { obj.bool }
+      assert_raise(NoMethodError) { obj.bool? }
       obj.attribute(:bool, true)
       assert(obj.has_bool?)
       assert(obj.bool?)
@@ -39,6 +41,7 @@ module TestRutema
 
       # Attribute with a textual representation of a boolean value
       assert_raise(NoMethodError) { obj.text_bool }
+      assert_raise(NoMethodError) { obj.text_bool? }
       obj.attribute(:text_bool, 'true')
       assert(obj.has_text_bool?)
       assert(obj.text_bool?)
