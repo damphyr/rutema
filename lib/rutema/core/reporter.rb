@@ -130,31 +130,48 @@ module Rutema
       end
     end
 
-    #A very simple event reporter that outputs to the console
+    ##
+    # A very simple event reporter that outputs to the console (i.e. +stdout+)
     #
-    #It has three settings: off, normal and verbose.
+    # It has three available modes:
+    # * +off+
+    # * +normal+
+    # * +verbose+
     #
-    #Example configuration:
-    # cfg.reporter={:class=>Rutema::Reporters::Console, "mode"=>"verbose"}
-    class Console<EventReporter
-      def initialize configuration,dispatcher
-        super(configuration,dispatcher)
-        @mode=configuration.reporters.fetch(self.class,{})["mode"]
+    # In mode +off+ it does not output anything to the console. In mode +normal+
+    # it outputs Rutema::ErrorMessage instances and Rutema::RunnerMessage
+    # instances whose +status+ is +:error+. In mode +verbose+ all messages are
+    # output to the console.
+    #
+    # Example:
+    #
+    #     configure do |cfg|
+    #       cfg.reporter={ class: Rutema::Reporters::Console, 'mode' => 'verbose' }
+    #     end
+    class Console < EventReporter
+      ##
+      # Initialize by the given configuration and subscribe to the given dispatcher
+      def initialize(configuration, dispatcher)
+        super(configuration, dispatcher)
+        @mode = configuration.reporters.fetch(self.class, {})['mode']
       end
-      def update message
-        unless @mode=="off"
-          case message
-          when RunnerMessage
-            if message.status == :error
-              puts "FATAL|#{message.to_s}"
-            else
-              puts message.to_s if @mode=="verbose"
-            end
-          when ErrorMessage
-            puts message.to_s 
-          when Message
-            puts message.to_s if @mode=="verbose"
+
+      ##
+      # Output the given +message+ to console according to the configured +mode+
+      def update(message)
+        return if @mode == 'off'
+
+        case message
+        when RunnerMessage
+          if message.status == :error
+            puts "FATAL|#{message}"
+          elsif @mode == 'verbose'
+            puts message.to_s
           end
+        when ErrorMessage
+          puts message.to_s
+        when Message
+          puts message.to_s if @mode == 'verbose'
         end
       end
     end
