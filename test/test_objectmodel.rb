@@ -98,7 +98,7 @@ module TestRutema
   end
 
   class TestScenario < Test::Unit::TestCase
-    def test_add_step
+    def test_adding_a_step
       scenario = Rutema::Scenario.new([])
       assert(scenario.steps.empty?)
       step = Rutema::Step.new('Step', DummyCommand.new)
@@ -106,6 +106,30 @@ module TestRutema
       assert_equal(1, scenario.steps.size)
       scenario.add_step(step)
       assert_equal(2, scenario.steps.size)
+    end
+
+    def test_initialize
+      scenario = Rutema::Scenario.new([])
+      assert_instance_of(Array, scenario.steps)
+      assert(scenario.steps.empty?)
+
+      scenario = Rutema::Scenario.new([1, 2, 3])
+      assert_instance_of(Array, scenario.steps)
+      assert_false(scenario.steps.empty?)
+      assert_equal(3, scenario.steps.size)
+    end
+
+    def test_overwriting_steps
+      scenario = Rutema::Scenario.new([1, 2, 3])
+      assert_instance_of(Array, scenario.steps)
+      assert_false(scenario.steps.empty?)
+      assert_equal(3, scenario.steps.size)
+
+      scenario.steps = 'Generally this does not belong here'
+
+      assert_instance_of(String, scenario.steps)
+      assert_false(scenario.steps.empty?)
+      assert_equal(35, scenario.steps.size)
     end
   end
 
