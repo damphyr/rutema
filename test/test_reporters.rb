@@ -1,10 +1,25 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
+
 require 'test/unit'
 require 'mocha/test_unit'
+
 require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/reporters/junit'
 
 module TestRutema
+  class TestBlockReporter < Test::Unit::TestCase
+    def test_initialize
+      assert_nothing_raised do
+        Rutema::Reporters::BlockReporter.new(nil, nil)
+      end
+    end
+
+    def test_report
+      block_reporter = Rutema::Reporters::BlockReporter.new(nil, nil)
+      assert_nothing_raised { block_reporter.report(nil, nil, nil) }
+    end
+  end
+
   class TestReporters<Test::Unit::TestCase
     def test_junit
       #Rutema::Utilities.expects(:write_file).returns("OK")
