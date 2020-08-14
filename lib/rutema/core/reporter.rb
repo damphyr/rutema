@@ -1,4 +1,7 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
+
+require 'English'
+
 module Rutema
   #Rutema supports two kinds of reporters.
   #
@@ -25,21 +28,33 @@ module Rutema
       # data
       def report(specifications, states, errors) end
     end
+
+    ##
+    # A Rutema::Reporters::EventReporter receives its data continually during a
+    # _rutema_ run
     class EventReporter
-      def initialize configuration,dispatcher
-        @configuration=configuration
-        @queue=dispatcher.subscribe(self.object_id)
+      ##
+      # Initialize a new Rutema::Reporters::EventReporter instance
+      #
+      # The +configuration+ argument is stored internally for later usage.
+      # The passed +dispatcher+ is being subscribed to.
+      def initialize(configuration, dispatcher)
+        @configuration = configuration
+        @queue = dispatcher.subscribe(object_id)
       end
 
+      ##
+      # Start a new Thread which regularly (each 0.1 seconds) calls #update for
+      # all data received through the dispatcher which was given on initialization
       def run!
-        @thread=Thread.new do
-          while true do
-            if  @queue.size>0
-              data=@queue.pop
+        @thread = Thread.new do
+          loop do
+            unless @queue.empty?
+              data = @queue.pop
               begin
                 update(data) if data
               rescue
-                puts "#{self.class} failed with #{$!.message}"
+                puts "#{self.class} failed with #{$ERROR_INFO.message}"
                 raise
               end
             end
@@ -48,18 +63,27 @@ module Rutema
         end
       end
 
-      def update data
-      end
+      ##
+      # Update the Rutema::Reporters::EventReporter with some data
+      #
+      # In the currently existing implementations the derived reporters expect
+      # class instances derived from Rutema::Message as data.
+      def update(data) end
 
+      ##
+      # This blocks as long as the thread is alive and messages are still in the
+      # queue.
+      #
+      # If one of the two conditions becomes +false+ the thread is killed and
+      # the method returns.
       def exit
         puts "Exiting #{self.class}" if $DEBUG
-        if @thread
-          puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
-          while @queue.size>0 && @thread.alive? do
-            sleep 0.1
-          end
-          Thread.kill(@thread)
-        end
+
+        return unless @thread
+
+        puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
+        sleep 0.1 while !@queue.empty? && @thread.alive?
+        Thread.kill(@thread)
       end
     end
     #This reporter is always instantiated and collects all messages fired by the rutema engine
