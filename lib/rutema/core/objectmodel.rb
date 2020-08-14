@@ -120,113 +120,133 @@ module Rutema
       @steps << step
     end
   end
-  #Represents a step in a Scenario.
+
+  ##
+  # This class represents a step in a Rutema::Scenario
   #
-  #Each Rutema::Step can have text and a command associated with it. 
+  # Each Rutema::Step can have text and a command associated with it.
   #
-  #Step standard attributes are.
+  # Rutema::Step standard attributes are:
+  # * +attended+ - the step can only run in attended mode - it requires user
+  #   input.
+  # * +step_type+ - a string identifying the type of the step. By default it's
+  #   "step".
+  # * +ignore+ - set to true if the step's success or failure is to be ignored.
+  #   It essentially means that the step is always considered to be succesfully
+  #   conducted.
+  # * +number+ - this is set when the step is assigned to a Rutema::Scenario and
+  #   is the sequence number
+  # * +cmd+ - the command associated with this step. This should quack like
+  #   Patir::Command.
+  # * +status+ - one of +:not_executed+, +:success+, +:warning+, +:error+.
+  #   Encapsulates the underlying command's status
   #
-  #attended - the step can only run in attended mode, it requires user input.
   #
-  #step_type - a string identifying the type of the step. It is "step" by default.
+  # == Dynamic behaviour
   #
-  #ignore - set to true if the step's success or failure is to be ignored. It essentially means that the step is always considered succesfull
+  # A Rutema::Step can be queried dynamically about the attributes it posesses
+  # with e.g. +step.has_script?+. This will return +true+ if +script+ is an
+  # attribute of +step+. Attributes are mostly assigned by the parser, i.e. the
+  # Rutema::Parsers::XML, from an XML element.
   #
-  #number - this is set when the step is assigned to a Scenario and is the sequence number
+  # <test script="some_script"/> will create a Rutema::Step instance with
+  # step_type == 'test' and script == 'some_script'. In this case
+  # +step.has_script?+ returns +true+ and +step.script+ returns 'some_script'.
   #
-  #cmd - the command associated with this step. This should quack like Patir::Command.
+  # Just like an +OpenStruct+ Rutema::Step attributes will be created by direct
+  # assignment. step.script = 'some_script' creates the +script+ attribute if it
+  # does not already exist.
   #
-  #status - one of :not_executed, :success, :warning, :error. Encapsulates the underlying command's status
-  #
-  #==Dynamic behaviour
-  #
-  #A Rutema::Step can be queried dynamicaly about the attributes it posesses:
-  # step.has_script? - will return true if script is step's attribute.
-  #Attribute's are mostly assigned by the parser, i.e. the Rutema::BaseXMLParser from the XML element
-  # <test script="some_script"/>
-  #will create a Step instance with step_type=="test" and script="some_script". In this case
-  #
-  # step.has_script? returns true
-  # step.script returns "some_script"
-  #
-  #Just like an OpenStruct, Step attributes will be created by direct assignment:
-  # step.script="some_script" creates the script attribute if it does not exist.
-  #
-  #See Rutema::SpecificationElement for the implementation details. 
+  # See Rutema::SpecificationElement for the implementation details.
   class Step
     include SpecificationElement
     include Patir::Command
-    
-    #_txt_ describes the step, _cmd_ is the command to run
-    def initialize txt="",cmd=nil
-      @attributes=Hash.new
-      #ignore is off by default
-      @attributes[:ignore]=false
-      #assign
-      @attributes[:cmd]=cmd if cmd
-      @attributes[:text]=txt
-      @number=0
-      @attributes[:step_type]="step"
+
+    # The +txt+ argument describes the step, +cmd+ is the command which shall be run
+    def initialize(txt = '', cmd = nil)
+      @attributes = {}
+      # ignore is off by default
+      @attributes[:ignore] = false
+      # assign
+      @attributes[:cmd] = cmd if cmd
+      @attributes[:text] = txt
+      @number = 0
+      @attributes[:step_type] = 'step'
     end
-    
+
     def name
-      return name_with_parameters
+      name_with_parameters
     end
+
     def output
-      return "" unless @attributes[:cmd]
-      return @attributes[:cmd].output
+      return '' unless @attributes[:cmd]
+
+      @attributes[:cmd].output
     end
+
     def error
-      return "no command associated" unless @attributes[:cmd]
-      return @attributes[:cmd].error
+      return 'no command associated' unless @attributes[:cmd]
+
+      @attributes[:cmd].error
     end
+
     def ignore?
       return false unless @attributes[:ignore]
-      return @attributes[:ignore]
+
+      @attributes[:ignore]
     end
+
     def exec_time
       return 0 unless @attributes[:cmd]
-      return @attributes[:cmd].exec_time
+
+      @attributes[:cmd].exec_time
     end
+
     def status
       return :warning unless @attributes[:cmd]
-      return @attributes[:cmd].status
+
+      @attributes[:cmd].status
     end
-    def status= st
-      @attributes[:cmd].status=st if @attributes[:cmd]
+
+    def status=(new_state)
+      @attributes[:cmd].status = new_state if @attributes[:cmd]
     end
-    def run context=nil
+
+    def run(context = nil)
       return not_executed unless @attributes[:cmd]
-      return @attributes[:cmd].run(context)
+
+      @attributes[:cmd].run(context)
     end
+
     def reset
-      @attributes[:cmd].reset if @attributes[:cmd]
+      @attributes[:cmd]&.reset
     end
+
     def name_with_parameters
-      param=" - #{self.cmd.to_s}" if self.has_cmd?
-      return "#{@attributes[:step_type]}#{param}"
+      param = " - #{cmd}" if has_cmd?
+      "#{@attributes[:step_type]}#{param}"
     end
-    def to_s#:nodoc:
-      if self.has_cmd?
-        msg="#{self.number} - #{self.cmd.to_s}"
-      else
-        msg="#{self.number} - #{self.name}"
-      end
-        msg<<" in #{self.included_in}" if self.has_included_in?
-      return msg
+
+    def to_s #:nodoc:
+      msg = if has_cmd?
+              "#{number} - #{cmd}"
+            else
+              "#{number} - #{name}"
+            end
+      msg << " in #{included_in}" if has_included_in?
+      msg
     end
   end
-  
 end
 
 class Patir::ShellCommand
-  def to_s#:nodoc:
-    return @command
+  def to_s #:nodoc:
+    @command
   end
 end
 
 class Patir::RubyCommand
-  def to_s#:nodoc:
-    return @name
+  def to_s #:nodoc:
+    @name
   end
 end
