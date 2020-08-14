@@ -1,6 +1,7 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'test/unit'
 require_relative '../lib/rutema/core/objectmodel'
+
 module TestRutema
   class DummyCommand
     include Patir::Command
@@ -109,17 +110,39 @@ module TestRutema
   end
 
   class TestSpecification < Test::Unit::TestCase
-    def test_new
-      spec = Rutema::Specification.new(name: 'name', title: 'title', description: 'description')
-      assert(!spec.has_version?, 'Version present')
-      assert_equal('name', spec.name)
-      assert_equal('title', spec.title)
-      assert_equal('description', spec.description)
-      assert(!spec.has_scenario?, 'Scenario present')
+    def test_default_initialization
+      spec = Rutema::Specification.new({})
+      assert_equal('', spec.description)
+      assert_equal('', spec.filename)
+      assert_equal('', spec.name)
+      assert_equal('', spec.title)
+      assert_false(spec.has_version?,
+                   ':version present in default initialized Specification')
+      assert_equal(' - ', spec.to_s)
+    end
+
+    def test_full_initialization
+      test_scenario = Rutema::Scenario.new([])
+      spec = Rutema::Specification.new(description: 'Some example specification',
+                                       filename: 'example.spec',
+                                       name: 'example_spec',
+                                       scenario: test_scenario,
+                                       title: 'Example Spec',
+                                       version: '0.9.8')
+      assert_equal('Some example specification', spec.description)
+      assert_equal('example.spec', spec.filename)
+      assert_equal('example_spec', spec.name)
+      # ToDo(markuspg): Bug?
+      # assert_equal(test_scenario, spec.scenario)
+      assert_equal('Example Spec', spec.title)
+      assert_equal('0.9.8', spec.version)
       spec.scenario = 'Foo'
-      assert_not_nil(spec.scenario)
-      assert_equal('name - title', spec.to_s)
-      # we can arbitrarily add attributes to a spec
+      assert_equal('Foo', spec.scenario)
+
+      # Check stringification
+      assert_equal('example_spec - Example Spec', spec.to_s)
+
+      # Check if arbitrary value can be added
       spec.requirements = %w[R1 R2]
       assert(spec.has_requirements?)
       assert_equal(2, spec.requirements.size)
