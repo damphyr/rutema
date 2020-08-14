@@ -44,7 +44,7 @@ module Rutema
 
     ##
     # Refer to (Ruby-Doc.org)[https://ruby-doc.org/core-2.7.1/Object.html#method-i-respond_to-3F]
-    def respond_to?(symbol, include_all)
+    def respond_to?(symbol, include_all = false)
       @attributes ||= {}
       key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
       if @attributes.key?(:"#{key}")
@@ -54,41 +54,40 @@ module Rutema
       end
     end
   end
-  #A Rutema::Specification encompasses all elements required to run a test, the builds used, the scenario to run,
-  #together with a textual description and information that aids in tracing the test back to the requirements.
+
+  ##
+  # A Rutema::Specification contains all elements required for running a test:
+  # the builds used, the scenario to run together with a textual description and
+  # information that aids in tracing the test back to the requirements.
   class Specification
     include SpecificationElement
     attr_accessor :scenario
-    #Expects a Hash of parameters
+
+    ##
+    # Initialize by a +Hash+ of parameters
     #
-    #Following keys have meaning in initialization:
+    # Following keys have a meaning for initialization:
+    # * +:name+ - the name of the testcase. Should uniquely identify the testcase
+    # * +:title+ - a one liner describing what the testcase does
+    # * +:filename+ - the filename describing the testcase
+    # * +:description+ - a full textual description for the testcase. To be used in reports and documents
+    # * +:scenario+ - An instance of Rutema::Scenario
+    # * +:version+ - The version of this specification
     #
-    #:name - the name of the testcase. Should uniquely identify the testcase
-    #
-    #:title - a one liner describing what the testcase does
-    #
-    #:filename - the filename describing the testcase
-    #
-    #:description - a full textual description for the testcase. To be used in reports and documents
-    #
-    #:scenario - An instance of Rutema::Scenario
-    #
-    #:version - The version of this specification
-    #
-    #Default values are empty strings and arrays. (scenario is nil)
-    def initialize params
-      begin
-        @attributes=params
-      end if params
-      @attributes||=Hash.new
-      @attributes[:name]||=""
-      @attributes[:title]||=""
-      @attributes[:filename]||=""
-      @attributes[:description]||=""
-      @scenario=@attributes[:scenario]
+    # Default values are empty +Array+ and +String+ instances (_scenario_ is
+    # +nil+ and _version_ does not exist)
+    def initialize(params)
+      @attributes = params if params
+      @attributes ||= {}
+      @attributes[:description] ||= ''
+      @attributes[:filename] ||= ''
+      @attributes[:name] ||= ''
+      @attributes[:title] ||= ''
+      @scenario = @attributes[:scenario]
     end
-    def to_s#:nodoc: 
-      return "#{@attributes[:name]} - #{@attributes[:title]}"
+
+    def to_s #:nodoc:
+      "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
   #A Rutema::Scenario is a sequence of Rutema::Step instances.
