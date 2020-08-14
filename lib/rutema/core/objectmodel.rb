@@ -90,31 +90,34 @@ module Rutema
       "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
-  #A Rutema::Scenario is a sequence of Rutema::Step instances.
+
+  ##
+  # A Rutema::Scenario is a sequence of Rutema::Step instances.
   #
-  #Rutema::Step instances are run in the definition sequence and the scenario
-  #is succesfull when all steps are succesfull. 
+  # Rutema::Step instances are run in the defined sequence and the scenario is
+  # successful if all steps are conducted succesfully.
   #
-  #From the execution point of view each step is either succesfull or failed and it depends on 
-  #the exit code of the step's command. 
+  # From the execution point of view each step is either successful or failed.
+  # This depends on the exit code of each step's command.
   #
-  #Failure in a step results in the interruption of execution and the report of the errors.
+  # Failure in a step results in the interruption of execution and a report of
+  # occurred errors.
   class Scenario
     include SpecificationElement
-    attr_reader :steps
-    
-    def initialize steps
-      @attributes=Hash.new
-      @steps=steps
-      @steps||=Array.new
+    attr_accessor :steps
+
+    ##
+    # Initialize the Rutema::Scenario by an array of Rutema::Step instances
+    def initialize(steps)
+      @attributes = {}
+      @steps = steps
+      @steps ||= []
     end
-    #Adds a step at the end of the step sequence
-    def add_step step
-      @steps<<step
-    end
-    #Overwrites the step sequence
-    def steps= array_of_steps
-      @steps=array_of_steps
+
+    ##
+    # Adds a Rutema::Step instance to the end of the steps sequence
+    def add_step(step)
+      @steps << step
     end
   end
   #Represents a step in a Scenario.
