@@ -81,19 +81,50 @@ module TestRutema
   end
 
   class TestStep < Test::Unit::TestCase
-    def test_new
-      step = Rutema::Step.new('Step', DummyCommand.new)
-      assert_not_equal('dummy', step.name)
-      assert(/step - .*DummyCommand.*/=~step.name)
-      assert_equal('output', step.output)
-      assert_equal('error', step.error)
-      assert_equal(:not_executed, step.status)
-      assert_nothing_raised { step.run }
-      assert_equal(:success, step.status)
-      assert_nothing_raised { step.reset }
-      assert_equal(:not_executed, step.status)
+    def test_default_initialize
+      step = Rutema::Step.new
+      assert_raise(NoMethodError) { step.cmd }
+      assert_equal('no command associated', step.error)
+      assert_equal(0, step.exec_time)
+      assert_equal(false, step.ignore)
+      assert_equal(false, step.ignore?)
+      assert_equal('step', step.name)
+      assert_equal('step', step.name_with_parameters)
+      step.reset
       assert_equal('', step.output)
-      assert(/0 - .*DummyCommand.*/=~step.to_s)
+      # ToDo(markuspg): Fix symbols
+      # assert_equal(:not_executed, step.run)
+      # assert_equal(:not_executed, step.run({}))
+      assert_equal(:warning, step.status)
+      step.status = :test_status
+      assert_equal(:warning, step.status)
+      assert_equal('step', step.step_type)
+      assert_equal('', step.text)
+      assert_equal('0 - step', step.to_s)
+    end
+
+    def test_initialize
+      dummy_cmd = DummyCommand.new
+      step = Rutema::Step.new('Test Step', dummy_cmd)
+      
+      assert_equal(dummy_cmd, step.cmd)
+      assert_equal('error', step.error)
+      assert_equal(0, step.exec_time)
+      assert_equal(false, step.ignore)
+      assert_equal(false, step.ignore?)
+      assert(/step - #<TestRutema::DummyCommand:/ =~ step.name)
+      assert(/step - #<TestRutema::DummyCommand:/ =~ step.name_with_parameters)
+      step.reset
+      assert_equal('', step.output)
+      # ToDo(markuspg): Fix symbols
+      # assert_equal(:not_executed, step.run)
+      # assert_equal(:not_executed, step.run({}))
+      # assert_equal(not_executed, step.status)
+      step.status = :test_status
+      assert_equal(:test_status, step.status)
+      assert_equal('step', step.step_type)
+      assert_equal('Test Step', step.text)
+      assert(/0 - #<TestRutema::DummyCommand:/ =~ step.to_s)
     end
   end
 
