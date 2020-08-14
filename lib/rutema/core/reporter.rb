@@ -7,12 +7,23 @@ module Rutema
   #
   #Nothing prevents you from creating a class that implements both behaviours
   module Reporters
+    ##
+    # A Rutema::Reporters::BlockReporter receives its data once at the end of a
+    # _rutema_ run
     class BlockReporter
-      def initialize configuration,dispatcher
-        @configuration=configuration
+      ##
+      # Initialize a new Rutema::Reporters::BlockReporter instance
+      #
+      # The +configuration+ argument is stored internally for later usage.
+      # +dispatcher+ is unused.
+      def initialize(configuration, _dispatcher)
+        @configuration = configuration
       end
-      def report specifications,states,errors
-      end
+
+      ##
+      # Conduct (e.g. write to a file or _stdout_) a report based on the passed
+      # data
+      def report(specifications, states, errors) end
     end
     class EventReporter
       def initialize configuration,dispatcher
