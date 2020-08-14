@@ -4,9 +4,19 @@ require 'test/unit'
 require 'mocha/test_unit'
 
 require_relative '../lib/rutema/core/engine'
+require_relative '../lib/rutema/core/framework'
 require_relative '../lib/rutema/reporters/junit'
 
 module TestRutema
+  class ConsoleTestMockConfiguration
+    attr_reader :reporters
+
+    def initialize(simulated_mode)
+      @reporters = {}
+      @reporters[Rutema::Reporters::Console] = { 'mode' => simulated_mode }
+    end
+  end
+
   class TestBlockReporter < Test::Unit::TestCase
     def test_initialize
       assert_nothing_raised do
@@ -17,6 +27,67 @@ module TestRutema
     def test_report
       block_reporter = Rutema::Reporters::BlockReporter.new(nil, nil)
       assert_nothing_raised { block_reporter.report(nil, nil, nil) }
+    end
+  end
+
+  class TestConsole < Test::Unit::TestCase
+    def test_initialize
+      configurator = ConsoleTestMockConfiguration.new('normal')
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      assert_nothing_raised do
+        Rutema::Reporters::Console.new(configurator, dispatcher)
+      end
+    end
+
+    def test_update_normal
+      configurator = ConsoleTestMockConfiguration.new('normal')
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      reporter = Rutema::Reporters::Console.new(configurator, dispatcher)
+      output = capture_output do
+        reporter.update(Rutema::Message.new(test: 'Test1', text: 'Test1 text'))
+        reporter.update(Rutema::ErrorMessage.new(test: 'Test2', text: 'Test2 text'))
+        reporter.update(Rutema::RunnerMessage.new(test: 'Test3', text: 'Test3 text'))
+        reporter.update(Rutema::RunnerMessage.new('status' => :error, test: 'Test4', text: 'Test4 text'))
+      end
+      puts output
+      assert_equal(["ERROR - Test2 Test2 text\nFATAL|Test4:Test4 text.\n", ''], output)
+    end
+
+    def test_update_off
+      configurator = ConsoleTestMockConfiguration.new('off')
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      reporter = Rutema::Reporters::Console.new(configurator, dispatcher)
+      output = capture_output do
+        reporter.update(Rutema::Message.new(test: 'Test1', text: 'Test1 text'))
+        reporter.update(Rutema::ErrorMessage.new(test: 'Test2', text: 'Test2 text'))
+        reporter.update(Rutema::RunnerMessage.new(test: 'Test3', text: 'Test3 text'))
+      end
+      assert_equal(['', ''], output)
+    end
+
+    def test_update_verbose
+      configurator = ConsoleTestMockConfiguration.new('verbose')
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      reporter = Rutema::Reporters::Console.new(configurator, dispatcher)
+      output = capture_output do
+        reporter.update(Rutema::Message.new(test: 'Test1', text: 'Test1 text'))
+        reporter.update(Rutema::ErrorMessage.new(test: 'Test2', text: 'Test2 text'))
+        reporter.update(Rutema::RunnerMessage.new(test: 'Test3', text: 'Test3 text'))
+        reporter.update(Rutema::RunnerMessage.new('status' => :error, test: 'Test4', text: 'Test4 text'))
+      end
+      puts output
+      assert_equal(["Test1 Test1 text\n" \
+                    "ERROR - Test2 Test2 text\n" \
+                    "Test3:Test3 text.\n" \
+                    "FATAL|Test4:Test4 text.\n", ''], output)
     end
   end
 
