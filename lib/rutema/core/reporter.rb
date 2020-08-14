@@ -86,32 +86,50 @@ module Rutema
         Thread.kill(@thread)
       end
     end
-    #This reporter is always instantiated and collects all messages fired by the rutema engine
+
+    ##
+    # This reporter is always instantiated (within Rutema::Dispatcher within
+    # Rutema::Engine) and collects all messages fired by the _rutema_ engine
     #
-    #The collections of errors and states are then at the end of a run fed to the block reporters
-    class Collector<EventReporter
-      attr_reader :errors,:states
-      def initialize params,dispatcher
-        super(params,dispatcher)
-        @errors=[]
-        @states={}
+    # The collections of errors and states are then at the end of a run fed to
+    # the block reporters.
+    class Collector < EventReporter
+      attr_reader :errors, :states
+
+      ##
+      # Initialize a new instance and create publicly accessible #errors Array and #states Hash
+      def initialize(params, dispatcher)
+        super(params, dispatcher)
+        @errors = []
+        @states = {}
       end
 
-      def update message
+      ##
+      # Update the internal state of the class depending on the given +message+
+      #
+      # Only messages instances of type Rutema::ErrorMessage or
+      # Rutema::RunnerMessage have an effect.
+      #
+      # Rutema::ErrorMessage instances are accumulated in the #errors Array.
+      #
+      # Rutema::RunnerMessage instances of each individual test are accumulated
+      # in a respective Rutema::ReportState instance.
+      def update(message)
         case message
         when RunnerMessage
-          test_state=@states[message.test]
+          test_state = @states[message.test]
           if test_state
-            test_state<<message
+            test_state << message
           else
-            test_state=Rutema::ReportState.new(message)
+            test_state = Rutema::ReportState.new(message)
           end
-          @states[message.test]=test_state
+          @states[message.test] = test_state
         when ErrorMessage
-          @errors<<message
+          @errors << message
         end
       end
     end
+
     #A very simple event reporter that outputs to the console
     #
     #It has three settings: off, normal and verbose.
