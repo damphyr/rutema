@@ -20,6 +20,40 @@ module TestRutema
     end
   end
 
+  class TestEventReporter < Test::Unit::TestCase
+    def test_initialize
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      assert_nothing_raised do
+        Rutema::Reporters::EventReporter.new(nil, dispatcher)
+      end
+    end
+
+    def test_threading
+      dispatcher = mock
+      test_queue = Queue.new
+      (1..50).step(1) { |i| test_queue << i }
+      dispatcher.expects(:subscribe).once.returns(test_queue).with \
+        { |value| value.is_a?(Integer) }
+      reporter = Rutema::Reporters::EventReporter.new(nil, dispatcher)
+      reporter.run!
+      timepoint_before = Time.now
+      reporter.exit
+      timepoint_after = Time.now
+      expired_time = timepoint_after - timepoint_before
+      assert((expired_time > 4.9) && (expired_time < 5.1))
+    end
+
+    def test_update
+      dispatcher = mock
+      dispatcher.expects(:subscribe).once.returns(Queue.new).with \
+        { |value| value.is_a?(Integer) }
+      reporter = Rutema::Reporters::EventReporter.new(nil, dispatcher)
+      assert_nothing_raised { reporter.update(nil) }
+    end
+  end
+
   class TestReporters<Test::Unit::TestCase
     def test_junit
       #Rutema::Utilities.expects(:write_file).returns("OK")
