@@ -7,12 +7,16 @@ require_relative '../elements/minimal'
 
 module Rutema
   module Parsers
-    #Rutema::Parsers::XML is a basic XML parser that is easily extended
+    ##
+    # Rutema::Parsers::XML is a basic XML parser that can easily be extended
     #
-    #Derive your parser from this class and define for each element 'foo' that you want to parse 
-    #a method element_foo(step)
+    # Parsers derived from this class should define for each element +foo+ that
+    # shall be parsed a method element_foo(step). This method receives a
+    # Rutema::Step instance, configures it accordingly to the parsed XML and
+    # returns it afterwards.
     #
-    #The method will receive a Rutema::Step instance as a parameter which it should return
+    # The Rutema::Elements::Minimal module can be taken as an example of a mixin
+    # for the accumulation of +element_+ methods.
     class XML<SpecificationParser
       include Rutema::Elements::Minimal
       #:nodoc:
@@ -23,11 +27,12 @@ module Rutema
       ELEM_TITLE="specification/title"
       #:nodoc:
       ELEM_SCENARIO="specification/scenario"
-      #Parses __param__ and returns the Rutema::Specification instance
+      ##
+      # Parse +param+ and return a respective Rutema::Specification instance
       #
-      #param can be the filename of the specification or the contents of that file.
+      # +param+ can be the filename of a specification or text of a specification
       #
-      #Will throw Rutema::ParserError if something goes wrong
+      # Rutema::ParserError will be thrown if an error occurrs.
       def parse_specification param
         @parsed||=[]
         begin

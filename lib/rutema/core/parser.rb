@@ -5,12 +5,23 @@
 require_relative 'framework'
 
 module Rutema
+  ##
+  # Module for the definition of parsers which can be used by Rutema::Engine to
+  # parse test specifications
+  #
+  # _rutema_ comes by default with a parser skeleton class
+  # Rutema::Parsers::SpecificationParser from which Rutema::Parsers::XML got
+  # derived and implemented as a default parser.
+  #
+  # The parser to be used is one of the few mandatory configuration options for
+  # a _rutema_ invocation. Elaborate documentation about its configuration is
+  # available in Rutema::ConfigurationDirectives#parser=
   module Parsers
     ##
     # Base class for parsers that raises exceptions if used directly
     #
-    # Parser classes should be derived from this class and implement
-    # parse_specification and validate_configuration
+    # Derived parser classes (like the default Rutema::Parsers::XML) should
+    # implement #parse_specification and #validate_configuration
     class SpecificationParser
       attr_reader :configuration
 

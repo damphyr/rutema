@@ -3,6 +3,12 @@
 require_relative "framework"
 
 module Rutema
+  ##
+  # Module for the definition of runners which can be used by Rutema::Engine to
+  # execute test specifications
+  #
+  # _rutema_ comes by default with two runners Rutema::Runners::Default and
+  # Rutema::Runners::NoOp
   module Runners
     class Default
       include Rutema::Messaging

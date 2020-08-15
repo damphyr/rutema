@@ -5,6 +5,8 @@ require 'optparse'
 require_relative 'core/configuration'
 require_relative 'core/engine'
 
+##
+# Rutema is the base module of all modules in the _rutema_ library.
 module Rutema
   ##
   # This class is the entry point to the execution of _rutema_

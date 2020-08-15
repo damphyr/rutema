@@ -1,14 +1,20 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'highline'
 module Rutema
-  #The Elements module provides the namespace for the various modules adding parser functionality
+  ##
+  # The Rutema::Elements module provides the namespace for the various modules
+  # adding functionaly to the parser implementations. Any method defined in a
+  # sub-module should correspond to an XML element it shall be parsed from.
   module Elements
-    #Minimal offers a minimal(chic) set of elements for use in specifications
+    ##
+    # The Rutema::Elements::Minimal module offers a minimal (chic) set of
+    # elements for use in specifications. These represent a baseline of XML
+    # elements and can be used as an example for the definition of new ones.
     #
-    #These are:
-    # echo
-    # command
-    # prompt
+    # These are:
+    # * command
+    # * echo
+    # * prompt
     module Minimal
       #echo prints a message on the screen:
       # <echo text="A meaningful message"/>

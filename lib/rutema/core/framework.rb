@@ -86,12 +86,33 @@ module Rutema
     end
   end
 
+  ##
+  # Module offering convenience methods for creating error and normal messages
+  #
+  # The only requirement for including classes is that an @queue instance
+  # variable exists where the created messages can be pushed to.
+  #
+  # Messages pushed through these convenience functions will have their
+  # timestamp set to the moment of their creation.
   module Messaging
-    #Signal an error - use the test name/id as the identifier
+    ##
+    # Push a new Rutema::ErrorMessage to the queue
+    #
+    # +identifier+ will be used for the test name and +message+ for the text.
     def error identifier,message
       @queue.push(ErrorMessage.new(:test=>identifier,:text=>message,:timestamp=>Time.now))
     end
-    #Informational message during test runs
+
+    ##
+    # Push a new Rutema::Message or Rutema::RunnerMessage to the queue
+    #
+    # +message+ can either be a String or a Hash instance. In case of a String
+    # the test name attribute will be unset and the +message+ will become the
+    # text of the Rutema::Message instance.
+    #
+    # If +message+ is an instance of Hash the created message will be
+    # initialized from it. If the Hash contains a 'status' key a
+    # Rutema::RunnerMessage will be created, otherwise a Rutema::Message
     def message message
       case message
       when String

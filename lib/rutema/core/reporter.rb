@@ -197,8 +197,17 @@ module Rutema
     end
   end
 
+  ##
+  # The Rutema::Utilities module is intended for the accumulation of methods
+  # useful in multiple contexts
   module Utilities
     require "fileutils"
+
+    ##
+    # Write +content+ to a file at the location +filename+
+    #
+    # The file and the directories containing it are being created if they don't
+    # exist yet. If the file already exists it is being truncated.
     def self.write_file filename,content
       FileUtils.mkdir_p(File.dirname(filename),:verbose=>false)
       File.open(filename, 'wb') {|f| f.write(content) }
