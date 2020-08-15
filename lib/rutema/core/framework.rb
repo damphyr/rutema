@@ -38,15 +38,21 @@ module Rutema
       msg << @text
     end
   end
-  #What it says on the tin.
-  class ErrorMessage<Message
+
+  ##
+  # Rutema::ErrorMessage is a class for simple error messages
+  #
+  # Compared to Rutema::Message it does not contain any additional information.
+  # The only difference is that "Error -" is being prepended to its stringified
+  # representation.
+  class ErrorMessage < Message
+    ##
+    # Convert the message to a string representation
     def to_s
-      msg="ERROR - "
-      msg<<"#{@test} " unless @test.empty?
-      msg<<@text
-      return msg
+      'ERROR - ' + super
     end
   end
+
   #The Runner continuously sends these when executing tests
   #
   #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
