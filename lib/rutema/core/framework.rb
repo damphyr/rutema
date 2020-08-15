@@ -62,27 +62,52 @@ module Rutema
       return msg.chomp
     end
   end
-  #While executing tests the state of each test is collected in an 
-  #instance of ReportTestState and the collection is at the end passed to the available block reporters
+  ##
+  # Rutema::ReportTestState is used by the Rutema::Reporters::Collector event
+  # reporter to accumulate all Rutema::RunnerMessage instances emitted by a
+  # specific test. This accumulated data can then in the end be passed to block
+  # reporters.
   #
-  #ReportTestState assumes the timestamp of the first message, the status of the last message
-  #and accumulates the duration reported by all messages in it's collection.
+  # Rutema::ReportTestState permanently assumes the name of the respective test
+  # in its +test+ attribute and the timestamp of the first received message in
+  # its +timestamp+ attribute.
+  #
+  # Durations will be accumulated in the +duration+ attribute and all inserted
+  # messages in the +steps+ attribute. The +status+ attribute will always be set
+  # to the status of the most recently inserted message.
   class ReportTestState
+    ##
+    # Holds all inserted Rutema::RunnerMessage instances
     attr_accessor :steps
-    attr_reader :test,:timestamp,:duration,:status
-    
-    def initialize message
-      @test=message.test
-      @timestamp=message.timestamp
-      @duration=message.duration
-      @status=message.status
-      @steps=[message]
+    ##
+    # Accumulates the durations of all inserted messages
+    attr_reader :duration
+    ##
+    # Always has the status of the most recently inserted message
+    attr_reader :status
+    ##
+    # The name of the respective test whose messages this Rutema::ReportTestState collects
+    attr_reader :test
+    ##
+    # The timestamp of the first message of the test
+    attr_reader :timestamp
+
+    ##
+    # Create a new Rutema::ReportTestState instance from a Rutema::RunnerMessage
+    def initialize(message)
+      @duration = message.duration
+      @status = message.status
+      @steps = [message]
+      @test = message.test
+      @timestamp = message.timestamp
     end
 
+    ##
+    # Accumulate a further Rutema::RunnerMessage instance
     def <<(message)
-      @steps<<message
-      @duration+=message.duration
-      @status=message.status
+      @duration += message.duration
+      @status = message.status
+      @steps << message
     end
   end
 
