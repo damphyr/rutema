@@ -6,6 +6,12 @@ module Rutema
   #
   # The two classes Rutema::ErrorMessage and Rutema::RunnerMessage are the
   # primarily used message classes throughout Rutema.
+  #
+  # Messages are mostly created by Rutema::Engine and Rutema::Runners class
+  # instances through the Rutema::Messaging module. Errors within Rutema will be
+  # represented by Rutema::ErrorMessage instances. Test errors are represented
+  # by Rutema::RunnerMessage instances which have their +status+ attribute set
+  # to +:error+.
   class Message
     ##
     # Test id or name of the respective test
@@ -53,36 +59,68 @@ module Rutema
     end
   end
 
-  #The Runner continuously sends these when executing tests
+  ##
+  # Rutema::RunnerMessage instances are repeatedly created during test execution
   #
-  #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
-  #you will get a RunnerMessage with :error in the status.
-  class RunnerMessage<Message
-    attr_accessor :duration,:status,:number,:out,:err
-    def initialize params
+  # These messages are particular to a respective test and carry additional
+  # information compared to the base Rutema::Message
+  #
+  # The following (additional to Rutema::Message) keys of the hash are used:
+  # * 'duration' - An optional duration of a step (defaults to +0+)
+  # * 'err' - An optional error message (defaults to an empty string)
+  # * 'number' - The number of a step (defaults to +1+)
+  # * 'status' - A status of a step or the respective test (defaults to +:none+)
+  # * 'out' - An optional output of a step (defaults to an empty string)
+  class RunnerMessage < Message
+    ##
+    # The duration of a test step
+    attr_accessor :duration
+    ##
+    # An error occurred during a step or a test
+    attr_accessor :err
+    ##
+    # The number of a test step
+    attr_accessor :number
+    ##
+    # The output of a test step
+    attr_accessor :out
+    ##
+    # The status of a respective test step or test itself
+    attr_accessor :status
+
+    def initialize(params)
       super(params)
-      @duration=params.fetch("duration",0)
-      @status=params.fetch("status",:none)
-      @number=params.fetch("number",1)
-      @out=params.fetch("out","")
-      @err=params.fetch("err","")
+
+      @duration = params.fetch('duration', 0)
+      @err = params.fetch('err', '')
+      @number = params.fetch('number', 1)
+      @out = params.fetch('out', '')
+      @status = params.fetch('status', :none)
     end
 
+    ##
+    # Convert the message to a string representation
+    #
+    # A steps error and output string will be included if the +out+ attribute is
+    # not empty and the +status+ attribute is set to +:error+.
     def to_s
-      msg="#{@test}:"
-      msg<<"#{@text}." unless @text.empty?
-      outpt=output()
-      msg<<" Output:\n#{outpt}" unless outpt.empty? || @status!=:error
-      return msg
+      msg = "#{@test}:"
+      msg << "#{@text}." unless @text.empty?
+      outpt = output
+      msg << " Output:\n#{outpt}" unless outpt.empty? || @status != :error
+      msg
     end
 
+    ##
+    # Return a string combining step output and the error string
     def output
-      msg=""
-      msg<<"#{@out}\n" unless @out.empty?
-      msg<<@err unless @err.empty?
-      return msg.chomp
+      msg = ''
+      msg << "#{@out}\n" unless @out.empty?
+      msg << @err unless @err.empty?
+      msg.chomp
     end
   end
+
   ##
   # Rutema::ReportTestState is used by the Rutema::Reporters::Collector event
   # reporter to accumulate all Rutema::RunnerMessage instances emitted by a
