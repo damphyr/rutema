@@ -1,26 +1,41 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
+
 module Rutema
-  #Represents the data beeing shunted between the components in lieu of logging.
+  ##
+  # Rutema::Message is the base class of different message types for exchanging data
   #
-  #This is the primary type passed to the event reporters
+  # The two classes Rutema::ErrorMessage and Rutema::RunnerMessage are the
+  # primarily used message classes throughout Rutema.
   class Message
-    attr_accessor :test,:text,:timestamp
-    #Keys used:
-    # test - the test id/name
-    # text - the text of the message
-    # timestamp
-    def initialize params
-      @test=params.fetch(:test,"")
-      @test||=""
-      @text=params.fetch(:text,"")
-      @timestamp=params.fetch(:timestamp,Time.now)
+    ##
+    # Test id or name of the respective test
+    attr_accessor :test
+    ##
+    # Message text
+    attr_accessor :text
+    ##
+    # A timestamp respective to the message
+    attr_accessor :timestamp
+
+    ##
+    # Initialize a new message from a Hash
+    #
+    # The following keys of the hash are used:
+    # * +test+ - the test id/name (defaults to an empty string)
+    # * +text+ - the text of the message (defaults to an empty string)
+    # * +timestamp+ - a timestamp (defaults to +Time.now+)
+    def initialize(params)
+      @test = params.fetch(:test, '')
+      @text = params.fetch(:text, '')
+      @timestamp = params.fetch(:timestamp, Time.now)
     end
 
+    ##
+    # Convert the message to a string representation
     def to_s
-      msg=""
-      msg<<"#{@test} " unless @test.empty?
-      msg<<@text
-      return msg
+      msg = ''
+      msg << "#{@test} " unless @test.empty?
+      msg << @text
     end
   end
   #What it says on the tin.
