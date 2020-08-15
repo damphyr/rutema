@@ -136,7 +136,7 @@ module TestRutema
       junit_reporter=Rutema::Reporters::JUnit.new(configuration,dispatcher)
       assert_equal("<?xml version='1.0'?><testsuite errors='0' failures='0' tests='0' time='0'/>", junit_reporter.process_data([],{},[]))
       
-      states={"_setup_"=>Rutema::ReportState.new(
+      states={"_setup_"=>Rutema::ReportTestState.new(
           Rutema::RunnerMessage.new({"timestamp"=>Time.now, "duration"=>0.000157, "status"=>:success, "steps"=>[]})
         )
       }
@@ -154,13 +154,13 @@ module TestRutema
 
       reporter=Rutema::Reporters::Summary.new(configuration,dispatcher)
       assert_equal(0,reporter.report([],{},[]))
-      states={"_setup_"=>Rutema::ReportState.new(
+      states={"_setup_"=>Rutema::ReportTestState.new(
           Rutema::RunnerMessage.new({"timestamp"=>Time.now, "duration"=>0.000157, "status"=>:success, "steps"=>[]})
         )
       }
       assert_equal(0,reporter.report([],states,[]))
 
-      states={"_setup_"=>Rutema::ReportState.new(
+      states={"_setup_"=>Rutema::ReportTestState.new(
           Rutema::RunnerMessage.new({"timestamp"=>Time.now, "duration"=>0.000157, "status"=>:error, "steps"=>[]})
         )
       }

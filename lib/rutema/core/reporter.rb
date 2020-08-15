@@ -113,7 +113,7 @@ module Rutema
       # Rutema::ErrorMessage instances are accumulated in the #errors Array.
       #
       # Rutema::RunnerMessage instances of each individual test are accumulated
-      # in a respective Rutema::ReportState instance.
+      # in a respective Rutema::ReportTestState instance.
       def update(message)
         case message
         when RunnerMessage
@@ -121,7 +121,7 @@ module Rutema
           if test_state
             test_state << message
           else
-            test_state = Rutema::ReportState.new(message)
+            test_state = Rutema::ReportTestState.new(message)
           end
           @states[message.test] = test_state
         when ErrorMessage

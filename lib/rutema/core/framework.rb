@@ -63,11 +63,11 @@ module Rutema
     end
   end
   #While executing tests the state of each test is collected in an 
-  #instance of ReportState and the collection is at the end passed to the available block reporters
+  #instance of ReportTestState and the collection is at the end passed to the available block reporters
   #
-  #ReportState assumes the timestamp of the first message, the status of the last message
+  #ReportTestState assumes the timestamp of the first message, the status of the last message
   #and accumulates the duration reported by all messages in it's collection.
-  class ReportState
+  class ReportTestState
     attr_accessor :steps
     attr_reader :test,:timestamp,:duration,:status
     
