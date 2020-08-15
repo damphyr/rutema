@@ -1,5 +1,7 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 
+# frozen_string_literal: false
+
 module Rutema
   ##
   # Rutema::Message is the base class of different message types for exchanging data
@@ -191,8 +193,8 @@ module Rutema
     # Push a new Rutema::ErrorMessage to the queue
     #
     # +identifier+ will be used for the test name and +message+ for the text.
-    def error identifier,message
-      @queue.push(ErrorMessage.new(:test=>identifier,:text=>message,:timestamp=>Time.now))
+    def error(identifier, message)
+      @queue.push(ErrorMessage.new(test: identifier, text: message, timestamp: Time.now))
     end
 
     ##
@@ -203,30 +205,41 @@ module Rutema
     # text of the Rutema::Message instance.
     #
     # If +message+ is an instance of Hash the created message will be
-    # initialized from it. If the Hash contains a 'status' key a
+    # initialized from it. If the Hash contains a 'status' and a +:test+ key a
     # Rutema::RunnerMessage will be created, otherwise a Rutema::Message
-    def message message
+    def message(message)
       case message
       when String
-        Message.new(:text=>message,:timestamp=>Time.now)
+        Message.new(text: message, timestamp: Time.now)
       when Hash
-        hm=Message.new(message)
-        hm=RunnerMessage.new(message) if message[:test] && message["status"]
-        hm.timestamp=Time.now
+        hm = Message.new(message)
+        hm = RunnerMessage.new(message) if message[:test] && message['status']
+        hm.timestamp = Time.now
         @queue.push(hm)
       end
     end
   end
-  #Generic error class for errors in the engine
-  class RutemaError<RuntimeError
+
+  ##
+  # Generic base class for all Rutema errors
+  class RutemaError < RuntimeError
   end
-  #Is raised when an error is found in a specification
-  class ParserError<RutemaError
+
+  ##
+  # Rutema::ParserError is raised when parsing a specification fails
+  #
+  # The exception may be thrown for errors within the parser subsystem itself
+  # as well as for errors encountered within the parsed specifications.
+  class ParserError < RutemaError
   end
-  #Is raised on an unexpected error during execution
-  class RunnerError<RutemaError
+
+  ##
+  # Rutema::RunnerError is raised on unexpected errors in the runner
+  class RunnerError < RutemaError
   end
-  #Errors in reporters should use this class
-  class ReportError<RutemaError
+
+  ##
+  # Rutema::ReportError errors are raised on errors with the reporting subsystem
+  class ReportError < RutemaError
   end
 end
