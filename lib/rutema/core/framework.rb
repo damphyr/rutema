@@ -104,7 +104,15 @@ module Rutema
 
     ##
     # Accumulate a further Rutema::RunnerMessage instance
+    #
+    # Throws a Rutema::RunnerError if a message of a different test is being
+    # inserted than what the Rutema::ReportTestState instance was created with.
     def <<(message)
+      if message.test != @test
+        raise Rutema::RunnerError,
+              "Attempted to insert \"#{message.test}\" message into \"#{@test}\" ReportTestStates"
+      end
+
       @duration += message.duration
       @status = message.status
       @steps << message
