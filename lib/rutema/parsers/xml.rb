@@ -1,6 +1,7 @@
 # Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
-require 'rexml/document'
+require 'English'
 require 'patir/command'
+require 'rexml/document'
 require_relative '../core/parser'
 require_relative '../core/objectmodel'
 require_relative '../elements/minimal'
@@ -158,8 +159,8 @@ module Rutema
               begin
                 self.send(:"element_#{step.step_type}",step)
               rescue
-                raise ParserError, $!.message
-              end#begin
+                raise ParserError, ($ERROR_INFO.message + "\n" + $ERROR_POSITION.join("\n"))
+              end #begin
             elsif @configuration.parser["strict_mode"]
               raise ParserError,"No command element associated with #{step.step_type}. Missing element_#{step.step_type}"
             end
