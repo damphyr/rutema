@@ -119,7 +119,7 @@ module TestRutema
       reporter.exit
       timepoint_after = Time.now
       expired_time = timepoint_after - timepoint_before
-      assert((expired_time > 4.9) && (expired_time < 5.1))
+      assert(expired_time < 0.5)
     end
 
     def test_update

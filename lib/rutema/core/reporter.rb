@@ -49,16 +49,13 @@ module Rutema
       def run!
         @thread = Thread.new do
           loop do
-            unless @queue.empty?
-              data = @queue.pop
-              begin
-                update(data) if data
-              rescue
-                puts "#{self.class} failed with #{$ERROR_INFO.message}"
-                raise
-              end
+            data = @queue.pop
+            begin
+              update(data) if data
+            rescue
+              puts "#{self.class} failed with #{$ERROR_INFO.message}"
+              raise
             end
-            sleep 0.1
           end
         end
       end
