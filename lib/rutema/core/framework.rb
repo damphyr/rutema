@@ -129,7 +129,7 @@ module Rutema
       msg = ''
       msg << "#{@out}\n" unless @out.empty?
       msg << @err unless @err.empty?
-      msg << "\n" + @backtrace.join("\n") unless @backtrace.empty?
+      msg << "\n" + (@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
       msg.chomp
     end
   end
