@@ -65,6 +65,8 @@ module TestRutema
     EOT
   end
 
+  ##
+  # Test Rutema::Parsers::SpecificationParser
   class TestSpecificationParser < Test::Unit::TestCase
     def test_specification_parser
       parser = nil
@@ -78,6 +80,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Parsers::XML
   class TestXMLParser<Test::Unit::TestCase
     def test_parse_specification
       config=stub()

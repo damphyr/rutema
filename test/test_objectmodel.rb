@@ -16,6 +16,8 @@ module TestRutema
     include Rutema::SpecificationElement
   end
 
+  ##
+  # Test Rutema::SpecificationElement
   class TestSpecificationElement < Test::Unit::TestCase
     def test_attribute
       obj = Dummy.new
@@ -80,6 +82,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Step
   class TestStep < Test::Unit::TestCase
     def test_default_initialize
       step = Rutema::Step.new
@@ -128,6 +132,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Scenario
   class TestScenario < Test::Unit::TestCase
     def test_adding_a_step
       scenario = Rutema::Scenario.new([])
@@ -164,6 +170,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Specification
   class TestSpecification < Test::Unit::TestCase
     def test_default_initialization
       spec = Rutema::Specification.new({})

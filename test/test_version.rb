@@ -6,6 +6,8 @@ require 'test/unit'
 require_relative '../lib/rutema/version'
 
 module TestRutema
+  ##
+  # Test Rutema::Version
   class TestVersion < Test::Unit::TestCase
     def test_version_major
       assert_equal(2, Rutema::Version::MAJOR)

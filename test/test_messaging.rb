@@ -18,6 +18,8 @@ class TestClass
 end
 
 module TestRutema
+  ##
+  # Test Rutema::Messaging
   class TestMessaging < Test::Unit::TestCase
     def test_error
       # Create a class to use for testing

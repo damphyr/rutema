@@ -8,6 +8,8 @@ require 'mocha/test_unit'
 require_relative '../lib/rutema/core/framework'
 
 module TestRutema
+  ##
+  # Test Rutema::ReportTestState
   class TestReportTestState < Test::Unit::TestCase
     def test_initialize
       # Prepare mock

@@ -10,7 +10,11 @@ require_relative '../lib/rutema/core/reporter'
 class MockConfiguration
 end
 
+##
+# The TestRutema module contains all classes testing the functionality of Rutema
 module TestRutema
+  ##
+  # Test Rutema::Reporters::Collector
   class TestCollector < Test::Unit::TestCase
     def test_initialize
       dispatcher = mock

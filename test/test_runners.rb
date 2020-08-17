@@ -11,6 +11,8 @@ require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/core/runner'
 
 module TestRutema
+  ##
+  # Test Rutema::Runners::Default
   class TestRunner < Test::Unit::TestCase
     def test_new
       scenario = Rutema::Scenario.new([Rutema::Step.new('desc')])

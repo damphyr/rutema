@@ -35,6 +35,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Engine
   class TestEngine < Test::Unit::TestCase
     def test_checks
       conf = {}

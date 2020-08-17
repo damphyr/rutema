@@ -17,6 +17,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Reporters::BlockReporter
   class TestBlockReporter < Test::Unit::TestCase
     def test_initialize
       assert_nothing_raised do
@@ -30,6 +32,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Reporters::Console
   class TestConsole < Test::Unit::TestCase
     def test_initialize
       configurator = ConsoleTestMockConfiguration.new('normal')
@@ -91,6 +95,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Reporters::EventReporter
   class TestEventReporter < Test::Unit::TestCase
     def test_initialize
       dispatcher = mock

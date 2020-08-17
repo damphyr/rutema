@@ -56,6 +56,8 @@ class InitTestClass
 end
 
 module TestRutema
+  ##
+  # Test Rutema::ConfigurationDirectives
   class TestConfigurationDirectives < Test::Unit::TestCase
     def test_init
       test_instance = InitTestClass.new
@@ -67,6 +69,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Configuration
   class TestRutemaConfiguration < Test::Unit::TestCase
     def test_rutema_configuration_configure
       File.expects(:read).with('test_identifiers.rutema').returns(IDENTIFIERS)

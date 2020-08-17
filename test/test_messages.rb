@@ -8,6 +8,8 @@ require 'mocha/test_unit'
 require_relative '../lib/rutema/core/framework'
 
 module TestRutema
+  ##
+  # Test Rutema::ErrorMessage
   class TestErrorMessage < Test::Unit::TestCase
     def test_initialize_default
       # Test initialization
@@ -59,6 +61,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Message
   class TestMessage < Test::Unit::TestCase
     def test_initialize_default
       # Test initialization
@@ -110,6 +114,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::RunnerMessage
   class TestRunnerMessage < Test::Unit::TestCase
     def test_initialize_default
       # Test initialization
