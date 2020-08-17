@@ -53,6 +53,10 @@ module Rutema
   # Compared to Rutema::Message it does not contain any additional information.
   # The only difference is that "Error -" is being prepended to its stringified
   # representation.
+  #
+  # This class is mainly used to signal errors concerning the execution of
+  # Rutema. Test errors are signalled by Rutema::RunnerMessage instances with
+  # the +status+ attribute set to +:error+.
   class ErrorMessage < Message
     ##
     # Convert the message to a string representation
@@ -183,7 +187,7 @@ module Rutema
   ##
   # Module offering convenience methods for creating error and normal messages
   #
-  # The only requirement for including classes is that an @queue instance
+  # The only requirement for including classes is that a @queue instance
   # variable exists where the created messages can be pushed to.
   #
   # Messages pushed through these convenience functions will have their
@@ -212,8 +216,11 @@ module Rutema
       when String
         Message.new(text: message, timestamp: Time.now)
       when Hash
-        hm = Message.new(message)
-        hm = RunnerMessage.new(message) if message[:test] && message['status']
+        hm = if message[:test] && message['status']
+          RunnerMessage.new(message)
+        else
+          Message.new(message)
+        end
         hm.timestamp = Time.now
         @queue.push(hm)
       end
@@ -239,7 +246,7 @@ module Rutema
   end
 
   ##
-  # Rutema::ReportError errors are raised on errors with the reporting subsystem
+  # Rutema::ReportError is raised on errors with the reporting subsystem
   class ReportError < RutemaError
   end
 end
