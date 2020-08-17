@@ -10,10 +10,17 @@ module Rutema
   # _rutema_ comes by default with two runners Rutema::Runners::Default and
   # Rutema::Runners::NoOp
   module Runners
+    ##
+    # Rutema::Runners::Default is the default runner used by Rutema::Engine
+    #
+    # As its name indicates its purpose is to run (i.e. execute) test
+    # specifications which is done through its #run method.
     class Default
       include Rutema::Messaging
+
       attr_reader :context
       attr_accessor :setup,:teardown
+
       def initialize context,queue
         @setup=nil
         @teardown=nil
@@ -52,6 +59,7 @@ module Rutema
       end
 
       private
+
       def run_scenario name,scenario,meta
         executed_steps=[]
         status=:warning
@@ -74,6 +82,7 @@ module Rutema
         end
         return executed_steps,status
       end
+
       def run_step step,meta
         if step.has_cmd? && step.cmd.respond_to?(:run)
           step.cmd.run(meta)
@@ -86,6 +95,9 @@ module Rutema
       end
     end
 
+    ##
+    # Rutema::Runners::NoOp overrides the #run_step method to make it
+    # non-operational
     class NoOp<Default
       def run_step step,meta
         unless step.has_cmd? && step.cmd.respond_to?(:run)

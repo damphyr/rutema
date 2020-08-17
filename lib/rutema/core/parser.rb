@@ -23,6 +23,9 @@ module Rutema
     # Derived parser classes (like the default Rutema::Parsers::XML) should
     # implement #parse_specification and #validate_configuration
     class SpecificationParser
+      ##
+      # The Rutema::Configuration instance of the _rutema_ run creating this
+      # parser
       attr_reader :configuration
 
       def initialize(configuration)
@@ -39,13 +42,13 @@ module Rutema
       end
 
       ##
-      # Parse the setup script. By default calls parse_specification
+      # Parse the setup script. By default calls #parse_specification
       def parse_setup(param)
         parse_specification(param)
       end
 
       ##
-      # Parse the teardown script. By default calls parse_specification
+      # Parse the teardown script. By default calls #parse_specification
       def parse_teardown(param)
         parse_specification(param)
       end

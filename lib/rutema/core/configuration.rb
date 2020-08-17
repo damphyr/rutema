@@ -64,7 +64,7 @@ module Rutema
     # Example:
     #
     #     configure do |cfg|
-    #       { class: Rutema::Parsers::XML }
+    #       cfg.parser = { class: Rutema::Parsers::XML }
     #     end
     def parser=(definition)
       raise ConfigurationException,

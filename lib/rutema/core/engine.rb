@@ -29,6 +29,7 @@ module Rutema
       @dispatcher=Dispatcher.new(@queue,configuration)
       @configuration=configuration
     end
+
     #Parse, run, report
     def run test_identifier=nil
       @dispatcher.run!
@@ -49,6 +50,7 @@ module Rutema
       @dispatcher.exit
       @dispatcher.report(tests)
     end
+
     #Parse a single test spec or all the specs listed in the configuration
     def parse test_identifier=nil
       specs=[]
@@ -68,12 +70,15 @@ module Rutema
       suite_setup,suite_teardown,setup,teardown=parse_specials(@configuration)
       return [suite_setup,suite_teardown,setup,teardown,specs]
     end
+
     private
+
     def parse_specifications tests
       tests.map do |t| 
         parse_specification(t)
       end.compact
     end
+
     def parse_specification spec_identifier
       begin
         @parser.parse_specification(spec_identifier)
@@ -82,6 +87,7 @@ module Rutema
         raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" 
       end
     end
+
     def parse_specials configuration
       suite_setup=nil
       suite_teardown=nil
@@ -101,6 +107,7 @@ module Rutema
       end
       return suite_setup,suite_teardown,setup,teardown
     end
+
     def run_scenarios specs,suite_setup,suite_teardown
       if specs.empty?
         error(nil,"No tests to run")

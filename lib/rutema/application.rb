@@ -12,8 +12,8 @@ module Rutema
   # This class is the entry point to the execution of _rutema_
   #
   # Upon initialization it parses the commandline, sets up its execution
-  # configuration according to the passed configuration and launches
-  # Rutema::Engine
+  # Rutema::Configuration according to the passed configuration file and
+  # launches Rutema::Engine
   class App
     ##
     # Parse commandline arguments, read the given configuration file and start
