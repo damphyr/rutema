@@ -29,19 +29,21 @@ module Rutema
         @number_of_runs=0
       end
 
-      def run spec
+      def run(spec, is_special = false)
         steps=[]
         status=:success
         state={'start_time'=>Time.now, "sequence_id"=>@number_of_runs,:test=>spec.name}
         message(:test=>spec.name,:text=>'started')
         if @setup
           message(:test=>spec.name,:text=>'setup')
-          executed_steps,status=run_scenario("_setup_",@setup.scenario,@context)
+          executed_steps,status=run_scenario("_setup_", @setup.scenario,
+                                             @context, true)
           steps+=executed_steps
         end
         if status!=:error
           message(:test=>spec.name,:text=>'running')
-          executed_steps,status=run_scenario(spec.name,spec.scenario,@context)
+          executed_steps,status=run_scenario(spec.name, spec.scenario,
+                                             @context, is_special)
           steps+=executed_steps
         else
           message(:test=>spec.name,'number'=>0,'status'=>:error,'out'=>"Setup failed",'err'=>"",'duration'=>0)
@@ -49,7 +51,8 @@ module Rutema
         state['status']=status
         if @teardown
           message(:test=>spec.name,:text=>'teardown')
-          executed_steps,status=run_scenario("_teardown_",@teardown.scenario,@context)
+          executed_steps,status=run_scenario("_teardown_", @teardown.scenario,
+                                             @context, true)
         end
         message(:test=>spec.name,:text=>'finished')
         state["stop_time"]=Time.now
@@ -60,7 +63,7 @@ module Rutema
 
       private
 
-      def run_scenario name,scenario,meta
+      def run_scenario(name, scenario, meta, is_special)
         executed_steps=[]
         status=:warning
         begin 
@@ -70,8 +73,11 @@ module Rutema
             status=:error
           else
             stps.each do |s|
-              executed_steps<<run_step(s,meta)
-              message(:test=>name,:text=>s.to_s,'number'=>s.number,'status'=>s.status,'out'=>s.output,'err'=>s.error,'duration'=>s.exec_time)
+              executed_steps << run_step(s,meta)
+              message(test: name, text: s.to_s, 'number' => s.number,
+                      'status' => s.status, 'out'=>s.output, 'err'=>s.error,
+                      'backtrace' => s.backtrace, 'duration'=> s.exec_time,
+                      'is_special' => is_special)
               status=s.status
               break if :error==s.status
             end
