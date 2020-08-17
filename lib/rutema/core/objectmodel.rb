@@ -190,6 +190,11 @@ module Rutema
       @attributes[:cmd].error
     end
 
+    def backtrace
+      return "no command associated" unless @attributes[:cmd]
+      return @attributes[:cmd].backtrace
+    end
+
     def ignore?
       return false unless @attributes[:ignore]
 
