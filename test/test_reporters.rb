@@ -57,8 +57,10 @@ module TestRutema
         reporter.update(Rutema::RunnerMessage.new(test: 'Test3', text: 'Test3 text'))
         reporter.update(Rutema::RunnerMessage.new('status' => :error, test: 'Test4', text: 'Test4 text'))
       end
-      puts output
-      assert_equal(["ERROR - Test2 Test2 text\nFATAL|Test4:Test4 text.\n", ''], output)
+      assert_equal(2, output.size)
+      assert_match(/ERROR - Test2 Test2 text\nFATAL|Test4: \d\d:\d\d:\d\d :Test4 text.\n/,
+                   output[0])
+      assert_equal('', output[1])
     end
 
     def test_update_off
@@ -94,11 +96,10 @@ module TestRutema
                                                   test: 'Test5', text:
                                                   'Test5 text'))
       end
-      puts output
-      assert_equal(["Test1 Test1 text\n" \
-                    "ERROR - Test2 Test2 text\n" \
-                    "FATAL|Test4:Test4 text.\n" \
-                    "Test5:Test5 text.\n", ''], output)
+      assert_equal(2, output.size)
+      assert_match(/Test1 Test1 text\nERROR - Test2 Test2 text\nFATAL|Test4: \d\d:\d\d:\d\d :Test4 text.\nTest5: \d\d:\d\d:\d\d :Test5 text.\n/,
+                   output[0].to_s)
+      assert_equal('', output[1])
     end
   end
 

@@ -165,7 +165,7 @@ module TestRutema
       # Create and verify minimal message
       msg = Rutema::RunnerMessage.new({})
       assert_equal('', msg.output)
-      assert_equal(':', msg.to_s)
+      assert_match(/: \d\d:\d\d:\d\d /, msg.to_s)
 
       # Create and verify a full message with all attributes set
       timestamp = Time.now
@@ -177,8 +177,7 @@ module TestRutema
                                         text: 'Some hypothetical message text',
                                         timestamp: timestamp })
       assert_equal("Something happened!\nOops", msg.output)
-      assert_equal('Msg Init Example Test:Some hypothetical message text.' \
-                   + " Output:\nSomething happened!\nOops", msg.to_s)
+      assert_match(/Msg Init Example Test: \d\d:\d\d:\d\d :Some hypothetical message text. Output:\nSomething happened!\nOops/, msg.to_s)
     end
   end
 end

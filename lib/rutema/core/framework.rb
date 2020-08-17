@@ -116,6 +116,7 @@ module Rutema
     # not empty and the +status+ attribute is set to +:error+.
     def to_s
       msg = "#{@test}:"
+      msg << " #{@timestamp.strftime("%H:%M:%S")} :"
       msg << "#{@text}." unless @text.empty?
       outpt = output
       msg << " Output:\n#{outpt}" unless outpt.empty? || @status != :error
