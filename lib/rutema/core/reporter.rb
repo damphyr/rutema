@@ -186,7 +186,8 @@ module Rutema
         states.each{|k,v| failures<<v.test if v.status==:error}
 
         unless @silent
-          puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"
+          count_tests_run = states.select { |name, state| !state.is_special }.count
+          puts "#{errors.size} errors. #{count_tests_run} test cases executed. #{failures.size} failed"
           unless failures.empty?
             puts "Failures:"
             puts specs.map{|spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name)}.compact.join("\n")
