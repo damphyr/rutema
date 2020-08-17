@@ -22,9 +22,9 @@ module TestRutema
       state = nil
       assert_nothing_raised { state = runner.run(spec) }
       assert_equal(1, state['steps'].size)
-      assert_equal(5, queue.size)
+      assert_equal(6, queue.size)
       assert_equal('started', queue.pop.text)
-      3.times { queue.pop }
+      4.times { queue.pop }
       assert_equal('finished', queue.pop.text)
     end
 

@@ -225,7 +225,7 @@ module Rutema
     def message(message)
       case message
       when String
-        Message.new(text: message, timestamp: Time.now)
+        @queue.push(Message.new(text: message, timestamp: Time.now))
       when Hash
         hm = if message[:test] && message['status']
           RunnerMessage.new(message)

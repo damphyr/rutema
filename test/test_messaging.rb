@@ -102,8 +102,6 @@ module TestRutema
     end
 
     def test_message_string
-      return # ToDo(markuspg) Reactivate test when bug is fixed
-
       # Create a class to use for testing
       test_class = TestClass.new
 
