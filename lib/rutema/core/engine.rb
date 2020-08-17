@@ -40,11 +40,9 @@ module Rutema
         @dispatcher.exit
         raise RutemaError,"No tests to run!"
       else
-        @runner.setup=setup
-        @runner.teardown=teardown
         #running - at this point we've done any and all checks and we're stepping on the gas
         message("running")
-        run_scenarios(tests,suite_setup,suite_teardown)
+        run_scenarios(tests, suite_setup, suite_teardown, setup, teardown)
       end
       message("end")
       @dispatcher.exit
@@ -108,27 +106,30 @@ module Rutema
       return suite_setup,suite_teardown,setup,teardown
     end
 
-    def run_scenarios specs,suite_setup,suite_teardown
+    def run_scenarios(specs, suite_setup, suite_teardown, setup, teardown)
       if specs.empty?
         error(nil,"No tests to run")
       else
-        if suite_setup
-          if run_test(suite_setup)==:success
-            specs.each{|s| run_test(s)}
-          else
-            error(nil,"Suite setup test failed")
-          end
+        @runner.setup = nil
+        @runner.teardown = nil
+
+        if !suite_setup || (run_test(suite_setup, true) == :success)
+          @runner.setup=setup
+          @runner.teardown=teardown
+          specs.each{ |spec| run_test(spec) }
         else
-          specs.each{|spec| run_test(spec)}
+          error(nil,"Suite setup test failed")
         end
         if suite_teardown
-          run_test(suite_teardown)
+          @runner.setup=nil
+          @runner.teardown=nil
+          run_test(suite_teardown, true)
         end
       end
     end
-    def run_test specification
+    def run_test(specification, is_special = false)
       if specification.scenario
-        status=@runner.run(specification)["status"]
+        status=@runner.run(specification, is_special)['status']
       else
         status=:not_executed
         message(:test=>specification.name,:text=>"No scenario", :status=>status)
