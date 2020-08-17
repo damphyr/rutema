@@ -15,6 +15,7 @@ module TestRutema
       # Prepare mock
       mock_message = mock
       mock_message.expects(:duration).returns(325)
+      mock_message.expects(:is_special).returns(false)
       mock_message.expects(:status).returns(:some_status)
       mock_message.expects(:test).returns('Example test')
       timestamp = Time.now
@@ -27,6 +28,7 @@ module TestRutema
 
       # Verify created instance
       assert_equal(325, report_state.duration)
+      assert_equal(false, report_state.is_special)
       assert_equal(:some_status, report_state.status)
       assert_equal('Example test', report_state.test)
       assert_equal(timestamp, report_state.timestamp)
@@ -38,6 +40,7 @@ module TestRutema
       # Prepare mock and create ReportTestState instance
       mock_message_a = mock
       mock_message_a.expects(:duration).returns(41)
+      mock_message_a.expects(:is_special).returns(false)
       mock_message_a.expects(:status).returns(:a_status)
       mock_message_a.expects(:test).returns('Example test A')
       timestamp = Time.now

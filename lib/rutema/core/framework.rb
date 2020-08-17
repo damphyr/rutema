@@ -85,6 +85,9 @@ module Rutema
     # An error occurred during a step or a test
     attr_accessor :err
     ##
+    # An error occurred during a step or a test
+    attr_accessor :is_special
+    ##
     # The number of a test step
     attr_accessor :number
     ##
@@ -97,8 +100,10 @@ module Rutema
     def initialize(params)
       super(params)
 
+      @backtrace = params.fetch('backtrace', '')
       @duration = params.fetch('duration', 0)
       @err = params.fetch('err', '')
+      @is_special = params.fetch('is_special', '')
       @number = params.fetch('number', 1)
       @out = params.fetch('out', '')
       @status = params.fetch('status', :none)
@@ -123,6 +128,7 @@ module Rutema
       msg = ''
       msg << "#{@out}\n" unless @out.empty?
       msg << @err unless @err.empty?
+      msg << "\n" + @backtrace.join("\n") unless @backtrace.empty?
       msg.chomp
     end
   end
@@ -148,6 +154,9 @@ module Rutema
     # Accumulates the durations of all inserted messages
     attr_reader :duration
     ##
+    # Accumulates the durations of all inserted messages
+    attr_reader :is_special
+    ##
     # Always has the status of the most recently inserted message
     attr_reader :status
     ##
@@ -161,6 +170,7 @@ module Rutema
     # Create a new Rutema::ReportTestState instance from a Rutema::RunnerMessage
     def initialize(message)
       @duration = message.duration
+      @is_special = message.is_special
       @status = message.status
       @steps = [message]
       @test = message.test
