@@ -73,6 +73,8 @@ module Rutema
             status=:error
           else
             stps.each do |s|
+              message(test: name, text: s.to_s, 'number' => s.number,
+                      'status' => :started, 'is_special' => is_special)
               executed_steps << run_step(s,meta)
               message(test: name, text: s.to_s, 'number' => s.number,
                       'status' => s.status, 'out'=>s.output, 'err'=>s.error,

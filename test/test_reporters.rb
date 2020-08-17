@@ -83,15 +83,22 @@ module TestRutema
       reporter = Rutema::Reporters::Console.new(configurator, dispatcher)
       output = capture_output do
         reporter.update(Rutema::Message.new(test: 'Test1', text: 'Test1 text'))
-        reporter.update(Rutema::ErrorMessage.new(test: 'Test2', text: 'Test2 text'))
-        reporter.update(Rutema::RunnerMessage.new(test: 'Test3', text: 'Test3 text'))
-        reporter.update(Rutema::RunnerMessage.new('status' => :error, test: 'Test4', text: 'Test4 text'))
+        reporter.update(Rutema::ErrorMessage.new(test: 'Test2',
+                                                 text: 'Test2 text'))
+        reporter.update(Rutema::RunnerMessage.new(test: 'Test3',
+                                                  text: 'Test3 text'))
+        reporter.update(Rutema::RunnerMessage.new('status' => :error,
+                                                  test: 'Test4',
+                                                  text: 'Test4 text'))
+        reporter.update(Rutema::RunnerMessage.new('status' => :started,
+                                                  test: 'Test5', text:
+                                                  'Test5 text'))
       end
       puts output
       assert_equal(["Test1 Test1 text\n" \
                     "ERROR - Test2 Test2 text\n" \
-                    "Test3:Test3 text.\n" \
-                    "FATAL|Test4:Test4 text.\n", ''], output)
+                    "FATAL|Test4:Test4 text.\n" \
+                    "Test5:Test5 text.\n", ''], output)
     end
   end
 
