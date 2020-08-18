@@ -97,7 +97,7 @@ module TestRutema
                                                   'Test5 text'))
       end
       assert_equal(2, output.size)
-      assert_match(/Test1 Test1 text\nERROR - Test2 Test2 text\nFATAL|Test4: \d\d:\d\d:\d\d :Test4 text.\nTest5: \d\d:\d\d:\d\d :Test5 text.\n/,
+      assert_match(/Test1 Test1 text\nERROR - Test2 Test2 text\nFATAL|Test4: \d\d:\d\d:\d\d :Test4 text.\nTest5: \d\d:\d\d:\d\d :Test5 text. Started.\n/,
                    output[0].to_s)
       assert_equal('', output[1])
     end

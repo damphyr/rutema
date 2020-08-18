@@ -164,8 +164,12 @@ module Rutema
             puts "FATAL|#{message}"
           elsif message.status == :warning
             puts "WARNING|#{message}"
-          elsif @mode == 'verbose' && message.status == :started
-            puts message.to_s
+          elsif @mode == 'verbose'
+            if message.status == :started
+              puts "#{message.to_s} Started."
+            else
+              puts message.to_s
+            end
           end
         when ErrorMessage
           puts message.to_s
