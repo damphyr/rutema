@@ -49,13 +49,15 @@ module Rutema
         else
           message(:test=>spec.name,'number'=>0,'status'=>:error,'out'=>"Setup failed",'err'=>"",'duration'=>0)
         end
-        state['status']=status
+        @context['rutema_status'] = status
         if @teardown
           message(:test=>spec.name,:text=>'teardown')
           executed_steps,status=run_scenario("_teardown_", @teardown.scenario,
                                              @context, true)
         end
+        @context['rutema_status'] = status
         message(:test=>spec.name,:text=>'finished')
+        state['status'] = status
         state["stop_time"]=Time.now
         state['steps']=steps
         @number_of_runs+=1
