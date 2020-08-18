@@ -119,7 +119,7 @@ module Rutema
       msg << " #{@timestamp.strftime("%H:%M:%S")} :"
       msg << "#{@text}." unless @text.empty?
       outpt = output
-      msg << " Output:\n#{outpt}" unless outpt.empty? || @status != :error
+      msg << " Output" + (outpt.empty? ? "." : ":\n#{outpt}")
       msg
     end
 
