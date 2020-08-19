@@ -4,17 +4,19 @@
 
 require 'English'
 require 'ostruct'
+
 require_relative 'parser'
 require_relative 'reporter'
+
 module Rutema
   ##
   # This module defines the configuration directives used for the configuration
-  # of Rutema and test suites.
+  # of Rutema and the test suites to be run with it.
   #
   # A configuration file needs as a minimum to define which parser to use and
   # which tests to run.
   #
-  # Since rutema configuration files are valid Ruby code, you can use the full
+  # Since rutema configuration files are valid Ruby code you can use the full
   # power of the Ruby language including require directives
   #
   # Example:
@@ -46,8 +48,10 @@ module Rutema
     #     end
     def context=(definition)
       @context ||= {}
-      raise ConfigurationException,
-            'Only accepting hash values as context argument' unless definition.is_a?(Hash)
+      unless definition.is_a?(Hash)
+        raise ConfigurationException,
+              'Only accepting hash values as context argument'
+      end
 
       @context.merge!(definition)
     end
@@ -67,8 +71,10 @@ module Rutema
     #       cfg.parser = { class: Rutema::Parsers::XML }
     #     end
     def parser=(definition)
-      raise ConfigurationException,
-            "Required key :class is missing from #{definition} for parser" unless definition[:class]
+      unless definition[:class]
+        raise ConfigurationException,
+              "Required key :class is missing from #{definition} for parser"
+      end
 
       @parser = definition
     end
@@ -87,10 +93,14 @@ module Rutema
     #       cfg.path = { name: 'src', path: '/usr/src' }
     #     end
     def path=(definition)
-      raise ConfigurationException,
-            "Required key :name is missing from #{definition} of path" unless definition[:name]
-      raise ConfigurationException,
-            "Required key :path is missing from #{definition} of path" unless definition[:path]
+      unless definition[:name]
+        raise ConfigurationException,
+              "Required key :name is missing from #{definition} of path"
+      end
+      unless definition[:path]
+        raise ConfigurationException,
+              "Required key :path is missing from #{definition} of path"
+      end
       @paths[definition[:name]] = definition[:path]
     end
 
@@ -109,8 +119,10 @@ module Rutema
     #       cfg.reporter = { class: Rutema::Reporters::EventReporter }
     #     end
     def reporter=(definition)
-      raise ConfigurationException,
-            "Required key :class is missing from #{definition} of reporter" unless definition[:class]
+      unless definition[:class]
+        raise ConfigurationException,
+              "Required key :class is missing from #{definition} of reporter"
+      end
 
       @reporters[definition[:class]] = definition
     end
@@ -130,8 +142,10 @@ module Rutema
     #       cfg.runner = { class: Rutema::Runners::Default }
     #     end
     def runner=(definition)
-      raise ConfigurationException,
-            "Required key :class is missing from #{definition} of runner" unless definition[:class]
+      unless definition[:class]
+        raise ConfigurationException,
+              "Required key :class is missing from #{definition} of runner"
+      end
 
       @runner = definition
     end
@@ -237,8 +251,10 @@ module Rutema
     #
     # This way you can pass configuration information for the tools you use
     def tool=(definition)
-      raise ConfigurationException,
-            "Required key :name is missing from #{definition} of tool" unless definition[:name]
+      unless definition[:name]
+        raise ConfigurationException,
+              "Required key :name is missing from #{definition} of tool"
+      end
 
       @tools[definition[:name]] = definition
     end
@@ -353,7 +369,8 @@ module Rutema
       # Just wrap the exception so we can differentiate
       raise ConfigurationException.new, "Syntax error in the configuration file '#{filename}':\n#{$ERROR_INFO.message}"
     rescue NoMethodError
-      raise ConfigurationException.new, "Encountered an unknown directive in configuration file '#{filename}':\n#{$ERROR_INFO.message}"
+      raise ConfigurationException.new, \
+            "Encountered an unknown directive in configuration file '#{filename}':\n#{$ERROR_INFO.message}"
     rescue
       # Just wrap the exception so we can differentiate
       raise ConfigurationException.new, $ERROR_INFO.message.to_s
