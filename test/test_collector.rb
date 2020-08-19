@@ -35,9 +35,9 @@ module TestRutema
       collector = Rutema::Reporters::Collector.new(MockConfiguration.new,
                                                    dispatcher)
       collector.update(Rutema::ErrorMessage.new(test: 'Test1', text: 'Test1 text'))
-      collector.update(Rutema::RunnerMessage.new(duration: 14, number: 1,
+      collector.update(Rutema::RunnerMessage.new(duration: 14, number: 1, 'status' => :success,
                                                  test: 'Test2', text: 'Test2 text'))
-      collector.update(Rutema::RunnerMessage.new(duration: 32, number: 2,
+      collector.update(Rutema::RunnerMessage.new(duration: 32, number: 2, 'status' => :success,
                                                  test: 'Test2', text: 'Test2 text'))
       last_test_2_timestamp = Time.now
       collector.update(Rutema::RunnerMessage.new(duration: 5, number: 3,

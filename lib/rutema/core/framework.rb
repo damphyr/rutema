@@ -3,6 +3,7 @@
 # frozen_string_literal: false
 
 module Rutema
+  STATUS_CODES = [:none, :skipped, :success, :warning, :error]
   ##
   # Rutema::Message is the base class of different message types for exchanging data
   #
@@ -190,7 +191,9 @@ module Rutema
       end
 
       @duration += message.duration
-      @status = message.status
+      puts "a: #{message.status}"
+      puts "b: #{status}"
+      @status = message.status unless message.status.nil? || (!@status.nil? && STATUS_CODES.find_index(message.status) < STATUS_CODES.find_index(@status))
       @steps << message
     end
   end
