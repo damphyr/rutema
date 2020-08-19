@@ -79,13 +79,18 @@ module Rutema
               message(test: name, text: s.to_s, 'number' => s.number,
                       'status' => :started, 'is_special' => is_special)
               sleep 0.05
-              executed_steps << run_step(s,meta)
-              message(test: name, text: s.to_s, 'number' => s.number,
-                      'status' => s.status, 'out'=>s.output, 'err'=>s.error,
-                      'backtrace' => s.backtrace, 'duration'=> s.exec_time,
-                      'is_special' => is_special)
+              begin
+                executed_steps << run_step(s,meta)
+                message(test: name, text: s.to_s, 'number' => s.number,
+                        'status' => s.status, 'out'=>s.output, 'err'=>s.error,
+                        'backtrace' => s.backtrace, 'duration'=> s.exec_time,
+                        'is_special' => is_special)
+              rescue Exception => e
+                throw e unless s.continue?
+                s.status = :error
+              end
               status=s.status
-              break if :error==s.status
+              break if :error == s.status and !s.continue?
             end
           end
         rescue  

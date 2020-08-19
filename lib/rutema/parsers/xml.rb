@@ -119,6 +119,7 @@ module Rutema
         xmldoc=REXML::Document.new( xmltxt )
         #any step element
         step=Rutema::Step.new()
+        step.continue = false
         step.ignore=false
         xmldoc.root.attributes.each do |attr,value|
          add_attribute(step,attr,value)

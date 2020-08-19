@@ -169,9 +169,15 @@ module Rutema
       @attributes[:ignore] = false
       # assign
       @attributes[:cmd] = cmd if cmd
+      @attributes[:continue] = false
       @attributes[:text] = txt
       @number = 0
       @attributes[:step_type] = 'step'
+    end
+
+    def continue?
+      return false unless @attributes[:continue]
+      return @attributes[:continue]
     end
 
     def name
