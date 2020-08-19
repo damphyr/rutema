@@ -2,6 +2,8 @@
 require 'ostruct'
 require 'test/unit'
 require 'mocha/test_unit'
+
+require_relative '../lib/rutema/core/errors'
 require_relative '../lib/rutema/parsers/xml'
 
 
