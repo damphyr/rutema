@@ -170,6 +170,7 @@ module Rutema
       # assign
       @attributes[:cmd] = cmd if cmd
       @attributes[:continue] = false
+      @attributes[:skip_on_error] = false
       @attributes[:text] = txt
       @number = 0
       @attributes[:step_type] = 'step'
@@ -205,6 +206,11 @@ module Rutema
       return false unless @attributes[:ignore]
 
       @attributes[:ignore]
+    end
+
+    def skip_on_error?
+      return false unless @attributes[:skip_on_error]
+      return @attributes[:skip_on_error]
     end
 
     def exec_time
