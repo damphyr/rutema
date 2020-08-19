@@ -10,6 +10,7 @@ module Rutema
   # _rutema_ comes by default with two runners Rutema::Runners::Default and
   # Rutema::Runners::NoOp
   module Runners
+    STATUS_CODES = [:skipped, :success, :warning, :error]
     ##
     # Rutema::Runners::Default is the default runner used by Rutema::Engine
     #
@@ -89,7 +90,8 @@ module Rutema
                 throw e unless s.continue?
                 s.status = :error
               end
-              status=s.status
+              # Status of lower "importance" my not cover higher importance ones
+              status = s.status unless STATUS_CODES.find_index(s.status) < STATUS_CODES.find_index(status)
               break if :error == s.status and !s.continue?
             end
           end
