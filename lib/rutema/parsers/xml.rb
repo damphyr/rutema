@@ -121,6 +121,7 @@ module Rutema
         step=Rutema::Step.new()
         step.continue = false
         step.ignore=false
+        step.continue=false
         xmldoc.root.attributes.each do |attr,value|
          add_attribute(step,attr,value)
         end

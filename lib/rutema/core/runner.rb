@@ -27,6 +27,7 @@ module Rutema
         @context=context || Hash.new
         @queue = queue
         @number_of_runs=0
+        @cleanup_blocks = []
       end
 
       def run(spec, is_special = false)
@@ -98,7 +99,7 @@ module Rutema
               break if :error == s.status and !s.continue?
             end
           end
-        rescue  
+        rescue
           error(name,$!.message)
           status=:error
         end

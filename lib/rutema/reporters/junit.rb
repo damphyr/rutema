@@ -61,16 +61,31 @@ module Rutema
         element_test=REXML::Element.new("testcase")
         element_test.add_attributes("name"=>name,"time"=>state.duration,"classname"=>@configuration.context[:config_name])
         if state.status!=:success
-          fail=REXML::Element.new("failure")
-          fail.add_attribute("message","Step #{state.steps.last.number} failed.")
-          fail.add_text "Step #{state.steps.last.number} failed."
-          element_test.add_element(fail)
-          out=REXML::Element.new("system-out")
-          out.add_text state.steps.last.out
-          element_test.add_element(out)
-          err=REXML::Element.new("system-err")
-          err.add_text state.steps.last.err
-          element_test.add_element(err)
+          failed_steps = state.steps.select {|step| !step.status.nil? && STATUS_CODES.find_index(:success) < STATUS_CODES.find_index(step.status)}
+          if !failed_steps.empty?
+            failed_steps.each do |step|
+              fail=REXML::Element.new("failure")          
+              fail.add_attribute("message","Step: #{step.text} reported non-success status: #{step.status}.")
+              fail.add_text "Step #{step.number} failed."
+              element_test.add_element(fail)
+              out=REXML::Element.new("system-out")
+              out.add_text step.out
+              element_test.add_element(out)
+              err=REXML::Element.new("system-err")
+              err.add_text step.err
+              element_test.add_element(err)
+            end
+          else
+            fail.add_attribute("message","Case reported non-success status: #{state.status} without a matching step state.")
+            fail.add_text "Case with #{state.steps.last.number} steps failed with no matching failed step."
+            element_test.add_element(fail)
+            out=REXML::Element.new("system-out")
+            out.add_text state.steps.last.out
+            element_test.add_element(out)
+            err=REXML::Element.new("system-err")
+            err.add_text state.steps.last.err
+            element_test.add_element(err)          
+          end
         end
         return element_test
       end

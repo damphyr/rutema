@@ -57,7 +57,7 @@ module Rutema
       #make sure the one test is on the list
       if test_identifier
         if is_spec_included?(test_identifier)
-          specs<<parse_specification(File.expand_path(test_identifier))
+          specs << parse_specification(File.expand_path(test_identifier))
         else
           error(File.expand_path(test_identifier),"does not exist in the configuration")  
         end
@@ -143,16 +143,18 @@ module Rutema
       end
       return nil
     end
+
     def is_spec_included? test_identifier
       full_path=File.expand_path(test_identifier)
-      return @configuration.tests.include?(full_path) || is_special?(test_identifier) 
+      return @configuration.tests.include?(full_path) || is_special?(test_identifier)
     end
+
     def is_special? test_identifier
       full_path=File.expand_path(test_identifier)
       return full_path==@configuration.suite_setup ||
       full_path==@configuration.suite_teardown ||
       full_path==@configuration.setup ||
-      full_path==@configuration.teardown 
+      full_path==@configuration.teardown
     end
   end
   #The Rutema::Dispatcher functions as a demultiplexer between Rutema::Engine and the various reporters.
