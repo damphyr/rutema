@@ -50,7 +50,7 @@ module TestRutema
       # Test insertion
       mock_message_b = mock
       mock_message_b.expects(:duration).returns(29)
-      mock_message_b.expects(:status).times(4).returns(:success)
+      mock_message_b.expects(:status).times(3).returns(:success)
       mock_message_b.expects(:test).returns('Example test A')
       report_state << mock_message_b
       assert_equal(70, report_state.duration)
@@ -62,11 +62,11 @@ module TestRutema
 
       mock_message_c = mock
       mock_message_c.expects(:duration).returns(84)
-      mock_message_c.expects(:status).times(4).returns(:warning)
+      mock_message_c.expects(:status).times(3).returns(:error)
       mock_message_c.expects(:test).returns('Example test A')
       report_state << mock_message_c
       assert_equal(154, report_state.duration)
-      assert_equal(:warning, report_state.status)
+      assert_equal(:error, report_state.status)
       assert_equal('Example test A', report_state.test)
       assert_equal(timestamp, report_state.timestamp)
       assert_equal(3, report_state.steps.size)
@@ -75,7 +75,7 @@ module TestRutema
 
       mock_message_d = mock
       mock_message_d.expects(:duration).returns(24)
-      mock_message_d.expects(:status).times(4).returns(:error)
+      mock_message_d.expects(:status).twice.returns(:warning)
       mock_message_d.expects(:test).returns('Example test A')
       report_state << mock_message_d
       assert_equal(178, report_state.duration)

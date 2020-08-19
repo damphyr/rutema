@@ -3,7 +3,9 @@
 # frozen_string_literal: false
 
 module Rutema
-  STATUS_CODES = [:none, :skipped, :success, :warning, :error]
+  ##
+  # A list of possible states a Rutema::RunnerMessage can transport
+  STATUS_CODES = %i[uninitialized skipped success warning error].freeze
   ##
   # Rutema::Message is the base class of different message types for exchanging data
   #
@@ -23,7 +25,8 @@ module Rutema
     # Message text
     attr_accessor :text
     ##
-    # A timestamp respective to the message
+    # A timestamp respective to the message (in all known cases the time of
+    # message creation)
     attr_accessor :timestamp
 
     ##
@@ -43,7 +46,7 @@ module Rutema
     # Convert the message to a string representation
     def to_s
       msg = ''
-      msg << "#{@test} " unless @test.empty?
+      msg << "#{@test}: " unless @test.empty?
       msg << @text
     end
   end
@@ -52,7 +55,7 @@ module Rutema
   # Rutema::ErrorMessage is a class for simple error messages
   #
   # Compared to Rutema::Message it does not contain any additional information.
-  # The only difference is that "Error -" is being prepended to its stringified
+  # The only difference is that "Error - " is being prepended to its stringified
   # representation.
   #
   # This class is mainly used to signal errors concerning the execution of
@@ -71,14 +74,10 @@ module Rutema
   #
   # These messages are particular to a respective test and carry additional
   # information compared to the base Rutema::Message
-  #
-  # The following (additional to Rutema::Message) keys of the hash are used:
-  # * 'duration' - An optional duration of a step (defaults to +0+)
-  # * 'err' - An optional error message (defaults to an empty string)
-  # * 'number' - The number of a step (defaults to +1+)
-  # * 'status' - A status of a step or the respective test (defaults to +:none+)
-  # * 'out' - An optional output of a step (defaults to an empty string)
   class RunnerMessage < Message
+    ##
+    # The backtrace of a conducted but failed step
+    attr_accessor :backtrace
     ##
     # The duration of a test step
     attr_accessor :duration
@@ -86,7 +85,7 @@ module Rutema
     # An error occurred during a step or a test
     attr_accessor :err
     ##
-    # An error occurred during a step or a test
+    # The represented step is a special one (i.e. a setup or teardown step)
     attr_accessor :is_special
     ##
     # The number of a test step
@@ -98,39 +97,53 @@ module Rutema
     # The status of a respective test step or test itself
     attr_accessor :status
 
+    ##
+    # Initialize a new Rutema::RunnerMessage from a Hash
+    #
+    # The following (additional to Rutema::Message) keys of the hash are used:
+    # * 'backtrace' - A backtrace of a conducted but failed step (defaults to an
+    #   empty string)
+    # * 'duration' - An optional duration of a step (defaults to +0+)
+    # * 'err' - An optional error message (defaults to an empty string)
+    # * 'is_special' - If the respective step is a special one (i.e. setup or
+    #   teardown - defaults to +false+)
+    # * 'number' - The number of a step (defaults to +1+)
+    # * 'out' - An optional output of a step (defaults to an empty string)
+    # * 'status' - A status of a step or the respective test (defaults to +:uninitialized+)
     def initialize(params)
       super(params)
 
       @backtrace = params.fetch('backtrace', '')
       @duration = params.fetch('duration', 0)
       @err = params.fetch('err', '')
-      @is_special = params.fetch('is_special', '')
+      @is_special = params.fetch('is_special', false)
       @number = params.fetch('number', 1)
       @out = params.fetch('out', '')
-      @status = params.fetch('status', :none)
+      @status = params.fetch('status', :uninitialized)
     end
 
     ##
     # Convert the message to a string representation
     #
-    # A steps error and output string will be included if the +out+ attribute is
-    # not empty and the +status+ attribute is set to +:error+.
+    # The output of the #output method will be appended, if this returns a non-
+    # empty string
     def to_s
       msg = "#{@test}:"
-      msg << " #{@timestamp.strftime("%H:%M:%S")} :"
+      msg << " #{@timestamp.strftime('%H:%M:%S')} :"
       msg << "#{@text}." unless @text.empty?
       outpt = output
-      msg << " Output" + (outpt.empty? ? "." : ":\n#{outpt}")
+      msg << "\n#{outpt}" unless outpt.empty?
       msg
     end
 
     ##
-    # Return a string combining step output and the error string
+    # Return a string combining the stored step output, error string and
+    # backtrace
     def output
       msg = ''
-      msg << "#{@out}\n" unless @out.empty?
-      msg << @err unless @err.empty?
-      msg << "\n" + (@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
+      msg << "Output: \"#{@out}\"\n" unless @out.empty?
+      msg << "Error: \"#{@err}\"\n" unless @err.empty?
+      msg << "Backtrace:\n" + (@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
       msg.chomp
     end
   end
@@ -147,22 +160,25 @@ module Rutema
   #
   # Durations will be accumulated in the +duration+ attribute and all inserted
   # messages in the +steps+ attribute. The +status+ attribute will always be set
-  # to the status of the most recently inserted message.
+  # to the status of the highest priority of all the inserted messages. The
+  # order of the status priorities can be seen in ascending order in
+  # STATUS_CODES in the Rutema module
   class ReportTestState
-    ##
-    # Holds all inserted Rutema::RunnerMessage instances
-    attr_accessor :steps
     ##
     # Accumulates the durations of all inserted messages
     attr_reader :duration
     ##
-    # Accumulates the durations of all inserted messages
+    # If the Rutema::Message passed on initialization was a special one
     attr_reader :is_special
     ##
-    # Always has the status of the most recently inserted message
+    # Always has highest priority status of all inserted messages
     attr_reader :status
     ##
-    # The name of the respective test whose messages this Rutema::ReportTestState collects
+    # Holds all inserted Rutema::RunnerMessage instances
+    attr_accessor :steps
+    ##
+    # The name of the respective test whose messages this
+    # Rutema::ReportTestState collects
     attr_reader :test
     ##
     # The timestamp of the first message of the test
@@ -190,10 +206,20 @@ module Rutema
               "Attempted to insert \"#{message.test}\" message into \"#{@test}\" ReportTestStates"
       end
 
+      append_message_and_update(message)
+    end
+
+    private
+
+    ##
+    # Add message to the steps Array and update duration and status attributes
+    def append_message_and_update(message)
       @duration += message.duration
-      puts "a: #{message.status}"
-      puts "b: #{status}"
-      @status = message.status unless message.status.nil? || (!@status.nil? && STATUS_CODES.find_index(message.status) < STATUS_CODES.find_index(@status))
+      unless message.status.nil? \
+        || (!@status.nil? && STATUS_CODES.find_index(message.status) \
+            < STATUS_CODES.find_index(@status))
+        @status = message.status
+      end
       @steps << message
     end
   end
@@ -212,7 +238,7 @@ module Rutema
     #
     # +identifier+ will be used for the test name and +message+ for the text.
     def error(identifier, message)
-      @queue.push(ErrorMessage.new(test: identifier, text: message, timestamp: Time.now))
+      @queue.push(ErrorMessage.new(test: identifier, text: message))
     end
 
     ##
@@ -226,23 +252,24 @@ module Rutema
     # initialized from it. If the Hash contains a 'status' and a +:test+ key a
     # Rutema::RunnerMessage will be created, otherwise a Rutema::Message
     def message(message)
-      case message
-      when String
-        @queue.push(Message.new(text: message, timestamp: Time.now))
-      when Hash
-        hm = if message[:test] && message['status']
-          RunnerMessage.new(message)
-        else
-          Message.new(message)
-        end
-        hm.timestamp = Time.now
-        @queue.push(hm)
-      end
+      hm = case message
+           when String
+             Message.new(text: message)
+           when Hash
+             if message[:test] && message['status']
+               RunnerMessage.new(message)
+             else Message.new(message)
+             end
+           end
+      @queue.push(hm) if hm.is_a?(Message)
     end
   end
 
   ##
   # Generic base class for all Rutema errors
+  #
+  # Currently Rutema derives the more specific Rutema::ParserError,
+  # Rutema::ReportError and Rutema::RunnerError from it.
   class RutemaError < RuntimeError
   end
 

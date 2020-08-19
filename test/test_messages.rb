@@ -52,12 +52,12 @@ module TestRutema
 
       # Create and verify message with test and text given
       msg = Rutema::ErrorMessage.new({ test: 'Msg Test', text: 'Some sample text' })
-      assert_equal('ERROR - Msg Test Some sample text', msg.to_s)
+      assert_equal('ERROR - Msg Test: Some sample text', msg.to_s)
 
       # Create and verify message with all attributes set
       msg = Rutema::ErrorMessage.new({ test: 'Msg Test', text: 'Some sample text',
                                        timestamp: Time.now })
-      assert_equal('ERROR - Msg Test Some sample text', msg.to_s)
+      assert_equal('ERROR - Msg Test: Some sample text', msg.to_s)
     end
   end
 
@@ -105,12 +105,12 @@ module TestRutema
 
       # Create and verify message with test and text given
       msg = Rutema::Message.new({ test: 'Msg Test', text: 'Some sample text' })
-      assert_equal('Msg Test Some sample text', msg.to_s)
+      assert_equal('Msg Test: Some sample text', msg.to_s)
 
       # Create and verify message with all attributes set
       msg = Rutema::Message.new({ test: 'Msg Test', text: 'Some sample text',
                                   timestamp: Time.now })
-      assert_equal('Msg Test Some sample text', msg.to_s)
+      assert_equal('Msg Test: Some sample text', msg.to_s)
     end
   end
 
@@ -126,11 +126,13 @@ module TestRutema
       timestamp_after = Time.now
 
       # Verify created instance
+      assert_equal('', msg.backtrace)
       assert_equal(0, msg.duration)
       assert_equal('', msg.err)
+      assert_equal(false, msg.is_special)
       assert_equal(1, msg.number)
       assert_equal('', msg.out)
-      assert_equal(:none, msg.status)
+      assert_equal(:uninitialized, msg.status)
       assert_equal('', msg.test)
       assert_equal('', msg.text)
       assert((timestamp_before < msg.timestamp) \
@@ -141,21 +143,24 @@ module TestRutema
       # Test initialization
       timestamp = Time.now
       msg = assert_nothing_raised do
-        Rutema::RunnerMessage.new({ 'duration' => 137, 'err' => 'Oops',
-                                    'number' => 45,
+        Rutema::RunnerMessage.new({ 'backtrace' => %w[a b c],
+                                    'duration' => 137, 'err' => 'Oops',
+                                    'is_special' => true, 'number' => 45,
                                     'out' => 'Something happened!',
-                                    'status' => :none,
+                                    'status' => :error,
                                     test: 'Msg Init Example Test',
                                     text: 'Some hypothetical message text',
                                     timestamp: timestamp })
       end
 
       # Verify created instance
+      assert_equal(%w[a b c], msg.backtrace)
       assert_equal(137, msg.duration)
       assert_equal('Oops', msg.err)
+      assert_equal(true, msg.is_special)
       assert_equal(45, msg.number)
       assert_equal('Something happened!', msg.out)
-      assert_equal(:none, msg.status)
+      assert_equal(:error, msg.status)
       assert_equal('Msg Init Example Test', msg.test)
       assert_equal('Some hypothetical message text', msg.text)
       assert_equal(timestamp, msg.timestamp)
@@ -169,15 +174,18 @@ module TestRutema
 
       # Create and verify a full message with all attributes set
       timestamp = Time.now
-      msg = Rutema::RunnerMessage.new({ 'duration' => 137, 'err' => 'Oops',
+      msg = Rutema::RunnerMessage.new({ 'backtrace' => %w[Uuh Oopsie Ouch],
+                                        'duration' => 137, 'err' => 'Oops',
+                                        'is_special' => true,
                                         'number' => 45,
                                         'out' => 'Something happened!',
                                         'status' => :error,
                                         test: 'Msg Init Example Test',
                                         text: 'Some hypothetical message text',
                                         timestamp: timestamp })
-      assert_equal("Something happened!\nOops", msg.output)
-      assert_match(/Msg Init Example Test: \d\d:\d\d:\d\d :Some hypothetical message text. Output:\nSomething happened!\nOops/, msg.to_s)
+      assert_equal("Output: \"Something happened!\"\nError: \"Oops\"\nBacktrace:\nUuh\nOopsie\nOuch", msg.output)
+      puts msg.to_s
+      assert_match(/Msg Init Example Test: \d\d:\d\d:\d\d :Some hypothetical message text.\nOutput: "Something happened!"\nError: "Oops"\nBacktrace:\nUuh\nOopsie\nOuch/, msg.to_s)
     end
   end
 end
