@@ -67,6 +67,143 @@ module TestRutema
       assert_instance_of(Array, test_instance.tests)
       assert_instance_of(OpenStruct, test_instance.tools)
     end
+
+    def test_context
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.context = 5
+      end
+      test_instance.context = { a: 1, b: 2, c: 3 }
+      test_instance.context = { a: 4, c: 5, d: 6 }
+      assert_equal({ a: 4, b: 2, c: 5, d: 6 }, test_instance.context)
+    end
+
+    def test_parser
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.parser = { something: 'else' }
+      end
+      test_instance.parser = { class: Rutema::Configuration }
+      test_instance.parser = { class: Rutema::Parsers::XML, 'strict_mode': true }
+      assert_equal({ class: Rutema::Parsers::XML, 'strict_mode': true },
+                   test_instance.parser)
+    end
+
+    def test_path
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.path = { path: '/usr/src' }
+      end
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.path = { name: 'sources' }
+      end
+      test_instance.path = { name: 'binaries', path: '/usr/bin' }
+      test_instance.path = { name: 'home', path: '/home', something_else: 5 }
+      test_instance.path = { name: 'binaries', path: '/usr/local/bin' }
+      assert_equal('/usr/local/bin', test_instance.paths.binaries)
+      assert_equal('/home', test_instance.paths.home)
+    end
+
+    def test_reporter
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.reporter = { klass: Rutema::Reporters::Console }
+      end
+      test_instance.reporter = { class: Rutema::Reporters::BlockReporter, opt: 6 }
+      test_instance.reporter = { class: Rutema::Reporters::Collector, attr: 5 }
+      test_instance.reporter = { class: Rutema::Reporters::BlockReporter }
+      assert_equal({ Rutema::Reporters::BlockReporter \
+                     => { class: Rutema::Reporters::BlockReporter }, \
+                     Rutema::Reporters::Collector \
+                     => { class: Rutema::Reporters::Collector, attr: 5 } }, \
+                   test_instance.reporters)
+    end
+
+    def test_runner
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.runner = { klass: Rutema::Runners::Default }
+      end
+      test_instance.runner = { class: Rutema::Runners::NoOp, opt: 6 }
+      test_instance.runner = { class: Rutema::Runners::Default }
+      test_instance.runner = { class: Rutema::Runners::NoOp, attr: 8 }
+      assert_equal({ class: Rutema::Runners::NoOp, attr: 8 }, \
+                   test_instance.runner)
+    end
+
+    def test_setup
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.setup = 'setup.spec'
+      end
+      test_instance.setup = 'test/data/sample.spec'
+      test_instance.setup = 'test/data/setup.spec'
+      assert_equal(File.expand_path('test/data/setup.spec'),
+                   test_instance.setup)
+    end
+
+    def test_suite_setup
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.suite_setup = 'setup.spec'
+      end
+      test_instance.suite_setup = 'test/data/sample.spec'
+      test_instance.suite_setup = 'test/data/setup.spec'
+      assert_equal(File.expand_path('test/data/setup.spec'),
+                   test_instance.suite_setup)
+      test_instance.check = 'test/data/sample.spec'
+      assert_equal(File.expand_path('test/data/sample.spec'),
+                   test_instance.check)
+    end
+
+    def test_suite_teardown
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.suite_teardown = 'setup.spec'
+      end
+      test_instance.suite_teardown = 'test/data/sample.spec'
+      test_instance.suite_teardown = 'test/data/setup.spec'
+      assert_equal(File.expand_path('test/data/setup.spec'),
+                   test_instance.suite_teardown)
+    end
+
+    def test_teardown
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.teardown = 'setup.spec'
+      end
+      test_instance.teardown = 'test/data/sample.spec'
+      test_instance.teardown = 'test/data/setup.spec'
+      assert_equal(File.expand_path('test/data/setup.spec'),
+                   test_instance.teardown)
+    end
+
+    def test_tests
+      test_instance = InitTestClass.new
+      test_instance.tests = ['5', 'test/data/sample.spec', 'nil', 'setup.spec']
+      test_instance.tests = ['nil', '6', 'test/data/setup.spec']
+      assert_equal(['5', File.expand_path('test/data/sample.spec'), 'nil', \
+                    'setup.spec', 'nil', '6', \
+                    File.expand_path('test/data/setup.spec')],
+                   test_instance.tests)
+    end
+
+    def test_tools
+      test_instance = InitTestClass.new
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.tool = { path: '/usr/bin/firefox' }
+      end
+      test_instance.tool = { name: 'firefox', path: '/usr/bin/firefox',
+                             url: 'https://www.example.org' }
+      test_instance.tool = { name: 'inkscape', path: '/usr/local/bin/inkscape',
+                             file: 'rutema.svg' }
+      test_instance.tool = { name: 'firefox', path: '/usr/bin/firefox' }
+      assert_equal({ name: 'firefox', path: '/usr/bin/firefox' },
+                   test_instance.tools.firefox)
+      assert_equal({ name: 'inkscape', path: '/usr/local/bin/inkscape',
+                     file: 'rutema.svg' },
+                   test_instance.tools.inkscape)
+    end
   end
 
   ##

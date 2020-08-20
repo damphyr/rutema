@@ -57,7 +57,7 @@ module Rutema
     end
 
     ##
-    # A hash defining the parser to be utilized
+    # A hash defining the parser to be utilized (mandatory)
     #
     # The hash is passed as is to the engine constructor and each parser
     # should define the necessary configuration keys.
@@ -65,12 +65,16 @@ module Rutema
     # The only required key from the configurator's point of view is +:class+
     # which should be set to the fully qualified name of the class to use.
     #
+    # Later given parser definitions replace earlier ones. Additional attributes
+    # are preserved until a new value is added for an existing +:class+ key.
+    #
     # Example:
     #
     #     configure do |cfg|
     #       cfg.parser = { class: Rutema::Parsers::XML }
     #     end
     def parser=(definition)
+      # ToDo(markuspg): Only allow classes from Rutema::Parsers class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} for parser"
@@ -85,6 +89,9 @@ module Rutema
     # Required keys:
     # * +:name+ - the name to use for accessing the path in code
     # * +:path+ - the path itself
+    #
+    # Later given path definitions of the same name replace earlier ones.
+    # Keys except +:name+ and +:path+ are ignored.
     #
     # Example:
     #
@@ -110,7 +117,9 @@ module Rutema
     # As with the parser, the only required configuration key is +:class+ and
     # the definition hash is passed to the class' constructor.
     #
-    # Unlike the parser multiple reporters can be given.
+    # Unlike the parser multiple reporters can be given. Later given reporter
+    # definitions replace earlier ones. Additional attributes are preserved
+    # until a new value is added for an existing +:class+ key.
     #
     # Example:
     #
@@ -119,6 +128,7 @@ module Rutema
     #       cfg.reporter = { class: Rutema::Reporters::EventReporter }
     #     end
     def reporter=(definition)
+      # ToDo(markuspg): Only allow classes from Rutema::Reporter class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} of reporter"
@@ -136,12 +146,16 @@ module Rutema
     # The only required key from the configurator's point of view is +:class+
     # which should be set to the fully qualified name of the class to use.
     #
+    # Later given runner definitions replace earlier ones. Additional attributes
+    # are preserved until a new runner is given.
+    #
     # Example:
     #
     #     configure do |cfg|
     #       cfg.runner = { class: Rutema::Runners::Default }
     #     end
     def runner=(definition)
+      # ToDo(markuspg): Only allow classes from Rutema::Runner class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} of runner"
@@ -154,6 +168,8 @@ module Rutema
     # Path to a test case setup specification. (optional)
     #
     # This test case setup specification would be run before any test.
+    #
+    # Later given test case setup specifications replace earlier ones.
     #
     # Example:
     #
@@ -174,6 +190,8 @@ module Rutema
     #
     # This is also aliased as check= for backwards compatibility.
     #
+    # Later given test suite setup specifications replace earlier ones.
+    #
     # Example:
     #
     #     configure do |cfg|
@@ -191,6 +209,8 @@ module Rutema
     #
     # The suite teardown test runs after all the tests.
     #
+    # Later given test suite teardown specifications replace earlier ones.
+    #
     # Example:
     #
     #     configure do |cfg|
@@ -204,6 +224,8 @@ module Rutema
     # Path to the teardown specification. (optional)
     #
     # This test case teardown specification would be run after any test.
+    #
+    # Later given test case teardown specifications replace earlier ones.
     #
     # Example:
     #
@@ -220,10 +242,15 @@ module Rutema
     # These will usually be files, but they also can be anything.
     # Essentially this is an array of strings that mean something to your parser
     #
+    # New entries are appended to existing ones. No checks for duplicates take
+    # place (specifications can be executed multiple times during one test
+    # suite).
+    #
     # Example:
     #
     #     configure do |cfg|
     #       cfg.tests = ['../specs/T001.spec', '../specs/T002.spec']
+    #       cfg.tests = ['../specs/T003.spec', '../specs/T002.spec']
     #     end
     def tests=(array_of_identifiers)
       @tests += array_of_identifiers.map { |f| full_path_or_filename(f) }
@@ -237,6 +264,10 @@ module Rutema
     #
     # Required keys:
     # * +:name+ - the name to use for accessing the path in code
+    #
+    # Later given tool definitions of the same +:name+ replace earlier ones.
+    # Additional attributes are preserved until a new value is added for an
+    # existing key.
     #
     # Example:
     #
@@ -288,6 +319,9 @@ module Rutema
       msg.join(',')
     end
 
+    ##
+    # For a given string checks if it represents an existing file and returns
+    # full path if so, otherwise just the given string
     def full_path_or_filename(filename)
       return File.expand_path(filename) if File.exist?(filename)
 
