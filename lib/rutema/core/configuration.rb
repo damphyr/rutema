@@ -82,7 +82,7 @@ module Rutema
       unless definition[:class] <= Rutema::Parsers::SpecificationParser
         raise ConfigurationException,
               "Configured parser #{definition[:class]} must inherit" \
-              " Rutema::Parsers::SpecificationParser"
+              ' Rutema::Parsers::SpecificationParser'
       end
 
       @parser = definition
@@ -141,7 +141,7 @@ module Rutema
       unless definition[:class] <= Rutema::Reporters::BaseReporter
         raise ConfigurationException,
               "Configured parser #{definition[:class]} must inherit" \
-              " Rutema::Reporters::BaseReporter"
+              ' Rutema::Reporters::BaseReporter'
       end
 
       @reporters[definition[:class]] = definition
@@ -173,7 +173,7 @@ module Rutema
       unless definition[:class] <= Rutema::Runners::BaseRunner
         raise ConfigurationException,
               "Configured runner #{definition[:class]} must inherit" \
-              " Rutema::Runners::BaseRunner"
+              ' Rutema::Runners::BaseRunner'
       end
 
       @runner = definition
@@ -184,7 +184,8 @@ module Rutema
     #
     # This test case setup specification would be run before any test.
     #
-    # Later given test case setup specifications replace earlier ones.
+    # Later given test case setup specifications replace earlier ones. The path
+    # should be relative to the configuration file defining it.
     #
     # Example:
     #
@@ -205,7 +206,8 @@ module Rutema
     #
     # This is also aliased as check= for backwards compatibility.
     #
-    # Later given test suite setup specifications replace earlier ones.
+    # Later given test suite setup specifications replace earlier ones. The path
+    # should be relative to the configuration file defining it.
     #
     # Example:
     #
@@ -224,7 +226,8 @@ module Rutema
     #
     # The suite teardown test runs after all the tests.
     #
-    # Later given test suite teardown specifications replace earlier ones.
+    # Later given test suite teardown specifications replace earlier ones. The
+    # path should be relative to the configuration file defining it.
     #
     # Example:
     #
@@ -240,7 +243,8 @@ module Rutema
     #
     # This test case teardown specification would be run after any test.
     #
-    # Later given test case teardown specifications replace earlier ones.
+    # Later given test case teardown specifications replace earlier ones. The
+    # path should be relative to the configuration file defining it.
     #
     # Example:
     #
@@ -259,7 +263,8 @@ module Rutema
     #
     # New entries are appended to existing ones. No checks for duplicates take
     # place (specifications can be executed multiple times during one test
-    # suite).
+    # suite). The paths should be relative to the configuration file defining
+    # them.
     #
     # Example:
     #
@@ -399,6 +404,12 @@ module Rutema
 
     private
 
+    ##
+    # Load configuration from a given file
+    #
+    # The evaluation happens in the directory were the configuration file
+    # resides. In consequence paths of any specifications should be relative to
+    # the configuration file itself.
     def load_configuration(filename)
       cfg_txt = File.read(filename)
       cwd = File.expand_path(File.dirname(filename))
@@ -411,10 +422,13 @@ module Rutema
       raise
     rescue SyntaxError
       # Just wrap the exception so we can differentiate
-      raise ConfigurationException.new, "Syntax error in the configuration file '#{filename}':\n#{$ERROR_INFO.message}"
+      raise ConfigurationException.new, \
+            "Syntax error in the configuration file '#{filename}':" \
+            "\n#{$ERROR_INFO.message}"
     rescue NoMethodError
       raise ConfigurationException.new, \
-            "Encountered an unknown directive in configuration file '#{filename}':\n#{$ERROR_INFO.message}"
+            'Encountered an unknown directive in configuration file' \
+            " '#{filename}':\n#{$ERROR_INFO.message}"
     rescue
       # Just wrap the exception so we can differentiate
       raise ConfigurationException.new, $ERROR_INFO.message.to_s
