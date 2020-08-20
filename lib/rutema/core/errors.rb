@@ -6,9 +6,15 @@ module Rutema
   ##
   # Generic base class for all Rutema errors
   #
-  # Currently Rutema derives the more specific Rutema::ParserError,
-  # Rutema::ReportError and Rutema::RunnerError from it.
+  # Currently Rutema derives the more specific Rutema::ConfigurationException,
+  # Rutema::ParserError, Rutema::ReportError and Rutema::RunnerError from it.
   class RutemaError < RuntimeError
+  end
+
+  ##
+  # Rutema::ConfigurationException is being raised on errors processing a
+  # _rutema_ configuration
+  class ConfigurationException < RutemaError
   end
 
   ##

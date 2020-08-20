@@ -345,11 +345,6 @@ module Rutema
   end
 
   ##
-  # An exception that is being raised on errors processing a _rutema_ configuration
-  class ConfigurationException < RuntimeError
-  end
-
-  ##
   # Class for loading configuration files and storing and manipulating configuration options
   #
   # All relevant local variables and methods are in Rutema::ConfigurationDirectives
