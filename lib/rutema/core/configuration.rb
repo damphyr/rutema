@@ -74,10 +74,15 @@ module Rutema
     #       cfg.parser = { class: Rutema::Parsers::XML }
     #     end
     def parser=(definition)
-      # ToDo(markuspg): Only allow classes from Rutema::Parsers class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} for parser"
+      end
+
+      unless definition[:class] <= Rutema::Parsers::SpecificationParser
+        raise ConfigurationException,
+              "Configured parser #{definition[:class]} must inherit" \
+              " Rutema::Parsers::SpecificationParser"
       end
 
       @parser = definition
@@ -128,10 +133,15 @@ module Rutema
     #       cfg.reporter = { class: Rutema::Reporters::EventReporter }
     #     end
     def reporter=(definition)
-      # ToDo(markuspg): Only allow classes from Rutema::Reporter class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} of reporter"
+      end
+
+      unless definition[:class] <= Rutema::Reporters::BaseReporter
+        raise ConfigurationException,
+              "Configured parser #{definition[:class]} must inherit" \
+              " Rutema::Reporters::BaseReporter"
       end
 
       @reporters[definition[:class]] = definition
@@ -155,10 +165,15 @@ module Rutema
     #       cfg.runner = { class: Rutema::Runners::Default }
     #     end
     def runner=(definition)
-      # ToDo(markuspg): Only allow classes from Rutema::Runner class hierarchy
       unless definition[:class]
         raise ConfigurationException,
               "Required key :class is missing from #{definition} of runner"
+      end
+
+      unless definition[:class] <= Rutema::Runners::BaseRunner
+        raise ConfigurationException,
+              "Configured runner #{definition[:class]} must inherit" \
+              " Rutema::Runners::BaseRunner"
       end
 
       @runner = definition

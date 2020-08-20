@@ -83,7 +83,10 @@ module TestRutema
       assert_raise(Rutema::ConfigurationException) do
         test_instance.parser = { something: 'else' }
       end
-      test_instance.parser = { class: Rutema::Configuration }
+      assert_raise(Rutema::ConfigurationException) do
+        test_instance.parser = { class: Rutema::Configuration }
+      end
+      test_instance.parser = { class: Rutema::Parsers::SpecificationParser }
       test_instance.parser = { class: Rutema::Parsers::XML, 'strict_mode': true }
       assert_equal({ class: Rutema::Parsers::XML, 'strict_mode': true },
                    test_instance.parser)

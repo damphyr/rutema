@@ -11,11 +11,16 @@ module Rutema
   # Rutema::Runners::NoOp
   module Runners
     ##
+    # An empty base class for all runner classes
+    class BaseRunner
+    end
+
+    ##
     # Rutema::Runners::Default is the default runner used by Rutema::Engine
     #
     # As its name indicates its purpose is to run (i.e. execute) test
     # specifications which is done through its #run method.
-    class Default
+    class Default < BaseRunner
       include Rutema::Messaging
 
       attr_reader :context

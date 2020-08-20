@@ -11,9 +11,14 @@ module Rutema
   #Nothing prevents you from creating a class that implements both behaviours
   module Reporters
     ##
+    # An empty base class for all reporter classes
+    class BaseReporter
+    end
+
+    ##
     # A Rutema::Reporters::BlockReporter receives its data once at the end of a
     # _rutema_ run
-    class BlockReporter
+    class BlockReporter < BaseReporter
       ##
       # Initialize a new Rutema::Reporters::BlockReporter instance
       #
@@ -32,7 +37,7 @@ module Rutema
     ##
     # A Rutema::Reporters::EventReporter receives its data continually during a
     # _rutema_ run
-    class EventReporter
+    class EventReporter < BaseReporter
       ##
       # Initialize a new Rutema::Reporters::EventReporter instance
       #
