@@ -180,7 +180,7 @@ module Rutema
     end
 
     ##
-    # Path to a test case setup specification. (optional)
+    # Path to a test case setup specification.
     #
     # This test case setup specification would be run before any test.
     #
@@ -196,7 +196,7 @@ module Rutema
     end
 
     ##
-    # Path to a test suite setup specification. (optional)
+    # Path to a test suite setup specification.
     #
     # The suite setup test case runs once in the beginning of a test run before
     # all the tests of the suite.
@@ -220,7 +220,7 @@ module Rutema
     alias check= suite_setup=
 
     ##
-    # Path to a test suite teardown specification. (optional)
+    # Path to a test suite teardown specification.
     #
     # The suite teardown test runs after all the tests.
     #
@@ -236,7 +236,7 @@ module Rutema
     end
 
     ##
-    # Path to the teardown specification. (optional)
+    # Path to the teardown specification.
     #
     # This test case teardown specification would be run after any test.
     #
