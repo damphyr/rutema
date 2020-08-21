@@ -7,6 +7,8 @@ require 'mocha/test_unit'
 
 require_relative '../lib/rutema/core/framework'
 
+##
+# Facilitate testing with a Rutema::Messaging based class
 class TestClass
   include Rutema::Messaging
 

@@ -8,6 +8,9 @@ require_relative '../lib/rutema/core/framework'
 require_relative '../lib/rutema/reporters/junit'
 
 module TestRutema
+  ##
+  # Facilitate testing with a class mocking configuration for
+  # Rutema::Reporters::Console
   class ConsoleTestMockConfiguration
     attr_reader :reporters
 
@@ -139,6 +142,8 @@ module TestRutema
     end
   end
 
+  ##
+  # Test Rutema::Reporters::JUnit and Rutema::Reporters::Summary
   class TestReporters<Test::Unit::TestCase
     def test_junit
       #Rutema::Utilities.expects(:write_file).returns("OK")

@@ -7,14 +7,8 @@ require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/parsers/xml'
 
 module TestRutema
-  class MockRunner
-    attr_accessor :setup, :teardown
-
-    def initialize(_config) end
-
-    def run(_name, _scenario) end
-  end
-
+  ##
+  # Mock a Rutema::Reporters::EventReporter
   class MockReporter < Rutema::Reporters::EventReporter
     def run!
       @@updates = 0

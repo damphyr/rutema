@@ -27,9 +27,13 @@ module Rutema
     class Default < BaseRunner
       include Rutema::Messaging
 
+      ##
+      # The context of the runner (this class only stores 'rutema_status' in it
       attr_reader :context
       attr_accessor :setup, :teardown
 
+      ##
+      # Initialize a new Rutema::Runners::Default with a +context+ and a +queue+
       def initialize(context, queue)
         @setup = nil
         @teardown = nil
@@ -80,6 +84,8 @@ module Rutema
 
       private
 
+      ##
+      #
       def run_scenario(name, scenario, meta, is_special)
         executed_steps = []
         status = :skipped
@@ -115,6 +121,12 @@ module Rutema
         [executed_steps, status]
       end
 
+      ##
+      # Run a command associated with a stepit sets the
+
+      # It sets the step's +status+ to +:warning+ if no command is associated
+      # with it. It sets the step's status to +:success+ if its +ignore+
+      # attribute is set.
       def run_step(step, meta)
         if step.has_cmd? && step.cmd.respond_to?(:run)
           step.cmd.run(meta)
@@ -128,9 +140,15 @@ module Rutema
     end
 
     ##
-    # Rutema::Runners::NoOp overrides the #run_step method to make it
-    # non-operational
+    # Rutema::Runners::NoOp overrides the Rutema::Runners::Default#run_step
+    # method to make it non-operational
     class NoOp < Default
+      ##
+      # Run a particular +step+ and return it afterwards
+      #
+      # Makes Rutema::Runners::Default#run_step a no-op. Like it it sets the
+      # step's +status+ to +:warning+ if no command is associated with it. It
+      # sets the step's status to +:success+ if its +ignore+ attribute is set.
       def run_step(step, _meta)
         unless step.has_cmd? && step.cmd.respond_to?(:run)
           message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")

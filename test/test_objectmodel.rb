@@ -3,8 +3,11 @@ require 'test/unit'
 require_relative '../lib/rutema/core/objectmodel'
 
 module TestRutema
+  ##
+  # Facilitate testing with a Patir::Command based class
   class DummyCommand
     include Patir::Command
+
     def initialize
       @error = 'error'
       @name = 'dummy'
@@ -13,6 +16,7 @@ module TestRutema
   end
 
   class Dummy
+  # Facilitate testing with a Rutema::SpecificationElement based class
     include Rutema::SpecificationElement
   end
 
