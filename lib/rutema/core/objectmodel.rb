@@ -8,13 +8,15 @@ module Rutema
   # automagically appear.
   module SpecificationElement
     ##
-    # Adds an attribute with the given +value+ to the class. +symbol+ can be a
-    # Symbol or a String, the rest are silently ignored
+    # Add an attribute with the given +value+ to the class. +symbol+ must be a
+    # Symbol or a String, otherwise a RutemaError is raised.
     def attribute(symbol, value)
       @attributes ||= {}
       case symbol
       when String then @attributes[:"#{symbol}"] = value
       when Symbol then @attributes[symbol] = value
+      else raise RutemaError, \
+                 "Symbol of invalid type #{symbol.class} encountered"
       end
     end
 
