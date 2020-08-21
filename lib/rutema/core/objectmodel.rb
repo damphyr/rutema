@@ -12,9 +12,12 @@ module Rutema
     # Symbol or a String, otherwise a RutemaError is raised.
     def attribute(symbol, value)
       @attributes ||= {}
+
       case symbol
+      # Assign value if symbol is of type String or Symbol ...
       when String then @attributes[:"#{symbol}"] = value
       when Symbol then @attributes[symbol] = value
+      # ... or otherwise raise a RutemaError
       else raise RutemaError, \
                  "Symbol of invalid type #{symbol.class} encountered"
       end
@@ -31,15 +34,25 @@ module Rutema
     # operand.
     def method_missing(symbol, *args)
       @attributes ||= {}
+
+      # Remove a prefixed "_has" or sufixed '=' or '?' to get pure "name"
       key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+
+      # Handle assignment
       @attributes[:"#{key}"] = args[0] if key + '=' == symbol.id2name
+
+      # If the pure "name" exists as key in the interally stored attributes ...
       if @attributes.key?(:"#{key}")
+        # ... return true if its existence as attribute was queried ...
         return true if 'has_' + key + '?' == symbol.id2name
 
+        # ... or return the value otherwise
         @attributes[:"#{key}"]
       else
+        # Return false if the existence was queried and the key does not exist
         return false if 'has_' + key + '?' == symbol.id2name
 
+        # If all previous cases didn't match forward to parent which should raise
         super(symbol, *args)
       end
     end
@@ -48,10 +61,16 @@ module Rutema
     # Refer to (Ruby-Doc.org)[https://ruby-doc.org/core-2.7.1/Object.html#method-i-respond_to-3F]
     def respond_to?(symbol, include_all = false)
       @attributes ||= {}
+
+      # Remove a prefixed "_has" or sufixed '=' or '?' to get pure "name"
       key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+
+      # If pure "name" exists in internally stored attributes ...
       if @attributes.key?(:"#{key}")
+        # ... return true ...
         true
       else
+        # ... and otherwise ask parent
         super(symbol, include_all)
       end
     end
