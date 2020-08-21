@@ -5,7 +5,7 @@
 require 'test/unit'
 require 'mocha/test_unit'
 
-require_relative '../lib/rutema/core/engine'
+require_relative '../lib/rutema/core/dispatcher'
 
 module TestRutema
   ##
