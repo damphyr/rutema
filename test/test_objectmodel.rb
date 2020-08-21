@@ -208,7 +208,6 @@ module TestRutema
       assert_equal('Some example specification', spec.description)
       assert_equal('example.spec', spec.filename)
       assert_equal('example_spec', spec.name)
-      # ToDo(markuspg): Bug?
       assert_equal(test_scenario, spec.scenario)
       assert_equal('Example Spec', spec.title)
       assert_equal('0.9.8', spec.version)
