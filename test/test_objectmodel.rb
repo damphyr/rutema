@@ -187,6 +187,7 @@ module TestRutema
       assert_equal('', spec.description)
       assert_equal('', spec.filename)
       assert_equal('', spec.name)
+      assert_nil(spec.scenario)
       assert_equal('', spec.title)
       assert_false(spec.has_version?,
                    ':version present in default initialized Specification')
@@ -205,7 +206,7 @@ module TestRutema
       assert_equal('example.spec', spec.filename)
       assert_equal('example_spec', spec.name)
       # ToDo(markuspg): Bug?
-      # assert_equal(test_scenario, spec.scenario)
+      assert_equal(test_scenario, spec.scenario)
       assert_equal('Example Spec', spec.title)
       assert_equal('0.9.8', spec.version)
       spec.scenario = 'Foo'
@@ -217,7 +218,7 @@ module TestRutema
       # Check if arbitrary value can be added
       spec.requirements = %w[R1 R2]
       assert(spec.has_requirements?)
-      assert_equal(2, spec.requirements.size)
+      assert_equal(['R1', 'R2'], spec.requirements)
     end
   end
 end
