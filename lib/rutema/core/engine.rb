@@ -165,6 +165,10 @@ module Rutema
   class Dispatcher
     #The interval between queue operations
     INTERVAL=0.01
+
+    ##
+    # Initialize a new Rutema::Dispatcher with a given input +queue+ and
+    # +configuration+
     def initialize queue,configuration
       @queue = queue
       @queues = {}
@@ -179,12 +183,18 @@ module Rutema
       @streaming_reporters<<@collector
       @configuration=configuration
     end
-    #Call this to establish a queue with the given identifier
+
+    ##
+    # Subscribe to a message queue with given +identifier+
+    #
+    # The passed queue will have data pushed by the Rutema::Dispatcher instance
     def subscribe identifier
       @queues[identifier]=Queue.new
       return @queues[identifier]
     end
-    
+
+    ##
+    # 
     def run!
       puts "Running #{@streaming_reporters.size} streaming reporters" if $DEBUG
       @streaming_reporters.each {|r| r.run!}
@@ -196,12 +206,18 @@ module Rutema
       end
     end
 
+    ##
+    # Report all results to the internally held block reporters
     def report specs
       @block_reporters.each do |r|
         r.report(specs,@collector.states,@collector.errors)
       end
       Reporters::Summary.new(@configuration,self).report(specs,@collector.states,@collector.errors)
     end
+
+    ##
+    # If separate thread got started with #run! #flush the queue and exit
+    # streaming reporters
     def exit
       puts "Exiting main dispatcher" if $DEBUG
       if @thread
@@ -210,7 +226,12 @@ module Rutema
         Thread.kill(@thread)
       end
     end
+
     private
+
+    ##
+    # If separate thread got started with #run! dispatch messages each INTERVAL
+    # seconds until queue is emptied
     def flush
       puts "Flushing queues" if $DEBUG
       if @thread
@@ -220,6 +241,10 @@ module Rutema
         end
       end
     end
+
+    ##
+    # Create a new instance of the class in the +:class+ key of +definition+
+    # and pass +configuration+ to it
     def instantiate_reporter definition,configuration
       if definition[:class]
         klass=definition[:class]
@@ -227,6 +252,9 @@ module Rutema
       end
       return nil
     end
+
+    ##
+    # If there is a message in the incoming queue dispatch it to all subscribers
     def dispatch
       if @queue.size>0
         data=@queue.pop
