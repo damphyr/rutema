@@ -25,6 +25,8 @@ module TestRutema
       # Atribute with a String value
       assert_raise(NoMethodError) { obj.name }
       assert_raise(NoMethodError) { obj.name? }
+      # The assignment operator cannot be tested since it creates the methods
+      assert_false(obj.has_name?)
       obj.attribute(:name, 'name')
       assert(obj.has_name?)
       assert(obj.name?)
@@ -35,6 +37,8 @@ module TestRutema
       # Attribute with a boolean value
       assert_raise(NoMethodError) { obj.bool }
       assert_raise(NoMethodError) { obj.bool? }
+      # The assignment operator cannot be tested since it creates the methods
+      assert_false(obj.has_bool?)
       obj.attribute(:bool, true)
       assert(obj.has_bool?)
       assert(obj.bool?)
@@ -45,6 +49,8 @@ module TestRutema
       # Attribute with a textual representation of a boolean value
       assert_raise(NoMethodError) { obj.text_bool }
       assert_raise(NoMethodError) { obj.text_bool? }
+      # The assignment operator cannot be tested since it creates the methods
+      assert_false(obj.has_text_bool?)
       obj.attribute(:text_bool, 'true')
       assert(obj.has_text_bool?)
       assert(obj.text_bool?)
@@ -56,10 +62,13 @@ module TestRutema
     def test_method_missing
       obj = Dummy.new
       assert_raise(NoMethodError) { obj.name }
+      assert_raise(NoMethodError) { obj.name? }
+      # The assignment operator cannot be tested since it creates the methods
+      assert_false(obj.has_name?)
       obj.name = 'Some name'
-      assert(obj.has_name?)
-      assert(obj.name?)
       assert_equal(obj.name, 'Some name')
+      assert(obj.name?)
+      assert(obj.has_name?)
     end
 
     def test_respond_to
@@ -110,7 +119,7 @@ module TestRutema
     def test_initialize
       dummy_cmd = DummyCommand.new
       step = Rutema::Step.new('Test Step', dummy_cmd)
-      
+
       assert_equal(dummy_cmd, step.cmd)
       assert_equal('error', step.error)
       assert_equal(0, step.exec_time)
