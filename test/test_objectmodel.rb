@@ -147,11 +147,14 @@ module TestRutema
     def test_adding_a_step
       scenario = Rutema::Scenario.new([])
       assert(scenario.steps.empty?)
-      step = Rutema::Step.new('Step', DummyCommand.new)
-      scenario = Rutema::Scenario.new([step])
+      step_one = Rutema::Step.new('Step 1', DummyCommand.new)
+      scenario = Rutema::Scenario.new([step_one])
       assert_equal(1, scenario.steps.size)
-      scenario.add_step(step)
+      assert_equal([step_one], scenario.steps)
+      step_two = Rutema::Step.new('Step 2', DummyCommand.new)
+      scenario.add_step(step_two)
       assert_equal(2, scenario.steps.size)
+      assert_equal([step_one, step_two], scenario.steps)
     end
 
     def test_initialize
@@ -162,7 +165,7 @@ module TestRutema
       scenario = Rutema::Scenario.new([1, 2, 3])
       assert_instance_of(Array, scenario.steps)
       assert_false(scenario.steps.empty?)
-      assert_equal(3, scenario.steps.size)
+      assert_equal([1, 2, 3], scenario.steps)
     end
 
     def test_overwriting_steps
