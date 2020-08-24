@@ -44,7 +44,12 @@ module Rutema
       @configuration = configuration
     end
 
+    ##
     # Parse, run, report
+    #
+    # This method does and is expected to return an integer since its return
+    # value will be used as return code for the entire program execution in case
+    # Rutema::App is utilized.
     def run(test_identifier = nil)
       @dispatcher.run!
       # start

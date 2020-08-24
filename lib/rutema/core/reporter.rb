@@ -145,6 +145,9 @@ module Rutema
     # instances whose +status+ is +:error+. In mode +verbose+ all messages are
     # output to the console.
     #
+    # In case of the utilization of Rutema::App this reporter is being created
+    # by default except if the application is run in bare mode.
+    #
     # Example:
     #
     #     configure do |cfg|
@@ -180,6 +183,11 @@ module Rutema
       end
     end
 
+    ##
+    # Rutema::Reporters::Summary is a Rutema::BlockReporter
+    #
+    # In case of the utilization of Rutema::App this reporter is being created
+    # by default but does not produce any output in bare or silent mode.
     class Summary<BlockReporter
       def initialize configuration,dispatcher
         super(configuration,dispatcher)

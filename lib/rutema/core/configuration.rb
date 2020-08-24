@@ -35,7 +35,8 @@ module Rutema
     # Key-value pairs for passing data to the system.
     #
     # They are supposed to be used in the reporters and contain data such as
-    # version numbers, tester names etc.
+    # version numbers, tester names etc. Rutema::App e.g. stores its
+    # configuration file and the start of its execution in the context.
     #
     # If there is a key collision the last given value for a key wins.
     #

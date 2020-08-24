@@ -77,7 +77,7 @@ module Rutema
     ##
     # Makes the engine execute either the suite setup specification only (if
     # +--check+ was given as commandline argument) or the entire given
-    # specification otherwise.
+    # specifications otherwise.
     def application_flow
       if @check
         # run just the suite setup test
