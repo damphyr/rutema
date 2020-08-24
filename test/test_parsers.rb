@@ -1,6 +1,9 @@
-require 'test/unit'
+# Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'ostruct'
-require 'mocha/setup'
+require 'test/unit'
+require 'mocha/test_unit'
+
+require_relative '../lib/rutema/core/errors'
 require_relative '../lib/rutema/parsers/xml'
 
 
@@ -63,50 +66,19 @@ module TestRutema
     </scenario>
     EOT
   end
-  class TestSpecificationParser<Test::Unit::TestCase
+
+  ##
+  # Test Rutema::Parsers::SpecificationParser
+  class TestSpecificationParser < Test::Unit::TestCase
     def test_specification_parser
-      parser=nil
-      assert_nothing_raised() { parser=Rutema::Parsers::SpecificationParser.new({}) }
+      parser = nil
+      assert_nothing_raised { parser = Rutema::Parsers::SpecificationParser.new({}) }
       assert_not_nil(parser)
-      assert(parser.configuration.empty?,"Configuration is not empty")
-      assert_raise(Rutema::ParserError) { parser.parse_specification("foo") }
-    end
-  end
-  class TestXMLParser<Test::Unit::TestCase
-    def test_parse_specification
-      config=stub()
-      config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
-      specification=parser.parse_specification(Samples::SAMPLE_SPEC)
-      assert_equal("sample",specification.name)
-      assert_equal("Description", specification.description)
-      assert_equal("Title", specification.title)
-      assert(specification.scenario)
-      assert_equal(2, specification.scenario.steps.size)
-      assert_equal(1, specification.scenario.steps[0].number)
-      assert_equal("another_step", specification.scenario.steps[1].step_type)
-      assert_equal("script", specification.scenario.steps[1].script)
-      assert_equal(2, specification.scenario.steps[1].number)
-      assert_raise(Rutema::ParserError) { parser.parse_specification("") }
-      assert_raise(Rutema::ParserError) { parser.parse_specification("missing.spec") }
-    end
-    def test_include
-      config=stub()
-      config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
-      specification=parser.parse_specification(Samples::INCLUDE_SPEC)
-      assert_equal(3, specification.scenario.steps.size)
-      assert(specification.scenario.steps[2].has_included_in?)
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
-    end
-    def test_parse_error
-      config=stub()
-      config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
-      assert_not_nil(parser.configuration)
-      specification=nil
-      assert_raise(Rutema::ParserError) { specification=parser.parse_specification("<") }
+      assert(parser.configuration.empty?, 'Configuration is not empty')
+      assert_raise(Rutema::ParserError) { parser.parse_specification('foo') }
+      assert_raise(Rutema::ParserError) { parser.parse_setup('foo') }
+      assert_raise(Rutema::ParserError) { parser.parse_teardown('foo') }
+      assert_nothing_raised { parser.validate_configuration }
     end
   end
 end

@@ -1,9 +1,16 @@
 #!/usr/bin/env ruby
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+
+# Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
+
+# frozen_string_literal: true
+
+require 'English'
+
 require 'rutema/application'
+
 begin
-	Rutema::App.new(ARGV)
+  Rutema::App.new(ARGV)
 rescue Rutema::RutemaError
- puts $!.message
- exit 1
+  puts $ERROR_INFO.message
+  exit 1
 end

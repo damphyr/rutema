@@ -1,222 +1,290 @@
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+# Copyright (c) 2007-2020 Vassilis Rizopoulos. All rights reserved.
 require 'patir/command'
 
 module Rutema
-  #This module adds functionality that allows us to 
-  #arbitrarily add attributes to a class and then have 
-  #the accessor methods for these attributes appear automagically.
-  #
-  #It will also add a has_attribute? method to query if _attribute_ is part of the object or not.
+  ##
+  # This module adds functionality that allows to arbitrarily add attributes to
+  # a class and then have the accessor methods for these attributes
+  # automagically appear.
   module SpecificationElement
-    #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, 
-    #the rest are silently ignored
-    def attribute symbol,value
-      @attributes||=Hash.new
+    ##
+    # Add an attribute with the given +value+ to the class. +symbol+ must be a
+    # Symbol or a String, otherwise a RutemaError is raised.
+    def attribute(symbol, value)
+      @attributes ||= {}
+
       case symbol
-        when String then @attributes[:"#{symbol}"]=value
-        when Symbol then @attributes[symbol]=value
-      end
-    end
-    #allows us to call object.attribute, object.attribute=, object.attribute? and object.has_attribute?
-    #
-    #object.attribute and object.attribute? will throw NoMethodError if no attribute is set.
-    #
-    #object.attribute= will set the attribute to the right operand and
-    #object.has_attribute? returns false or true according to the existence of the attribute.
-    def method_missing symbol,*args
-      @attributes||=Hash.new
-      key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
-      @attributes[:"#{key}"]=args[0] if key+"="==symbol.id2name
-      if @attributes.has_key?(:"#{key}")
-          return true if "has_"+key+"?"==symbol.id2name
-          return @attributes[:"#{key}"]
-      else
-        return false if "has_"+key+"?"==symbol.id2name
-        super(symbol,*args)
+      # Assign value if symbol is of type String or Symbol ...
+      when String then @attributes[:"#{symbol}"] = value
+      when Symbol then @attributes[symbol] = value
+      # ... or otherwise raise a RutemaError
+      else raise RutemaError, \
+                 "Symbol of invalid type #{symbol.class} encountered"
       end
     end
 
-    def respond_to? symbol,include_all
-      @attributes||=Hash.new
-      key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
-      if @attributes.has_key?(:"#{key}")
-          return true
+    ##
+    # Allows to call +object.attribute+, +object.attribute=+, +object.attribute?+
+    # and +object.has_attribute?+
+    #
+    # +object.attribute+ and +object.attribute?+ will throw +NoMethodError+ if
+    # attribute is not set.
+    #
+    # +object.attribute=+ will set the value of the attribute to the right
+    # operand.
+    def method_missing(symbol, *args)
+      @attributes ||= {}
+
+      # Remove a prefixed "_has" or sufixed '=' or '?' to get pure "name"
+      key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+
+      # Handle assignment
+      @attributes[:"#{key}"] = args[0] if key + '=' == symbol.id2name
+
+      # If the pure "name" exists as key in the interally stored attributes ...
+      if @attributes.key?(:"#{key}")
+        # ... return true if its existence as attribute was queried ...
+        return true if 'has_' + key + '?' == symbol.id2name
+
+        # ... or return the value otherwise
+        @attributes[:"#{key}"]
       else
-        super(symbol,include_all)
+        # Return false if the existence was queried and the key does not exist
+        return false if 'has_' + key + '?' == symbol.id2name
+
+        # If all previous cases didn't match forward to parent which should raise
+        super(symbol, *args)
+      end
+    end
+
+    ##
+    # Refer to (Ruby-Doc.org)[https://ruby-doc.org/core-2.7.1/Object.html#method-i-respond_to-3F]
+    def respond_to?(symbol, include_all = false)
+      @attributes ||= {}
+
+      # Remove a prefixed "_has" or sufixed '=' or '?' to get pure "name"
+      key = symbol.id2name.chomp('?').chomp('=').sub(/^has_/, '')
+
+      # If pure "name" exists in internally stored attributes ...
+      if @attributes.key?(:"#{key}")
+        # ... return true ...
+        true
+      else
+        # ... and otherwise ask parent
+        super(symbol, include_all)
       end
     end
   end
-  #A Rutema::Specification encompasses all elements required to run a test, the builds used, the scenario to run,
-  #together with a textual description and information that aids in tracing the test back to the requirements.
+
+  ##
+  # A Rutema::Specification contains all elements required for running a test:
+  # the builds used, the scenario to run together with a textual description and
+  # information that aids in tracing the test back to the requirements.
   class Specification
     include SpecificationElement
     attr_accessor :scenario
-    #Expects a Hash of parameters
+
+    ##
+    # Initialize by a +Hash+ of parameters
     #
-    #Following keys have meaning in initialization:
+    # Following keys have a meaning for initialization:
+    # * +:name+ - the name of the testcase. Should uniquely identify the testcase
+    # * +:title+ - a one liner describing what the testcase does
+    # * +:filename+ - the filename describing the testcase
+    # * +:description+ - a full textual description for the testcase. To be used in reports and documents
+    # * +:scenario+ - An instance of Rutema::Scenario
+    # * +:version+ - The version of this specification
     #
-    #:name - the name of the testcase. Should uniquely identify the testcase
-    #
-    #:title - a one liner describing what the testcase does
-    #
-    #:filename - the filename describing the testcase
-    #
-    #:description - a full textual description for the testcase. To be used in reports and documents
-    #
-    #:scenario - An instance of Rutema::Scenario
-    #
-    #:version - The version of this specification
-    #
-    #Default values are empty strings and arrays. (scenario is nil)
-    def initialize params
-      begin
-        @attributes=params
-      end if params
-      @attributes||=Hash.new
-      @attributes[:name]||=""
-      @attributes[:title]||=""
-      @attributes[:filename]||=""
-      @attributes[:description]||=""
-      @scenario=@attributes[:scenario]
+    # Default values are empty +Array+ and +String+ instances (_scenario_ is
+    # +nil+ and _version_ does not exist)
+    def initialize(params)
+      @attributes = params if params
+      @attributes ||= {}
+      @attributes[:description] ||= ''
+      @attributes[:filename] ||= ''
+      @attributes[:name] ||= ''
+      @attributes[:title] ||= ''
+      @scenario = @attributes[:scenario]
     end
-    def to_s#:nodoc: 
-      return "#{@attributes[:name]} - #{@attributes[:title]}"
+
+    def to_s #:nodoc:
+      "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
-  #A Rutema::Scenario is a sequence of Rutema::Step instances.
+
+  ##
+  # A Rutema::Scenario is a sequence of Rutema::Step instances.
   #
-  #Rutema::Step instances are run in the definition sequence and the scenario
-  #is succesfull when all steps are succesfull. 
+  # Rutema::Step instances are run in the defined sequence and the scenario is
+  # successful if all steps are conducted succesfully.
   #
-  #From the execution point of view each step is either succesfull or failed and it depends on 
-  #the exit code of the step's command. 
+  # From the execution point of view each step is either successful or failed.
+  # This depends on the exit code of each step's command.
   #
-  #Failure in a step results in the interruption of execution and the report of the errors.
+  # Failure in a step results in the interruption of execution and a report of
+  # occurred errors.
   class Scenario
     include SpecificationElement
-    attr_reader :steps
-    
-    def initialize steps
-      @attributes=Hash.new
-      @steps=steps
-      @steps||=Array.new
+    attr_accessor :steps
+
+    ##
+    # Initialize the Rutema::Scenario by an array of Rutema::Step instances
+    def initialize(steps)
+      @attributes = {}
+      @steps = steps
+      @steps ||= []
     end
-    #Adds a step at the end of the step sequence
-    def add_step step
-      @steps<<step
-    end
-    #Overwrites the step sequence
-    def steps= array_of_steps
-      @steps=array_of_steps
+
+    ##
+    # Adds a Rutema::Step instance to the end of the steps sequence
+    def add_step(step)
+      @steps << step
     end
   end
-  #Represents a step in a Scenario.
+
+  ##
+  # This class represents a step in a Rutema::Scenario
   #
-  #Each Rutema::Step can have text and a command associated with it. 
+  # Each Rutema::Step can have text and a command associated with it.
   #
-  #Step standard attributes are.
+  # Rutema::Step standard attributes are:
+  # * +attended+ - the step can only run in attended mode - it requires user
+  #   input.
+  # * +step_type+ - a string identifying the type of the step. By default it's
+  #   "step".
+  # * +ignore+ - set to true if the step's success or failure is to be ignored.
+  #   It essentially means that the step is always considered to be succesfully
+  #   conducted.
+  # * +number+ - this is set when the step is assigned to a Rutema::Scenario and
+  #   is the sequence number
+  # * +cmd+ - the command associated with this step. This should quack like
+  #   Patir::Command.
+  # * +status+ - one of +:not_executed+, +:success+, +:warning+, +:error+.
+  #   Encapsulates the underlying command's status
   #
-  #attended - the step can only run in attended mode, it requires user input.
   #
-  #step_type - a string identifying the type of the step. It is "step" by default.
+  # == Dynamic behaviour
   #
-  #ignore - set to true if the step's success or failure is to be ignored. It essentially means that the step is always considered succesfull
+  # A Rutema::Step can be queried dynamically about the attributes it posesses
+  # with e.g. +step.has_script?+. This will return +true+ if +script+ is an
+  # attribute of +step+. Attributes are mostly assigned by the parser, i.e. the
+  # Rutema::Parsers::XML, from an XML element.
   #
-  #number - this is set when the step is assigned to a Scenario and is the sequence number
+  # <test script="some_script"/> will create a Rutema::Step instance with
+  # step_type == 'test' and script == 'some_script'. In this case
+  # +step.has_script?+ returns +true+ and +step.script+ returns 'some_script'.
   #
-  #cmd - the command associated with this step. This should quack like Patir::Command.
+  # Just like an +OpenStruct+ Rutema::Step attributes will be created by direct
+  # assignment. step.script = 'some_script' creates the +script+ attribute if it
+  # does not already exist.
   #
-  #status - one of :not_executed, :success, :warning, :error. Encapsulates the underlying command's status
-  #
-  #==Dynamic behaviour
-  #
-  #A Rutema::Step can be queried dynamicaly about the attributes it posesses:
-  # step.has_script? - will return true if script is step's attribute.
-  #Attribute's are mostly assigned by the parser, i.e. the Rutema::BaseXMLParser from the XML element
-  # <test script="some_script"/>
-  #will create a Step instance with step_type=="test" and script="some_script". In this case
-  #
-  # step.has_script? returns true
-  # step.script returns "some_script"
-  #
-  #Just like an OpenStruct, Step attributes will be created by direct assignment:
-  # step.script="some_script" creates the script attribute if it does not exist.
-  #
-  #See Rutema::SpecificationElement for the implementation details. 
+  # See Rutema::SpecificationElement for the implementation details.
   class Step
     include SpecificationElement
     include Patir::Command
-    
-    #_txt_ describes the step, _cmd_ is the command to run
-    def initialize txt="",cmd=nil
-      @attributes=Hash.new
-      #ignore is off by default
-      @attributes[:ignore]=false
-      #assign
-      @attributes[:cmd]=cmd if cmd
-      @attributes[:text]=txt
-      @number=0
-      @attributes[:step_type]="step"
+
+    # The +txt+ argument describes the step, +cmd+ is the command which shall be run
+    def initialize(txt = '', cmd = nil)
+      @attributes = {}
+      # ignore is off by default
+      @attributes[:ignore] = false
+      # assign
+      @attributes[:cmd] = cmd if cmd
+      @attributes[:continue] = false
+      @attributes[:skip_on_error] = false
+      @attributes[:text] = txt
+      @number = 0
+      @attributes[:step_type] = 'step'
     end
-    
+
+    def continue?
+      return false unless @attributes[:continue]
+      return @attributes[:continue]
+    end
+
     def name
-      return name_with_parameters
+      name_with_parameters
     end
+
     def output
-      return "" unless @attributes[:cmd]
-      return @attributes[:cmd].output
+      return '' unless @attributes[:cmd]
+
+      @attributes[:cmd].output
     end
+
     def error
-      return "no command associated" unless @attributes[:cmd]
-      return @attributes[:cmd].error
+      return 'no command associated' unless @attributes[:cmd]
+
+      @attributes[:cmd].error
     end
+
+    def backtrace
+      return 'no backtrace associated' unless @attributes[:cmd]
+      return @attributes[:cmd].backtrace
+    end
+
     def ignore?
       return false unless @attributes[:ignore]
-      return @attributes[:ignore]
+
+      @attributes[:ignore]
     end
+
+    def skip_on_error?
+      return false unless @attributes[:skip_on_error]
+      return @attributes[:skip_on_error]
+    end
+
     def exec_time
       return 0 unless @attributes[:cmd]
-      return @attributes[:cmd].exec_time
+
+      @attributes[:cmd].exec_time
     end
+
     def status
       return :warning unless @attributes[:cmd]
-      return @attributes[:cmd].status
+
+      @attributes[:cmd].status
     end
-    def status= st
-      @attributes[:cmd].status=st if @attributes[:cmd]
+
+    def status=(new_state)
+      @attributes[:cmd].status = new_state if @attributes[:cmd]
     end
-    def run context=nil
+
+    def run(context = nil)
       return not_executed unless @attributes[:cmd]
-      return @attributes[:cmd].run(context)
+
+      @attributes[:cmd].run(context)
     end
+
     def reset
-      @attributes[:cmd].reset if @attributes[:cmd]
+      @attributes[:cmd]&.reset
     end
+
     def name_with_parameters
-      param=" - #{self.cmd.to_s}" if self.has_cmd?
-      return "#{@attributes[:step_type]}#{param}"
+      param = " - #{cmd}" if has_cmd?
+      "#{@attributes[:step_type]}#{param}"
     end
-    def to_s#:nodoc:
-      if self.has_cmd?
-        msg="#{self.number} - #{self.cmd.to_s}"
-      else
-        msg="#{self.number} - #{self.name}"
-      end
-        msg<<" in #{self.included_in}" if self.has_included_in?
-      return msg
+
+    def to_s #:nodoc:
+      msg = if has_cmd?
+              "#{number} - #{cmd}"
+            else
+              "#{number} - #{name}"
+            end
+      msg << " in #{included_in}" if has_included_in?
+      msg
     end
   end
-  
 end
 
 class Patir::ShellCommand
-  def to_s#:nodoc:
-    return @command
+  def to_s #:nodoc:
+    @command
   end
 end
 
 class Patir::RubyCommand
-  def to_s#:nodoc:
-    return @name
+  def to_s #:nodoc:
+    @name
   end
 end
