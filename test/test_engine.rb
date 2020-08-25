@@ -52,7 +52,7 @@ module TestRutema
       engine=nil
       engine=Rutema::Engine.new(conf)
       engine.run
-      assert_equal(4, MockReporter.updates)
+      assert_equal(8, MockReporter.updates)
 
 
       conf[:tests]=["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec","#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"]
