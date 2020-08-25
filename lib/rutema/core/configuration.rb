@@ -189,6 +189,7 @@
           raise ConfigurationException, "Import error: Can't find #{fnm}"
         end
       end
+
       private
       def load_configuration filename
         begin 
