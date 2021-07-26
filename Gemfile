@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
+gem "highline", "~>2.0.3", :require => false
 gem "patir", "~>0.8", :require => false
-gem "highline","~>1.7", :require => false
 
 group :development do
   gem "coveralls", "~>0.8.23", :require => false
