@@ -9,5 +9,6 @@ group :development do
   gem "mocha", "~>1.13.0", :require => false
   gem "pry", "~>0.14.1", :require => false
   gem "rdoc", "~>6.3.0", :require => false
+  gem "rubocop", "~>1.16.1", :require => false
   gem "test-unit", "~>3.4.4", :require => false
 end
