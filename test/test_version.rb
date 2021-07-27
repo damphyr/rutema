@@ -9,7 +9,7 @@ require_relative "../lib/rutema/version"
 module TestRutema
   class TestVersion < Test::Unit::TestCase
     def test_string_rep
-      assert_equal("2.0.0", Rutema::Version::STRING)
+      assert_equal("2.0.1", Rutema::Version::STRING)
     end
   end
 end
