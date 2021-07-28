@@ -1,3 +1,7 @@
+# Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
+
+# frozen_string_literal: true
+
 ##
 # The top-level module of rutema encompassing all its functionality.
 module Rutema
