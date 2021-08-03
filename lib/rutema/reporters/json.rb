@@ -1,4 +1,5 @@
-#  Copyright (c) 2007-2010 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
+
 require 'json'
 require_relative "../core/reporter"
 

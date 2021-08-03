@@ -1,3 +1,5 @@
+#  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
+
 module Rutema
   #Represents the data beeing shunted between the components in lieu of logging.
   #

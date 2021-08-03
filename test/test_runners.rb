@@ -1,3 +1,5 @@
+#  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
+
 require 'test/unit'
 require 'ostruct'
 require 'patir/command'

@@ -1,3 +1,5 @@
+#  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
+
 require 'test/unit'
 require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/reporters/junit'

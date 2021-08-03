@@ -1,4 +1,5 @@
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
+
 require_relative 'framework'
 
 module Rutema

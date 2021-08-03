@@ -1,4 +1,5 @@
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
+
 module Rutema
   #Rutema supports two kinds of reporters.
   #

@@ -1,3 +1,4 @@
+#  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 require_relative '../lib/rutema/core/configuration'
 #$DEBUG=true
