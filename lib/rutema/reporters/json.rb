@@ -13,11 +13,12 @@ module Rutema
     class JSON<Rutema::Reporters::BlockReporter
       #Default report filename
       DEFAULT_FILENAME="rutema.results.json"
-    
+
       def initialize configuration,dispatcher
         super(configuration,dispatcher)
         @filename=configuration.reporters.fetch(self.class,{}).fetch("filename",DEFAULT_FILENAME)
       end
+
       #We get all the data from a test run in here.
       def report specs,states,errors
         run_entry={}

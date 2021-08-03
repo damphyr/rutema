@@ -1,15 +1,15 @@
 #  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
 
 require 'highline'
+
 module Rutema
-  #The Elements module provides the namespace for the various modules adding parser functionality
+  ##
+  # Module providing a namespace for modules which are used to add to a parsers
+  # functionality which can then be utilized in test specifications
   module Elements
-    #Minimal offers a minimal(chic) set of elements for use in specifications
-    #
-    #These are:
-    # echo
-    # command
-    # prompt
+    ##
+    # Module offering an examplary minimal set of elements for use as steps in
+    # test specifications
     module Minimal
       #echo prints a message on the screen:
       # <echo text="A meaningful message"/>
@@ -18,6 +18,7 @@ module Rutema
         step.cmd=Patir::RubyCommand.new("echo"){|cmd| cmd.error="";cmd.output="#{step.text}";$stdout.puts(cmd.output) ;:success}
         return step
       end
+
       #prompt asks the user a yes/no question. Answering yes means the step is succesful.
       # <prompt text="Do you want fries with that?"/>
       #
@@ -35,6 +36,7 @@ module Rutema
         end#do rubycommand
         return step
       end
+
       #command executes a shell command
       # <command cmd="useful_command.exe with parameters", working_directory="some/directory"/>
       def element_command step

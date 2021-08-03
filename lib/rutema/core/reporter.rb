@@ -1,20 +1,42 @@
 #  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
-  #Rutema supports two kinds of reporters.
+  ##
+  # Module for the definition of reporter classes
   #
-  #Block (from en bloc) reporters receive data via the report() method at the end of a Rutema run
-  #while event reporters receive events continuously during a run via the update() method
+  # rutema supports two kinds of reporters. Reporters derived from BlockReporter
+  # are supposed to receive data via the #report method at the end of a Rutema
+  # run. Reporters derived from EventReporter are intended to receive events
+  # continuously during a run via the #update method.
   #
-  #Nothing prevents you from creating a class that implements both behaviours
+  # Nothing permits implementing a reporter class which supports both
+  # behaviours.
   module Reporters
+    ##
+    # Base class for block reporters
+    #
+    # Block reporters are invoked at the end/after a test run. They offer means
+    # to e.g. print a summary after a test run or create a test report file for
+    # CI integration (see Reporters::JUnit as an example).
     class BlockReporter
+      ##
+      # Initialize a new instance from the given configuration
+      #
+      # * +configuration+ - the Configuration instance of the test run
+      # * +dispatcher+ - unused
       def initialize configuration,dispatcher
         @configuration=configuration
       end
+
+      ##
+      #
       def report specifications,states,errors
       end
     end
+
+    ##
+    # Event reporters receive and process information continually during a test
+    # run
     class EventReporter
       def initialize configuration,dispatcher
         @configuration=configuration

@@ -6,6 +6,7 @@ module Rutema
   module Runners
     class Default
       include Rutema::Messaging
+
       attr_reader :context
       attr_accessor :setup,:teardown
       def initialize context,queue
@@ -46,6 +47,7 @@ module Rutema
       end
 
       private
+
       def run_scenario name,scenario,meta
         executed_steps=[]
         status=:warning
@@ -80,7 +82,21 @@ module Rutema
       end
     end
 
+    ##
+    # Fake runner which does not run the passed steps but just sets their
+    # execution status to +:success+
+    #
+    # Steps that do not respond to +:run+ have their status set to +:warning+.
+    #
+    # Returns the step after "executing" it successfully
     class NoOp<Default
+      ##
+      # Simulate running the step by setting its status to +:success+
+      #
+      # If the step does not respond to +:run+ then +:warning+ is set as its
+      # status.
+      #
+      # * +step+ - 
       def run_step step,meta
         unless step.has_cmd? && step.cmd.respond_to?(:run)
           message("No command associated with step '#{step.step_type}'. Step number is #{step.number}")

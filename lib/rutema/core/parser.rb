@@ -3,32 +3,62 @@
 require_relative 'framework'
 
 module Rutema
-  module Parsers  
-    #Base class that bombs out when used.
+  ##
+  # Module for the definition of classes for the parsing of test specifications
+  module Parsers
+    ##
+    # Base class for parser implementations
     #
-    #Derive your parser class from this class and implement parse_specification and validate_configuration
+    # This class itself is not operational but only throws exceptions upon
+    # invocations of its +parse_*+ methods. Its sole purpose is to define a
+    # common interface for parser classes.
+    #
+    # Derived classes should implement at least the parse_specification and
+    # validate_configuration methods.
     class SpecificationParser
+      ##
+      # The Configuration instance passed to and used by the initializer
       attr_reader :configuration
+
+      ##
+      # Initialize a new instance internally storing and validating the passed
+      # Configuration instance
       def initialize configuration
         @configuration=configuration
         @configuration||={}
         validate_configuration
       end
-      #parses a specification
+
+      ##
+      # Parse a test specification
+      #
+      # The passed argument can either be the path to a test specification file
+      # or the test specification itself.
       def parse_specification param
         raise ParserError,"not implemented. You should derive a parser implementation from SpecificationParser!"
       end
-      #parses the setup script. By default calls parse_specification
+
+      ##
+      # Parse a setup specification
+      #
+      # This calls #parse_specification by default.
       def parse_setup param
         parse_specification(param)
       end
-      #parses the teardown script. By default calls parse_specification
+
+      ##
+      # Parse a teardown specification
+      #
+      # This calls #parse_specification by default.
       def parse_teardown param
         parse_specification(param)
       end
-      #The parser stores it's configuration in @configuration
+
+      ##
+      # Validate the Configuration instance which is stored by the parser
+      # internally
       #
-      #To avoid validating the configuration in element_* methods repeatedly, do all configuration validation here
+      # To avoid validating the configuration in element_* methods repeatedly, do all configuration validation here
       def validate_configuration
       end
     end

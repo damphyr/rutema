@@ -1,15 +1,35 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
-  #Represents the data beeing shunted between the components in lieu of logging.
+  ##
+  # Simple base for classes concerned with message passing to report test
+  # progress and failures
   #
-  #This is the primary type passed to the event reporters
+  # This class and its descendants can be utilized as a container for data
+  # relevant to tests and their results. Currently they are being emitted by the
+  # Engine and Runners instances and consumed by classes within the  Reporters
+  # module.
+  #
+  # Specialized descendants are ErrorMessage and RunnerMessage.
   class Message
-    attr_accessor :test,:text,:timestamp
-    #Keys used:
-    # test - the test id/name
-    # text - the text of the message
-    # timestamp
+    ##
+    # The test whose execution originated the message
+    attr_accessor :test
+    ##
+    # The text of the message
+    attr_accessor :text
+    ##
+    # The timestamp of the message's creation
+    attr_accessor :timestamp
+
+    ##
+    # Initialize a new message from data passed in a hash
+    #
+    # The following keys of the hash are being utilized:
+    # * +:test+ - the test id/name of the test which originates the message
+    # * +:text+ - the text of the message
+    # * +:timestamp+ - most often the timestamp of the creation of the message,
+    #   defaults to +Time.now+
     def initialize params
       @test=params.fetch(:test,"")
       @test||=""
@@ -17,6 +37,8 @@ module Rutema
       @timestamp=params.fetch(:timestamp,Time.now)
     end
 
+    ##
+    # Convert the instance to a convenient textual representation
     def to_s
       msg=""
       msg<<"#{@test} " unless @test.empty?
@@ -24,8 +46,16 @@ module Rutema
       return msg
     end
   end
-  #What it says on the tin.
+
+  ##
+  # Message container to report test errors
+  #
+  # The reported on errors may concern the test specifications, parser errors or
+  # errors which occurred during test execution. Logic errors of rutema itself
+  # are not reported by means of this class.
   class ErrorMessage<Message
+    ##
+    # Convert the instance to a convenient textual representation
     def to_s
       msg="ERROR - "
       msg<<"#{@test} " unless @test.empty?
@@ -33,12 +63,27 @@ module Rutema
       return msg
     end
   end
-  #The Runner continuously sends these when executing tests
+
+  ##
+  # Message container continually being emitted by runners (see Runners module)
+  # during test execution
   #
-  #If there is an engine error (e.g. when parsing) you will get an ErrorMessage, if it is a test error
-  #you will get a RunnerMessage with :error in the status.
+  # These messages inform about the progress of test execution. Test errors are
+  # propagated through instances of this class as well. If it's an engine error
+  # (e.g. during parsing), then an ErrorMessage will be used in that case.
   class RunnerMessage<Message
     attr_accessor :duration,:status,:number,:out,:err
+
+    ##
+    # Initialize a new runner message from data passed in a hash
+    #
+    # Additionally to the keys of the Message initializer the following keys of
+    # the hash are being utilized:
+    # * "duration" - the time a test step took for execution
+    # * "status" - the status of the respective step
+    # * +:timestamp+ - most often the timestamp of the creation of the message,
+    #   defaults to +Time.now+
+
     def initialize params
       super(params)
       @duration=params.fetch("duration",0)
@@ -48,6 +93,8 @@ module Rutema
       @err=params.fetch("err","")
     end
 
+    ##
+    # Convert the instance to a convenient textual representation
     def to_s
       msg="#{@test}:"
       msg<<"#{@text}." unless @text.empty?
@@ -63,6 +110,7 @@ module Rutema
       return msg.chomp
     end
   end
+
   #While executing tests the state of each test is collected in an 
   #instance of ReportState and the collection is at the end passed to the available block reporters
   #
@@ -87,12 +135,28 @@ module Rutema
     end
   end
 
+  ##
+  # Mix-in module which offers an interface to push messages to a queue
+  #
+  # Instances of the class including this module need a @queue member variable.
   module Messaging
-    #Signal an error - use the test name/id as the identifier
+    ##
+    # Push a new ErrorMessage instance to the queue
+    #
+    # * +identifier+ - in most cases this would be the name of a test or its
+    #   specification file
+    # * +message+ - a short descriptive message detailing the error condition
     def error identifier,message
       @queue.push(ErrorMessage.new(:test=>identifier,:text=>message,:timestamp=>Time.now))
     end
-    #Informational message during test runs
+
+    ##
+    # Push a new Message or RunnerMessage instance to the queue
+    #
+    # If +message+ is of type String a Message instance will be pushed to the
+    # queue. If it's of type Hash it will be passed to the initializer of
+    # RunnerMessage if it has both the keys :test and "status" or to the
+    # initializer of Message if not so.
     def message message
       case message
       when String
@@ -105,16 +169,32 @@ module Rutema
       end
     end
   end
-  #Generic error class for errors in the engine
+
+  ##
+  # Generic error class which is being used as base class for all other rutema
+  # errors and for Engine related errors.
+  #
+  # This is being inherited by:
+  # * ParserError
+  # * ReportError
+  # * RunnerError
   class RutemaError<RuntimeError
   end
-  #Is raised when an error is found in a specification
-  class ParserError<RutemaError
+
+  ##
+  # Specialized error class particular to the parsing of rutema test
+  # specifications
+  class ParserError < RutemaError
   end
-  #Is raised on an unexpected error during execution
-  class RunnerError<RutemaError
+
+  ##
+  # Specialized error class designated to errors within runner classes
+  class RunnerError < RutemaError
   end
-  #Errors in reporters should use this class
-  class ReportError<RutemaError
+
+  ##
+  # Specialized error class which should be utilized by Reporters members to
+  # signal errors upon reporting
+  class ReportError < RutemaError
   end
 end

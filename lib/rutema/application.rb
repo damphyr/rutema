@@ -1,12 +1,20 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 require  'optparse'
+
 require_relative "core/configuration"
 require_relative "core/engine"
 
 module Rutema
-  #Parses the commandline, sets up the configuration and launches Rutema::Engine
+  ##
+  # Entry-point class for rutema
+  #
+  # This class parses the commandline, sets up the internal configuration of
+  # rutema accordingly and starts the application flow.
   class App
+    ##
+    # Configure and start the application flow according to the passed
+    # commandline options
     def initialize command_line_args
       parse_command_line(command_line_args)
       @configuration=Rutema::Configuration.new(@config_file)
@@ -20,7 +28,12 @@ module Rutema
       @engine=Rutema::Engine.new(@configuration)
       application_flow
     end
+
     private
+
+    ##
+    # Define the available commandline options and parse the given commandline
+    # accordingly
     def parse_command_line args
       args.options do |opt|
         opt.on("rutema v#{Version::STRING}")
@@ -47,16 +60,19 @@ module Rutema
         end
       end
     end
+
+    ##
+    # Start the application flow
     def application_flow
       if @check
-        #run just the suite setup test
+        # run just the suite setup test if requested
         if @configuration.suite_setup
           exit @engine.run(@configuration.suite_setup)
         else
           raise Rutema::RutemaError,"There is no suite setup test defined in the configuration."
         end
       else
-        #run everything
+        # run everything
         exit @engine.run(@test_identifier)
       end
     end
