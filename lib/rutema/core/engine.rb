@@ -61,11 +61,9 @@ module Rutema
         @dispatcher.exit
         raise RutemaError,"No tests to run!"
       else
-        @runner.setup=setup
-        @runner.teardown=teardown
         # running - at this point all checks are done and the tests are active
         message("running")
-        run_scenarios(tests,suite_setup,suite_teardown)
+        run_scenarios(tests,suite_setup,suite_teardown,setup,teardown)
       end
       message("end")
       @dispatcher.exit
@@ -162,30 +160,33 @@ module Rutema
     #   tests
     # * +suite_setup+ - a test suite setup Specification instance
     # * +suite_teardown+ - a test suite teardown Specification instance
-    def run_scenarios specs,suite_setup,suite_teardown
+    def run_scenarios(specs, suite_setup, suite_teardown, setup, teardown)
       if specs.empty?
         error(nil,"No tests to run")
       else
-        if suite_setup
-          if run_test(suite_setup)==:success
-            specs.each{|s| run_test(s)}
-          else
-            error(nil,"Suite setup test failed")
-          end
-        else
+        @runner.setup = nil
+        @runner.teardown = nil
+
+        if !suite_setup || (run_test(suite_setup, true) == :success)
+          @runner.setup = setup
+          @runner.teardown = teardown
           specs.each{|spec| run_test(spec)}
+        else
+          error(nil, "Suite setup test failed")
         end
         if suite_teardown
-          run_test(suite_teardown)
+          @runner.setup = nil
+          @runner.teardown = nil
+          run_test(suite_teardown, true)
         end
       end
     end
 
     ##
     #
-    def run_test specification
+    def run_test(specification, is_special = false)
       if specification.scenario
-        status=@runner.run(specification)["status"]
+        status = @runner.run(specification, is_special)["status"]
       else
         status=:not_executed
         message(:test=>specification.name,:text=>"No scenario", :status=>status)
@@ -216,7 +217,7 @@ module Rutema
     #   the normal or special test case identifier sets
     def is_spec_included? test_identifier
       full_path=File.expand_path(test_identifier)
-      return @configuration.tests.include?(full_path) || is_special?(test_identifier) 
+      return @configuration.tests.include?(full_path) || is_special?(test_identifier)
     end
 
     ##
@@ -232,7 +233,7 @@ module Rutema
       return full_path==@configuration.suite_setup ||
       full_path==@configuration.suite_teardown ||
       full_path==@configuration.setup ||
-      full_path==@configuration.teardown 
+      full_path==@configuration.teardown
     end
   end
 
