@@ -1,15 +1,25 @@
-#  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
+#  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
+
 require 'patir/command'
 
 module Rutema
-  #This module adds functionality that allows us to 
-  #arbitrarily add attributes to a class and then have 
-  #the accessor methods for these attributes appear automagically.
+  ##
+  # Mix-in module allowing to add attributes to a class on the go
   #
-  #It will also add a has_attribute? method to query if _attribute_ is part of the object or not.
+  # This allows to add attributes to classes on the go and makes the accessor
+  # methods appear automatically too.
+  #
+  # It will add a #has_attribute? method too to query if an attribute is part of
+  # the object or not.
   module SpecificationElement
-    #adds an attribute to the class with the given __value__. __symbol__ can be a Symbol or a String, 
-    #the rest are silently ignored
+    ##
+    # Add an attribute with a given value to the class instance
+    #
+    # * +symbol+ - a symbol or a string (which will be converted to a symbol
+    #   internally) which shall be the name of the new attribute
+    # * +value+ - the initial value of the attribute
+    #
+    # If +symbol+ is neither a string nor a symbol this method will be a no-op.
     def attribute symbol,value
       @attributes||=Hash.new
       case symbol
@@ -17,12 +27,16 @@ module Rutema
         when Symbol then @attributes[symbol]=value
       end
     end
-    #allows us to call object.attribute, object.attribute=, object.attribute? and object.has_attribute?
+
+    ##
+    # Method enabling to call object.attribute, object.attribute=, object.attribute? and object.has_attribute?
     #
-    #object.attribute and object.attribute? will throw NoMethodError if no attribute is set.
+    # object.attribute and object.attribute? will throw NoMethodError if the
+    # attribute is not set on the object instance.
     #
-    #object.attribute= will set the attribute to the right operand and
-    #object.has_attribute? returns false or true according to the existence of the attribute.
+    # object.attribute= will set the attribute to the right operand and
+    # object.has_attribute? will return +true+ or +false+ according to the
+    # existence of the attribute.
     def method_missing symbol,*args
       @attributes||=Hash.new
       key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
@@ -36,6 +50,8 @@ module Rutema
       end
     end
 
+    ##
+    # Return +true+ if the object responds to the given method or else +false+
     def respond_to? symbol,include_all
       @attributes||=Hash.new
       key=symbol.id2name.chomp('?').chomp('=').sub(/^has_/,"")
@@ -46,28 +62,32 @@ module Rutema
       end
     end
   end
-  #A Rutema::Specification encompasses all elements required to run a test, the builds used, the scenario to run,
-  #together with a textual description and information that aids in tracing the test back to the requirements.
+
+  ##
+  # A Rutema::Specification encompasses all elements required to run a test, the builds used, the scenario to run,
+  # together with a textual description and information that aids in tracing the test back to the requirements.
   class Specification
     include SpecificationElement
+
     attr_accessor :scenario
-    #Expects a Hash of parameters
+    ##
+    # Expects a Hash of parameters
     #
-    #Following keys have meaning in initialization:
+    # Following keys have meaning in initialization:
     #
-    #:name - the name of the testcase. Should uniquely identify the testcase
+    # :name - the name of the testcase. Should uniquely identify the testcase
     #
-    #:title - a one liner describing what the testcase does
+    # :title - a one liner describing what the testcase does
     #
-    #:filename - the filename describing the testcase
+    # :filename - the filename describing the testcase
     #
-    #:description - a full textual description for the testcase. To be used in reports and documents
+    # :description - a full textual description for the testcase. To be used in reports and documents
     #
-    #:scenario - An instance of Rutema::Scenario
+    # :scenario - An instance of Rutema::Scenario
     #
-    #:version - The version of this specification
+    # :version - The version of this specification
     #
-    #Default values are empty strings and arrays. (scenario is nil)
+    # Default values are empty strings and arrays. (scenario is nil)
     def initialize params
       begin
         @attributes=params
@@ -79,10 +99,14 @@ module Rutema
       @attributes[:description]||=""
       @scenario=@attributes[:scenario]
     end
-    def to_s#:nodoc: 
+
+    ##
+    # Create a concise string representation consisting of +name+ and +title+
+    def to_s
       return "#{@attributes[:name]} - #{@attributes[:title]}"
     end
   end
+
   #A Rutema::Scenario is a sequence of Rutema::Step instances.
   #
   #Rutema::Step instances are run in the definition sequence and the scenario
@@ -94,6 +118,7 @@ module Rutema
   #Failure in a step results in the interruption of execution and the report of the errors.
   class Scenario
     include SpecificationElement
+
     attr_reader :steps
     
     def initialize steps
@@ -101,15 +126,18 @@ module Rutema
       @steps=steps
       @steps||=Array.new
     end
+
     #Adds a step at the end of the step sequence
     def add_step step
       @steps<<step
     end
+
     #Overwrites the step sequence
     def steps= array_of_steps
       @steps=array_of_steps
     end
   end
+
   #Represents a step in a Scenario.
   #
   #Each Rutema::Step can have text and a command associated with it. 
@@ -158,44 +186,54 @@ module Rutema
       @number=0
       @attributes[:step_type]="step"
     end
-    
+
     def name
       return name_with_parameters
     end
+
     def output
       return "" unless @attributes[:cmd]
       return @attributes[:cmd].output
     end
+
     def error
       return "no command associated" unless @attributes[:cmd]
       return @attributes[:cmd].error
     end
+
     def ignore?
       return false unless @attributes[:ignore]
       return @attributes[:ignore]
     end
+
     def exec_time
       return 0 unless @attributes[:cmd]
       return @attributes[:cmd].exec_time
     end
+
     def status
       return :warning unless @attributes[:cmd]
       return @attributes[:cmd].status
     end
+
     def status= st
       @attributes[:cmd].status=st if @attributes[:cmd]
     end
+
     def run context=nil
       return not_executed unless @attributes[:cmd]
       return @attributes[:cmd].run(context)
     end
+
     def reset
       @attributes[:cmd].reset if @attributes[:cmd]
     end
+
     def name_with_parameters
       param=" - #{self.cmd.to_s}" if self.has_cmd?
       return "#{@attributes[:step_type]}#{param}"
     end
+
     def to_s#:nodoc:
       if self.has_cmd?
         msg="#{self.number} - #{self.cmd.to_s}"
@@ -206,7 +244,6 @@ module Rutema
       return msg
     end
   end
-  
 end
 
 class Patir::ShellCommand

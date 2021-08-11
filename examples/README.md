@@ -22,15 +22,23 @@ suites/
 
 Configuration files are stored in config/ and suites/ and have per convention the extension .rutema.
 
-Note that there is no difference between a configuration file with tool parameters and a configuration file that defines a test suite. The difference is by convention:
-
-*Tool, path and test environment specific configuration is saved in config/ and the collection of tests to run per configuration in suites/*
+Note that there is no difference between a configuration file with tool
+parameters and a configuration file that defines a test suite. The difference
+is by convention. Tool, path and test environment specific configuration is
+saved in config/ in the tool parameter specifc file and the collection of tests
+to run per configuration in suites/*.
 
 ## rutema tooling
 
-The configuration system allows us to replace every part of the rutema engine. They are only three major parts anyway: the parser, the runner and the reporter. The parser must be specified, it handles the specific testing language you will develop for the project. 
+The configuration system allows to replace every part of the rutema engine.
+There are three major parts: the parser, the runner and the reporter. The parser
+must always be specified, it handles the specific testing language you will
+develop for the project.
 
-The runner is the easiest to provide a default implementation for and the reporters that can be made available are limited only by the time you have to come up with solutions but a simple console output is easy to provide.
+The runner is the simplest component and a default implementation is provided.
+The reporters that can be made available are limited only by the time and
+creativity to come up with solutions, but a simple console output is provided
+easily.
 
 The following shows the default configuration if it was explicitly spelled out in a .rutema file:
 
