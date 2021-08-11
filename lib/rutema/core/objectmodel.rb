@@ -202,7 +202,7 @@ module Rutema
     end
 
     def backtrace
-      return "no command associated" unless @attributes[:cmd]
+      return "no backtrace associated" unless @attributes[:cmd]
       return @attributes[:cmd].backtrace if @attributes[:cmd].respond_to?(:backtrace)
       return ""
     end

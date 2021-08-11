@@ -98,9 +98,10 @@ module Rutema
     # Convert the instance to a convenient textual representation
     def to_s
       msg="#{@test}:"
+      msg<<" #{@timestamp.strftime("%H:%M:%S")} :"
       msg<<"#{@text}." unless @text.empty?
       outpt=output()
-      msg<<" Output:\n#{outpt}" unless outpt.empty? || @status!=:error
+      msg<<" Output" + (outpt.empty? ? "." : ":\n#{outpt}") # unless outpt.empty? || @status!=:error
       return msg
     end
 
@@ -108,7 +109,7 @@ module Rutema
       msg=""
       msg<<"#{@out}\n" unless @out.empty?
       msg<<@err unless @err.empty?
-      msg<<"\n" + @backtrace.join("\n") unless @backtrace.empty?
+      msg<<"\n" + (@backtrace.kind_of?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
       return msg.chomp
     end
   end
@@ -163,7 +164,7 @@ module Rutema
     def message message
       case message
       when String
-        Message.new(:text=>message,:timestamp=>Time.now)
+        @queue.push(Message.new(:text=>message,:timestamp=>Time.now))
       when Hash
         hm=Message.new(message)
         hm=RunnerMessage.new(message) if message[:test] && message["status"]
