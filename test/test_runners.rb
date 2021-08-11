@@ -3,7 +3,7 @@
 require 'test/unit'
 require 'ostruct'
 require 'patir/command'
-require 'mocha/setup'
+require "mocha/test_unit"
 
 require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/core/runner'

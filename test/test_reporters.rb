@@ -3,7 +3,7 @@
 require 'test/unit'
 require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/reporters/junit'
-require 'mocha/setup'
+require "mocha/test_unit"
 
 module TestRutema
   class TestReporters<Test::Unit::TestCase
