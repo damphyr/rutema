@@ -3,7 +3,7 @@
 require 'test/unit'
 require 'ostruct'
 require 'patir/command'
-require 'mocha/setup'
+require "mocha/test_unit"
 
 require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/core/runner'
@@ -18,9 +18,9 @@ module TestRutema
       state=nil
       assert_nothing_raised() { state=runner.run(spec) }
       assert_equal(1, state["steps"].size)
-      assert_equal(4, queue.size)
+      assert_equal(6, queue.size)
       assert_equal("started", queue.pop.text)
-      2.times{queue.pop}
+      4.times{queue.pop}
       assert_equal("finished", queue.pop.text)
     end
     

@@ -195,7 +195,7 @@ module Rutema
               begin
                 self.send(:"element_#{step.step_type}",step)
               rescue
-                raise ParserError, $!.message
+                raise ParserError, ($!.message + "\n" + $@.join("\n"))
               end#begin
             elsif @configuration.parser["strict_mode"]
               raise ParserError,"No command element associated with #{step.step_type}. Missing element_#{step.step_type}"

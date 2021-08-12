@@ -72,7 +72,7 @@ module Rutema
   # propagated through instances of this class as well. If it's an engine error
   # (e.g. during parsing), then an ErrorMessage will be used in that case.
   class RunnerMessage<Message
-    attr_accessor :duration,:status,:number,:out,:err
+    attr_accessor :duration, :status, :number, :out, :err, :is_special
 
     ##
     # Initialize a new runner message from data passed in a hash
@@ -83,7 +83,6 @@ module Rutema
     # * "status" - the status of the respective step
     # * +:timestamp+ - most often the timestamp of the creation of the message,
     #   defaults to +Time.now+
-
     def initialize params
       super(params)
       @duration=params.fetch("duration",0)
@@ -91,15 +90,18 @@ module Rutema
       @number=params.fetch("number",1)
       @out=params.fetch("out","")
       @err=params.fetch("err","")
+      @backtrace=params.fetch("backtrace","")
+      @is_special=params.fetch("is_special","")
     end
 
     ##
     # Convert the instance to a convenient textual representation
     def to_s
       msg="#{@test}:"
+      msg<<" #{@timestamp.strftime("%H:%M:%S")} :"
       msg<<"#{@text}." unless @text.empty?
       outpt=output()
-      msg<<" Output:\n#{outpt}" unless outpt.empty? || @status!=:error
+      msg<<" Output" + (outpt.empty? ? "." : ":\n#{outpt}") # unless outpt.empty? || @status!=:error
       return msg
     end
 
@@ -107,6 +109,7 @@ module Rutema
       msg=""
       msg<<"#{@out}\n" unless @out.empty?
       msg<<@err unless @err.empty?
+      msg<<"\n" + (@backtrace.kind_of?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
       return msg.chomp
     end
   end
@@ -118,7 +121,7 @@ module Rutema
   #and accumulates the duration reported by all messages in it's collection.
   class ReportState
     attr_accessor :steps
-    attr_reader :test,:timestamp,:duration,:status
+    attr_reader :test, :timestamp, :duration, :status, :is_special
     
     def initialize message
       @test=message.test
@@ -126,6 +129,7 @@ module Rutema
       @duration=message.duration
       @status=message.status
       @steps=[message]
+      @is_special=message.is_special
     end
 
     def <<(message)
@@ -160,7 +164,7 @@ module Rutema
     def message message
       case message
       when String
-        Message.new(:text=>message,:timestamp=>Time.now)
+        @queue.push(Message.new(:text=>message,:timestamp=>Time.now))
       when Hash
         hm=Message.new(message)
         hm=RunnerMessage.new(message) if message[:test] && message["status"]

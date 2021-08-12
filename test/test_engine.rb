@@ -2,7 +2,7 @@
 
 require 'test/unit'
 require 'ostruct'
-require 'mocha/setup'
+require "mocha/test_unit"
 require_relative '../lib/rutema/core/engine'
 require_relative '../lib/rutema/core/objectmodel'
 require_relative '../lib/rutema/parsers/xml'
@@ -54,7 +54,7 @@ module TestRutema
       engine=nil
       engine=Rutema::Engine.new(conf)
       engine.run
-      assert_equal(4, MockReporter.updates)
+      assert_equal(8, MockReporter.updates)
 
 
       conf[:tests]=["#{File.expand_path(File.dirname(__FILE__))}/data/sample.spec","#{File.expand_path(File.dirname(__FILE__))}/data/duplicate_name.spec"]
@@ -62,7 +62,8 @@ module TestRutema
           engine=Rutema::Engine.new(conf)
           engine.run
       }
-      assert_equal(0, MockReporter.updates)
+      sleep(0.1)
+      assert_equal(2, MockReporter.updates)
 
       conf[:tests]=[]
       assert_raise(Rutema::RutemaError){

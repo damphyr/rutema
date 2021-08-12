@@ -201,6 +201,12 @@ module Rutema
       return @attributes[:cmd].error
     end
 
+    def backtrace
+      return "no backtrace associated" unless @attributes[:cmd]
+      return @attributes[:cmd].backtrace if @attributes[:cmd].respond_to?(:backtrace)
+      return ""
+    end
+
     def ignore?
       return false unless @attributes[:ignore]
       return @attributes[:ignore]

@@ -46,16 +46,13 @@ module Rutema
       def run!
         @thread=Thread.new do
           while true do
-            if  @queue.size>0
-              data=@queue.pop
-              begin
-                update(data) if data
-              rescue
-                puts "#{self.class} failed with #{$!.message}"
-                raise
-              end
+            data=@queue.pop
+            begin
+              update(data) if data
+            rescue
+              puts "#{self.class} failed with #{$!.message}"
+              raise
             end
-            sleep 0.1
           end
         end
       end
@@ -117,8 +114,14 @@ module Rutema
           when RunnerMessage
             if message.status == :error
               puts "FATAL|#{message.to_s}"
+            elsif message.status == :warning
+              puts "WARNING|#{message.to_s}"
             else
-              puts message.to_s if @mode=="verbose"
+                if message.status == :started
+                  puts "#{message.to_s} Started." if @mode=="verbose"
+                else
+                  puts message.to_s if @mode=="verbose"
+                end 
             end
           when ErrorMessage
             puts message.to_s 
@@ -139,7 +142,8 @@ module Rutema
         states.each{|k,v| failures<<v.test if v.status==:error}
 
         unless @silent
-          puts "#{errors.size} errors. #{states.size} test cases executed. #{failures.size} failed"
+          count_tests_run = states.select { |name, state| !state.is_special }.count
+          puts "#{errors.size} errors. #{count_tests_run} test cases executed. #{failures.size} failed"
           unless failures.empty?
             puts "Failures:"
             puts specs.map{|spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name)}.compact.join("\n")
