@@ -1,7 +1,7 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
-  STATUS_CODES=[:started,:skipped,:success,:warning,:error]
+  STATUS_CODES = [:started, :skipped, :success, :warning, :error].freeze
 
   ##
   # Simple base for classes concerned with message passing to report test
@@ -32,19 +32,19 @@ module Rutema
     # * +:text+ - the text of the message
     # * +:timestamp+ - most often the timestamp of the creation of the message,
     #   defaults to +Time.now+
-    def initialize params
-      @test=params.fetch(:test,"")
-      @test||=""
-      @text=params.fetch(:text,"")
-      @timestamp=params.fetch(:timestamp,Time.now)
+    def initialize(params)
+      @test = params.fetch(:test, "")
+      @test ||= ""
+      @text = params.fetch(:text, "")
+      @timestamp = params.fetch(:timestamp, Time.now)
     end
 
     ##
     # Convert the instance to a convenient textual representation
     def to_s
-      msg=""
-      msg<<"#{@test} " unless @test.empty?
-      msg<<@text
+      msg = ""
+      msg << "#{@test} " unless @test.empty?
+      msg << @text
       return msg
     end
   end
@@ -55,13 +55,13 @@ module Rutema
   # The reported on errors may concern the test specifications, parser errors or
   # errors which occurred during test execution. Logic errors of rutema itself
   # are not reported by means of this class.
-  class ErrorMessage<Message
+  class ErrorMessage < Message
     ##
     # Convert the instance to a convenient textual representation
     def to_s
-      msg="ERROR - "
-      msg<<"#{@test} " unless @test.empty?
-      msg<<@text
+      msg = "ERROR - "
+      msg << "#{@test} " unless @test.empty?
+      msg << @text
       return msg
     end
   end
@@ -73,8 +73,8 @@ module Rutema
   # These messages inform about the progress of test execution. Test errors are
   # propagated through instances of this class as well. If it's an engine error
   # (e.g. during parsing), then an ErrorMessage will be used in that case.
-  class RunnerMessage<Message
-    attr_accessor :backtrace, :duration, :status, :number, :out, :err, :is_special
+  class RunnerMessage < Message
+    attr_accessor :backtrace, :duration, :err, :is_special, :number, :out, :status
 
     ##
     # Initialize a new runner message from data passed in a hash
@@ -85,33 +85,33 @@ module Rutema
     # * "status" - the status of the respective step
     # * +:timestamp+ - most often the timestamp of the creation of the message,
     #   defaults to +Time.now+
-    def initialize params
+    def initialize(params)
       super(params)
-      @duration=params.fetch("duration",0)
-      @status=params.fetch("status",:none)
-      @number=params.fetch("number",1)
-      @out=params.fetch("out","")
-      @err=params.fetch("err","")
-      @backtrace=params.fetch("backtrace","")
-      @is_special=params.fetch("is_special","")
+      @backtrace = params.fetch("backtrace", "")
+      @duration = params.fetch("duration", 0)
+      @err = params.fetch("err", "")
+      @is_special = params.fetch("is_special", "")
+      @number = params.fetch("number", 1)
+      @out = params.fetch("out", "")
+      @status = params.fetch("status", :none)
     end
 
     ##
     # Convert the instance to a convenient textual representation
     def to_s
-      msg="#{@test}:"
-      msg<<" #{@timestamp.strftime("%H:%M:%S")} :"
-      msg<<"#{@text}." unless @text.empty?
-      outpt=output()
-      msg<<" Output" + (outpt.empty? ? "." : ":\n#{outpt}") # unless outpt.empty? || @status!=:error
+      msg = "#{@test}:"
+      msg << " #{@timestamp.strftime("%H:%M:%S")} :"
+      msg << "#{@text}." unless @text.empty?
+      outpt = output
+      msg << " Output #{outpt.empty? ? "." : ":\n#{outpt}"}" # unless outpt.empty? || @status!=:error
       return msg
     end
 
     def output
-      msg=""
-      msg<<"#{@out}\n" unless @out.empty?
-      msg<<@err unless @err.empty?
-      msg<<"\n" + (@backtrace.kind_of?(Array) ? @backtrace.join("\n") : @backtrace) unless @backtrace.empty?
+      msg = ""
+      msg << "#{@out}\n" unless @out.empty?
+      msg << @err unless @err.empty?
+      msg << "\n#{@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace}" unless @backtrace.empty?
       return msg.chomp
     end
   end
