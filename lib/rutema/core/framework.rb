@@ -153,8 +153,12 @@ module Rutema
     # * +identifier+ - in most cases this would be the name of a test or its
     #   specification file
     # * +message+ - a short descriptive message detailing the error condition
-    def error identifier,message
-      @queue.push(ErrorMessage.new(:test=>identifier,:text=>message,:timestamp=>Time.now))
+    def error(identifier, message)
+      @queue.push(
+        ErrorMessage.new(
+          :test => identifier, :text => message, :timestamp => Time.now
+        )
+      )
     end
 
     ##
@@ -164,15 +168,19 @@ module Rutema
     # queue. If it's of type Hash it will be passed to the initializer of
     # RunnerMessage if it has both the keys :test and "status" or to the
     # initializer of Message if not so.
-    def message message
+    def message(message)
       case message
       when String
-        @queue.push(Message.new(:text=>message,:timestamp=>Time.now))
+        @queue.push(Message.new(:text => message, :timestamp => Time.now))
       when Hash
-        hm=Message.new(message)
-        hm=RunnerMessage.new(message) if message[:test] && message["status"]
-        hm.timestamp=Time.now
+        hm = Message.new(message)
+        hm = RunnerMessage.new(message) if message[:test] && message["status"]
+        hm.timestamp = Time.now
         @queue.push(hm)
+      else
+        raise RutemaError, \
+              "Instance of invalid type \"#{message.class}\" passed to" \
+              " Rutema::Messaging#message"
       end
     end
   end
@@ -185,7 +193,7 @@ module Rutema
   # * ParserError
   # * ReportError
   # * RunnerError
-  class RutemaError<RuntimeError
+  class RutemaError < RuntimeError
   end
 
   ##

@@ -105,6 +105,20 @@ module TestRutema
     end
 
     ##
+    # Verify that passing an invalid type to Rutema::Messaing#message raises an
+    # Rutema::RutemaError
+    def test_message_invalid_type
+      inst = MessagingTester.new
+      assert_raises(
+        Rutema::RutemaError,
+        "Instance of invalid type \"Integer\" passed to" \
+        " Rutema::Messaging#message"
+      ) do
+        inst.message(5)
+      end
+    end
+
+    ##
     # Verify functionality of Rutema::Messaging#message if a string is given as
     # a message
     def test_string_push
