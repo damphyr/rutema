@@ -74,7 +74,7 @@ module Rutema
   # propagated through instances of this class as well. If it's an engine error
   # (e.g. during parsing), then an ErrorMessage will be used in that case.
   class RunnerMessage<Message
-    attr_accessor :duration, :status, :number, :out, :err, :is_special
+    attr_accessor :backtrace, :duration, :status, :number, :out, :err, :is_special
 
     ##
     # Initialize a new runner message from data passed in a hash
