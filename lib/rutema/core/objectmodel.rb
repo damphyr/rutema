@@ -150,6 +150,11 @@ module Rutema
   #
   #ignore - set to true if the step's success or failure is to be ignored. It essentially means that the step is always considered succesfull
   #
+  #continue - set to true if the step's success or failure is to be recognized, but following steps in the same scenario are to be carried out regardless
+  #  of if indicates test failure, but ensures any further state is carried out as needed
+  #
+  # skip_on_error - if the test case has been marked a failure, skip steps marked with this attribute
+  #
   #number - this is set when the step is assigned to a Scenario and is the sequence number
   #
   #cmd - the command associated with this step. This should quack like Patir::Command.
@@ -180,6 +185,10 @@ module Rutema
       @attributes=Hash.new
       #ignore is off by default
       @attributes[:ignore]=false
+      # continue is off by default
+      @attributes[:continue] = false
+      # skip_on_error is off by default
+      @attributes[:skip_on_error]=false
       #assign
       @attributes[:cmd]=cmd if cmd
       @attributes[:text]=txt
@@ -207,9 +216,19 @@ module Rutema
       return ""
     end
 
+    def skip_on_error?
+      return false unless @attributes[:skip_on_error]
+      return @attributes[:skip_on_error]
+    end
+
     def ignore?
       return false unless @attributes[:ignore]
       return @attributes[:ignore]
+    end
+
+    def continue?
+      return false unless @attributes[:continue]
+      return @attributes[:continue]
     end
 
     def exec_time

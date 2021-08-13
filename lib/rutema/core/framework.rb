@@ -1,6 +1,8 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
+  STATUS_CODES=[:started,:skipped,:success,:warning,:error]
+
   ##
   # Simple base for classes concerned with message passing to report test
   # progress and failures
@@ -135,7 +137,8 @@ module Rutema
     def <<(message)
       @steps<<message
       @duration+=message.duration
-      @status=message.status
+      @status = message.status unless message.status.nil? \
+        || (!@status.nil? && STATUS_CODES.find_index(message.status) < STATUS_CODES.find_index(@status))
     end
   end
 

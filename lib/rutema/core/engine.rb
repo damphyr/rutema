@@ -248,7 +248,7 @@ module Rutema
   class Dispatcher
     ##
     # The interval between queue operations
-    INTERVAL=0.01
+    INTERVAL = 0.01
 
     ##
     # Initialize a new demultiplexer and instantiate all reporters requested by
