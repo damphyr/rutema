@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 gem "highline", "~>2.0.3", :require => false
 gem "patir", "~>0.8", :require => false
-gem "rexml", "~>3.3.9", :require => false
+gem "rexml", "~> 3.4.2", :require => false
 
 group :development do
   gem "coveralls", "~>0.8.23", :require => false
