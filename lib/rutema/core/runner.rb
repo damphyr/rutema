@@ -4,6 +4,7 @@ require_relative "framework"
 
 module Rutema
   module Runners
+    # The default test runner
     class Default
       include Rutema::Messaging
 
@@ -19,6 +20,7 @@ module Rutema
         @cleanup_blocks = []
       end
 
+      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/OptionalBooleanParameter
       def run(spec, is_special = false)
         @context["spec_name"] = spec.name
         steps = []
@@ -53,23 +55,27 @@ module Rutema
         @number_of_runs += 1
         return state
       ensure
-        begin
-          cleanup_exception = nil
-          @cleanup_blocks.each do |cleanup_block|
-            # Try all blocks
-
-            cleanup_block.run(@context) if cleanup_block.respond_to?(:run)
-          rescue Exception => e
-            # Ignore errors, ensure all cleanup steps are attempted
-            cleanup_exception = e
-          end
-          raise cleanup_exception unless cleanup_exception.nil?
-        ensure
-          @cleanup_blocks = []
-        end
+        ensure_cleanup_on_exception
       end
 
       private
+
+      def ensure_cleanup_on_exception
+        cleanup_exception = nil
+        @cleanup_blocks.each do |cleanup_block|
+          # Try all blocks
+
+          cleanup_block.run(@context) if cleanup_block.respond_to?(:run)
+        # rubocop:disable Lint/RescueException
+        rescue Exception => e
+          # Ignore errors, ensure all cleanup steps are attempted
+          cleanup_exception = e
+        end
+        # rubocop:enable Lint/RescueException
+        raise cleanup_exception unless cleanup_exception.nil?
+      ensure
+        @cleanup_blocks = []
+      end
 
       def run_scenario(name, scenario, meta, is_special)
         executed_steps = []
@@ -92,9 +98,11 @@ module Rutema
                 begin
                   cache_cleanup(s)
                   executed_steps << run_step(s, meta)
+                  # rubocop:disable Lint/RescueException
                 rescue Exception => e
                   throw e unless s.continue?
                   s.status = :error
+                  # rubocop:enable Lint/RescueException
                 end
                 message(
                   :test => name, :text => s.to_s, "number" => s.number,
@@ -103,7 +111,7 @@ module Rutema
                   "is_special" => is_special
                 )
                 status = s.status unless STATUS_CODES.find_index(s.status) < STATUS_CODES.find_index(status)
-                break if :error == s.status and !s.continue?
+                break if s.status == :error && !s.continue?
               end
             end
           end
@@ -113,6 +121,7 @@ module Rutema
         end
         return executed_steps, status
       end
+      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/OptionalBooleanParameter
 
       def cache_cleanup(step)
         return unless step.has_cleanup? && step.cleanup.respond_to?(:run)

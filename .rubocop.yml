@@ -155,7 +155,7 @@ Style/NumberedParametersLimit:
 Style/ObjectThen:
   Enabled: true
 Style/OpenStructUse:
-  Enabled: true
+  Enabled: false
 Style/OperatorMethodCall:
   Enabled: true
 Style/QuotedSymbols:

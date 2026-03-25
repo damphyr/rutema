@@ -199,6 +199,7 @@ module Rutema
       return nil
     end
 
+    # rubocop:disable Naming/PredicatePrefix
     ##
     # Check if the given test identifier belongs to the normal test cases or to
     # one of the special ones (the test (suite) setups and teardowns)
@@ -227,8 +228,9 @@ module Rutema
     end
   end
 
+  # rubocop:enable Naming/PredicatePrefix
   ##
-  # Class functioning as a demultiplexer between the Engine and the various
+  # Class functioning as a de-multiplexer between the Engine and the various
   # Reporters instances
   #
   # In stream mode the incoming queue is popped periodically and the messages
@@ -282,9 +284,9 @@ module Rutema
     # incoming queue
     def run!
       puts "Running #{@streaming_reporters.size} streaming reporters" if $DEBUG
-      @streaming_reporters.each { |r| r.run! }
+      @streaming_reporters.each(&:run!)
       @thread = Thread.new do
-        while true
+        loop do
           dispatch
           sleep INTERVAL
         end
@@ -309,7 +311,7 @@ module Rutema
       return unless @thread
 
       flush
-      @streaming_reporters.each { |r| r.exit }
+      @streaming_reporters.each(&:exit)
       Thread.kill(@thread)
     end
 
@@ -322,7 +324,7 @@ module Rutema
       puts "Flushing queues" if $DEBUG
       return unless @thread
 
-      while @queue.size > 0
+      until @queue.empty?
         dispatch
         sleep INTERVAL
       end
@@ -352,10 +354,10 @@ module Rutema
     # empty) and distribute it to all subscribed Reporters::EventReporter
     # instances
     def dispatch
-      return unless @queue.size > 0
+      return if @queue.empty?
 
       data = @queue.pop
-      @queues.each { |_i, q| q.push(data) } if data
+      @queues.each_value { |q| q.push(data) } if data
     end
   end
 end

@@ -20,13 +20,13 @@ module Rutema
       include Rutema::Elements::Minimal
 
       # :nodoc:
-      ELEM_SPEC = "specification"
+      ELEM_SPEC = "specification".freeze
       # :nodoc:
-      ELEM_DESC = "specification/description"
+      ELEM_DESC = "specification/description".freeze
       # :nodoc:
-      ELEM_TITLE = "specification/title"
+      ELEM_TITLE = "specification/title".freeze
       # :nodoc:
-      ELEM_SCENARIO = "specification/scenario"
+      ELEM_SCENARIO = "specification/scenario".freeze
 
       ##
       # Pass the given test specification and return a corresponding
@@ -59,6 +59,7 @@ module Rutema
 
       private
 
+      # rubocop:disable Metrics/AbcSize
       ##
       # Parse the XML specification of a testcase and create a corresponding
       # Rutema::Specification instance
@@ -90,6 +91,7 @@ module Rutema
         return spec
       end
 
+      # rubocop:enable Metrics/AbcSize
       ##
       # Conduct a simple validation of the XML document by checking if it
       # contains all necessary elements
@@ -157,8 +159,10 @@ module Rutema
       def add_attribute(element, attr, value)
         # If the string is a textual representation of a boolean value ...
         if boolean?(value)
+          # rubocop:disable Security/Eval
           # ... convert it to a boolean value
           element.attribute(attr, eval(value))
+          # rubocop:enable Security/Eval
         else
           element.attribute(attr, value)
         end

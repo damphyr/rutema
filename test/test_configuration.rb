@@ -34,6 +34,7 @@ CFG
 
 module TestRutema
   class TestRutemaConfiguration < Test::Unit::TestCase
+    # rubocop:disable  Metrics/AbcSize
     def test_rutema_configuration
       cfg = "foo.cfg"
       File.expects(:read).with("full.rutema").returns(FULL_CONFIG)
@@ -56,6 +57,7 @@ module TestRutema
       assert_not_nil(cfg.context)
     end
 
+    # rubocop:enable  Metrics/AbcSize
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
       cfg = Rutema::Configuration.new("test_identifiers.rutema")

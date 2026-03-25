@@ -18,7 +18,7 @@ module Rutema
     # require "rutema/reporters/junit"
     # cfg.reporter={:class=>Rutema::Reporters::JUnit,"filename"=>"rutema.junit.xml"}
     class JUnit < BlockReporter
-      DEFAULT_FILENAME = "rutema.results.junit.xml"
+      DEFAULT_FILENAME = "rutema.results.junit.xml".freeze
 
       def initialize(configuration, dispatcher)
         super
@@ -54,14 +54,14 @@ module Rutema
 
       private
 
+      # <testcase name="" time="">      => the results from executing a test method
+      #  <system-out>  => data written to System.out during the test run
+      #  <system-err>  => data written to System.err during the test run
+      #  <skipped/>    => test was skipped
+      #  <failure>     => test failed
+      #  <error>       => test encountered an error
+      # </testcase>
       def test_case(name, state)
-        # <testcase name="" time="">      => the results from executing a test method
-        #  <system-out>  => data written to System.out during the test run
-        #  <system-err>  => data written to System.err during the test run
-        #  <skipped/>    => test was skipped
-        #  <failure>     => test failed
-        #  <error>       => test encountered an error
-        # </testcase>
         element_test = REXML::Element.new("testcase")
         element_test.add_attributes("name" => name, "time" => state.duration, "classname" => @configuration.context[:config_name])
         if state.status != :success

@@ -1,7 +1,7 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
-  STATUS_CODES = [:started, :skipped, :success, :warning, :error]
+  STATUS_CODES = [:started, :skipped, :success, :warning, :error].freeze
 
   ##
   # Simple base for classes concerned with message passing to report test
@@ -92,7 +92,7 @@ module Rutema
       @number = params.fetch("number", 1)
       @out = params.fetch("out", "")
       @err = params.fetch("err", "")
-      @backtrace = params.fetch("backtrace", "")
+      @backtrace = params.fetch("backtrace", [])
       @is_special = params.fetch("is_special", "")
     end
 
@@ -103,7 +103,7 @@ module Rutema
       msg << " #{@timestamp.strftime("%H:%M:%S")} :"
       msg << "#{@text}." unless @text.empty?
       outpt = output
-      msg << (" Output" + (outpt.empty? ? "." : ":\n#{outpt}")) # unless outpt.empty? || @status!=:error
+      msg << " Output:\n#{outpt}" unless outpt.empty? || @status != :error
       return msg
     end
 
@@ -111,7 +111,7 @@ module Rutema
       msg = ""
       msg << "#{@out}\n" unless @out.empty?
       msg << @err unless @err.empty?
-      msg << ("\n" + (@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace)) unless @backtrace.empty?
+      msg << "\n#{@backtrace.is_a?(Array) ? @backtrace.join("\n") : @backtrace}" unless @backtrace.empty?
       return msg.chomp
     end
   end

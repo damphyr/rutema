@@ -40,16 +40,20 @@ module Rutema
     def method_missing(symbol, *args)
       @attributes ||= {}
       key = symbol.id2name.chomp("?").chomp("=").sub(/^has_/, "")
-      @attributes[:"#{key}"] = args[0] if key + "=" == symbol.id2name
-      if @attributes.has_key?(:"#{key}")
-        return true if "has_" + key + "?" == symbol.id2name
+      @attributes[:"#{key}"] = args[0] if "#{key}=" == symbol.id2name
+      if @attributes.key?(:"#{key}")
+        return true if "has_#{key}?" == symbol.id2name
 
         return @attributes[:"#{key}"]
       else
-        return false if "has_" + key + "?" == symbol.id2name
+        return false if "has_#{key}?" == symbol.id2name
 
         super
       end
+    end
+
+    def respond_to_missing?(*_args)
+      true
     end
 
     ##
@@ -57,7 +61,7 @@ module Rutema
     def respond_to?(symbol, include_all)
       @attributes ||= {}
       key = symbol.id2name.chomp("?").chomp("=").sub(/^has_/, "")
-      return true if @attributes.has_key?(:"#{key}")
+      return true if @attributes.key?(:"#{key}")
 
       super
     end
@@ -245,8 +249,8 @@ module Rutema
       return @attributes[:cmd].status
     end
 
-    def status=(st)
-      @attributes[:cmd].status = st if @attributes[:cmd]
+    def status=(stts)
+      @attributes[:cmd].status = stts if @attributes[:cmd]
     end
 
     def run(context = nil)
@@ -256,7 +260,7 @@ module Rutema
     end
 
     def reset
-      @attributes[:cmd].reset if @attributes[:cmd]
+      @attributes[:cmd]&.reset
     end
 
     def name_with_parameters
@@ -276,6 +280,7 @@ module Rutema
   end
 end
 
+# rubocop:disable Style/OneClassPerFile, Style/Documentation
 class Patir::ShellCommand
   # :nodoc:
   def to_s
@@ -289,3 +294,4 @@ class Patir::RubyCommand
     return @name
   end
 end
+# rubocop:enable Style/OneClassPerFile, Style/Documentation

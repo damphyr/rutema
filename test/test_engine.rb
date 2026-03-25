@@ -19,6 +19,7 @@ module TestRutema
     end
   end
 
+  # rubocop:disable Style/ClassVars
   class MockReporter < Rutema::Reporters::EventReporter
     def run!
       @@updates = 0
@@ -32,15 +33,12 @@ module TestRutema
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
-    def exit
-      super
-    end
-
     def self.updates
       return @@updates
     end
   end
 
+  # rubocop:enable Style/ClassVars
   class TestEngine < Test::Unit::TestCase
     def test_checks
       conf = {}

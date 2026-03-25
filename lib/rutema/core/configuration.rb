@@ -265,10 +265,8 @@ module Rutema
       @reporters = {}
       @context = {}
       @tests = []
-      # rubocop:disable Style/OpenStructUse
       @tools = OpenStruct.new
       @paths = OpenStruct.new
-      # rubocop:enable Style/OpenStructUse
     end
 
     private
@@ -396,7 +394,7 @@ module Rutema
       raise ConfigurationException.new, "Encountered an unknown directive in configuration file '#{filename}':\n#{$!.message}"
     rescue StandardError
       # just wrap the exception so we can differentiate
-      raise ConfigurationException.new, "#{$!.message}"
+      raise ConfigurationException.new, $!.message
     end
   end
 end

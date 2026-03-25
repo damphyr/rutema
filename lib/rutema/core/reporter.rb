@@ -45,7 +45,7 @@ module Rutema
 
       def run!
         @thread = Thread.new do
-          while true
+          loop do
             data = @queue.pop
             begin
               update(data) if data
@@ -65,7 +65,7 @@ module Rutema
         return unless @thread
 
         puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
-        sleep 0.1 while @queue.size > 0 && @thread.alive?
+        sleep 0.1 while !@queue.empty? && @thread.alive?
         Thread.kill(@thread)
       end
     end
@@ -110,6 +110,7 @@ module Rutema
         @mode = configuration.reporters.fetch(self.class, {})["mode"]
       end
 
+      # rubocop:disable Metrics/CyclomaticComplexity
       def update(message)
         return if @mode == "off"
 
@@ -129,19 +130,22 @@ module Rutema
         end
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity
 
+    # Produces a summary of the test run returning aggregate numbers for tests and failures
     class Summary < BlockReporter
       def initialize(configuration, dispatcher)
         super
         @silent = configuration.reporters.fetch(self.class, {})["silent"]
       end
 
+      # rubocop:disable Metrics/CyclomaticComplexity
       def report(specs, states, errors)
         failures = []
-        states.each { |_k, v| failures << v.test if v.status == :error }
+        states.each_value { |v| failures << v.test if v.status == :error }
 
         unless @silent
-          count_tests_run = states.select { |_name, state| !state.is_special }.count
+          count_tests_run = states.reject { |_name, state| state.is_special }.count
           puts "#{errors.size} errors. #{count_tests_run} test cases executed. #{failures.size} failed"
           unless failures.empty?
             puts "Failures:"
@@ -150,9 +154,11 @@ module Rutema
         end
         return failures.size + errors.size
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 
+  # rubocop:disable Style/Documentation
   module Utilities
     require "fileutils"
     def self.write_file(filename, content)
@@ -160,4 +166,5 @@ module Rutema
       File.binwrite(filename, content)
     end
   end
+  # rubocop:enable Style/Documentation
 end
