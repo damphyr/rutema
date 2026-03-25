@@ -3,6 +3,8 @@ source "https://rubygems.org"
 gem "highline", "~>2.0.3", :require => false
 gem "patir", "~>0.9", :require => false
 gem "rexml", "~>3.4", :require => false
+gem "observer", :require => false
+gem "abbrev", :require => false
 
 group :development do
   gem "coveralls_reborn", :require => false

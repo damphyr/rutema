@@ -17,7 +17,7 @@ Hoe.spec "rutema" do |prj|
   prj.readme_file = "README.md"
   prj.extra_deps << ["patir", "~>0.9"]
   prj.extra_deps << ["highline", "~>2.0"]
-  prj.spec_extras = { :executables => ["rutema"], :default_executable => "rutema" }
+  prj.spec_extras = { :executables => ["rutema"] }
 end
 
 Rake::Task[:default].clear
