@@ -1,7 +1,7 @@
 Gemspec/DevelopmentDependencies:
   Enabled: true
 Metrics/AbcSize:
-  Max: 25
+  Max: 30
 Metrics/ClassLength:
   Max: 250
 Metrics/BlockLength:
@@ -180,6 +180,12 @@ Style/ComparableClamp:
   Enabled: true
 Style/ConcatArrayLiterals:
   Enabled: true
+Style/EmptyMethod:
+    Enabled: false
+Style/NumericPredicate:
+    Enabled: false
+Style/SpecialGlobalVars:
+  Enabled: false
 AllCops:
   NewCops: enable
   SuggestExtensions: false
@@ -189,3 +195,7 @@ AllCops:
     - "tools/build/lib/gaudi/**/*"
     - "tools/build/lib/z-core/**/*"
     - "~/.gem/**"
+    - "vendor/**/*"
+    - "pkg/**/*"
+    - "test/**/*.spec"
+    - "examples/**/*.spec"

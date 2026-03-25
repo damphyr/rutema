@@ -1,6 +1,6 @@
 #  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
 
-require_relative 'framework'
+require_relative "framework"
 
 module Rutema
   ##
@@ -23,9 +23,9 @@ module Rutema
       ##
       # Initialize a new instance internally storing and validating the passed
       # Configuration instance
-      def initialize configuration
-        @configuration=configuration
-        @configuration||={}
+      def initialize(configuration)
+        @configuration = configuration
+        @configuration ||= {}
         validate_configuration
       end
 
@@ -34,15 +34,15 @@ module Rutema
       #
       # The passed argument can either be the path to a test specification file
       # or the test specification itself.
-      def parse_specification param
-        raise ParserError,"not implemented. You should derive a parser implementation from SpecificationParser!"
+      def parse_specification(_param)
+        raise ParserError, "not implemented. You should derive a parser implementation from SpecificationParser!"
       end
 
       ##
       # Parse a setup specification
       #
       # This calls #parse_specification by default.
-      def parse_setup param
+      def parse_setup(param)
         parse_specification(param)
       end
 
@@ -50,7 +50,7 @@ module Rutema
       # Parse a teardown specification
       #
       # This calls #parse_specification by default.
-      def parse_teardown param
+      def parse_teardown(param)
         parse_specification(param)
       end
 
