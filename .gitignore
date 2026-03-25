@@ -14,3 +14,4 @@ rubyforge_site/
 test/coverage/
 coverage/
 coverage.info
+vendor/
