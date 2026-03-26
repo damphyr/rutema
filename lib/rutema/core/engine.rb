@@ -171,8 +171,6 @@ module Rutema
       end
     end
 
-    # rubocop:disable  Style/OptionalBooleanParameter
-    #
     def run_test(specification, is_special = false)
       if specification.scenario
         status = @runner.run(specification, is_special)["status"]
@@ -182,9 +180,7 @@ module Rutema
       end
       return status
     end
-    # rubocop:enable  Style/OptionalBooleanParameter
 
-    ##
     # Instantiate a new class of a given type passing it a given configuration
     # upon construction
     #

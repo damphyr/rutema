@@ -186,6 +186,8 @@ Style/NumericPredicate:
     Enabled: false
 Style/SpecialGlobalVars:
   Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
 AllCops:
   NewCops: enable
   SuggestExtensions: false

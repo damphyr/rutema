@@ -26,12 +26,9 @@ module TestRutema
       super
     end
 
-    # rubocop:disable Lint/UnusedMethodArgument
-    def update(data)
-      # p data
+    def update(_data)
       @@updates += 1
     end
-    # rubocop:enable Lint/UnusedMethodArgument
 
     def self.updates
       return @@updates

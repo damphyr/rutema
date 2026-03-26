@@ -1,7 +1,7 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
 module Rutema
-  STATUS_CODES = [:started, :skipped, :success, :warning, :error].freeze
+  STATUS_CODES = [:not_executed, :started, :skipped, :success, :warning, :error].freeze
 
   ##
   # Simple base for classes concerned with message passing to report test

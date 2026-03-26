@@ -1,11 +1,11 @@
 source "https://rubygems.org"
 
+gem "abbrev", "~>0.1", :require => false
 gem "highline", "~>2.0.3", :require => false
+gem "observer", "~>0.1", :require => false
+gem "ostruct", "~>0.6", :require => false
 gem "patir", "~>0.9", :require => false
 gem "rexml", "~>3.4", :require => false
-gem "observer", "~>0.1", :require => false
-gem "abbrev", "~>0.1", :require => false
-gem "ostruct", "~>0.6", :require => false
 
 group :development do
   gem "coveralls_reborn", :require => false

@@ -35,12 +35,14 @@ end
 There is a major flaw in the above configuration file and it becomes immediately obvious once you have a few dozen test specifications. You can't possibly expect us to force you to add every single test specification filename by hand?!
 
 Well...ofcourse not. Here is where using Ruby as a configuration language shines:
+
 ```ruby
 require 'rake'
 configure do |cfg|
   cfg.tests=Rake::FileList["a_lot_of_tests_dir/*.spec"]
 end
 ```
+
 The above will add all *.spec* files to the tests used, making use of the Rake library's code for scanning the filesystem.
 
 The configuration file in this example serves as a single source for all the parameters for all the tools and also defines the suite of tests to run. This is not very practical. In order to be able to compose configuration files we use the import statement:
