@@ -280,7 +280,6 @@ module Rutema
   end
 end
 
-# rubocop:disable Style/OneClassPerFile, Style/Documentation
 class Patir::ShellCommand
   # :nodoc:
   def to_s
@@ -294,4 +293,3 @@ class Patir::RubyCommand
     return @name
   end
 end
-# rubocop:enable Style/OneClassPerFile, Style/Documentation
