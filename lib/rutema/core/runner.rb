@@ -20,45 +20,50 @@ module Rutema
         @cleanup_blocks = []
       end
 
-      # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/OptionalBooleanParameter
       def run(spec, is_special = false)
         @context["spec_name"] = spec.name
         steps = []
-        status = :success
+        run_status = :success
         state = { "start_time" => Time.now, "sequence_id" => @number_of_runs, :test => spec.name }
         message(:test => spec.name, :text => "started")
         if @setup
           message(:test => spec.name, :text => "setup")
-          executed_steps, setup_status = run_scenario("_setup_", @setup.scenario, @context, true)
-          status = setup_status unless STATUS_CODES.find_index(setup_status) < STATUS_CODES.find_index(status)
-          steps += executed_steps
+          run_status, steps = execute_and_collect_state("_setup_", @setup.scenario, true, run_status, steps)
         end
-        if status == :error
+        if run_status == :error
           message(:test => spec.name, "number" => 0, "status" => :error, "out" => "Setup failed", "err" => "", "duration" => 0)
         else
           message(:test => spec.name, :text => "running")
-          executed_steps, testspec_status = run_scenario(spec.name, spec.scenario, @context, is_special)
-          status = testspec_status unless STATUS_CODES.find_index(testspec_status) < STATUS_CODES.find_index(status)
-          steps += executed_steps
+          run_status, steps = execute_and_collect_state(spec.name, spec.scenario, is_special, run_status, steps)
         end
-        @context["rutema_status"] = status
+        @context["rutema_status"] = run_status
         if @teardown
           message(:test => spec.name, :text => "teardown")
-          _, teardown_status = run_scenario("_teardown_", @teardown.scenario, @context, true)
-          status = teardown_status unless STATUS_CODES.find_index(teardown_status) < STATUS_CODES.find_index(status)
+          run_status, steps = execute_and_collect_state("_teardown_", @teardown.scenario, true, run_status, steps)
         end
-        @context["rutema_status"] = status
-        message(:test => spec.name, :text => "finished")
-        state["status"] = status
-        state["stop_time"] = Time.now
-        state["steps"] = steps
-        @number_of_runs += 1
-        return state
+        wrap_up_execution(run_status, steps, spec, state)
       ensure
         ensure_cleanup_on_exception
       end
 
       private
+
+      def execute_and_collect_state(test_name, scenario, is_special, current_run_status, steps_until_now)
+        executed_steps, scenario_status = run_scenario(test_name, scenario, @context, is_special)
+        current_run_status = scenario_status unless STATUS_CODES.find_index(scenario_status) < STATUS_CODES.find_index(current_run_status)
+        steps_until_now += executed_steps
+        return current_run_status, steps_until_now
+      end
+
+      def wrap_up_execution(run_status, executed_steps, last_run_spec, state)
+        @context["rutema_status"] = run_status
+        message(:test => last_run_spec.name, :text => "finished")
+        state["status"] = run_status
+        state["stop_time"] = Time.now
+        state["steps"] = executed_steps
+        @number_of_runs += 1
+        return state
+      end
 
       def ensure_cleanup_on_exception
         cleanup_exception = nil
@@ -77,6 +82,7 @@ module Rutema
         @cleanup_blocks = []
       end
 
+      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       def run_scenario(name, scenario, meta, is_special)
         executed_steps = []
         status = :skipped
@@ -90,38 +96,44 @@ module Rutema
               if status == :error && s.skip_on_error?
                 message(:test => name, :text => s.to_s, "number" => s.number, "status" => :skipped, "is_special" => is_special)
               else
-                message(
-                  :test => name, :text => s.to_s, "number" => s.number,
-                  "status" => :started, "is_special" => is_special
-                )
-                sleep 0.05
-                begin
-                  cache_cleanup(s)
-                  executed_steps << run_step(s, meta)
-                  # rubocop:disable Lint/RescueException
-                rescue Exception => e
-                  throw e unless s.continue?
-                  s.status = :error
-                  # rubocop:enable Lint/RescueException
-                end
-                message(
-                  :test => name, :text => s.to_s, "number" => s.number,
-                  "status" => s.status, "out" => s.output, "err" => s.error,
-                  "backtrace" => s.backtrace, "duration" => s.exec_time,
-                  "is_special" => is_special
-                )
-                status = s.status unless STATUS_CODES.find_index(s.status) < STATUS_CODES.find_index(status)
+                executed_step = next_step(s, name, meta, is_special)
+                status = executed_step.status unless STATUS_CODES.find_index(executed_step.status) < STATUS_CODES.find_index(status)
+                executed_steps << executed_step
                 break if s.status == :error && !s.continue?
               end
             end
           end
         rescue StandardError
-          error(name, $!.message)
+          error(name, "#{$!.message}\n#{$!.backtrace.join("\n")}")
           status = :error
         end
         return executed_steps, status
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/OptionalBooleanParameter
+      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+      def next_step(step_spec, test_name, meta, test_is_special)
+        message(
+          :test => test_name, :text => step_spec.to_s, "number" => step_spec.number,
+          "status" => :started, "is_special" => test_is_special
+        )
+        sleep 0.05
+        begin
+          cache_cleanup(step_spec)
+          executed_step = run_step(step_spec, meta)
+          # rubocop:disable Lint/RescueException
+        rescue Exception => e
+          throw e unless step_spec.continue?
+          step_spec.status = :error
+          # rubocop:enable Lint/RescueException
+        end
+        message(
+          :test => test_name, :text => step_spec.to_s, "number" => step_spec.number,
+          "status" => step_spec.status, "out" => step_spec.output, "err" => step_spec.error,
+          "backtrace" => step_spec.backtrace, "duration" => step_spec.exec_time,
+          "is_special" => test_is_special
+        )
+        return executed_step
+      end
 
       def cache_cleanup(step)
         return unless step.has_cleanup? && step.cleanup.respond_to?(:run)
