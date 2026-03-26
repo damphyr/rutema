@@ -10,12 +10,13 @@ We want to test that the system starts correctly. In human readable form:
 
 Breaking down the test steps:
 
- * Flash the firmware: Find the latest build and flash the firmware using the flash utility
- * Reboot the device: Press the button or use the remote boot utility
- * Wait 5 seconds
- * Load the DebugTool and verify that the state=="Run" and ErrorList is empty
+* Flash the firmware: Find the latest build and flash the firmware using the flash utility
+* Reboot the device: Press the button or use the remote boot utility
+* Wait 5 seconds
+* Load the DebugTool and verify that the state=="Run" and ErrorList is empty
 
  In XML this could look like
+
  ```xml
 <specification id="T001">
   <title>Startup</title>
@@ -28,7 +29,8 @@ Breaking down the test steps:
   </scenario>
 </specification>
 ```
-The scenario above works, but is not flexible enough: commands need to be in the path (flash, reset, DebugTool) or fully specified and all those <command cmd=""/> lines are a bit counterintuitive.
+
+The scenario above works, but is not flexible enough: commands need to be in the path (flash, reset, DebugTool) or fully specified and all those `<command cmd=""/>` lines are a bit counterintuitive.
 How about:
 
  ```xml
@@ -45,7 +47,7 @@ How about:
 ```
 
 This is a small DSL, specific to the project and in line with the way team members will communicate the steps of the test.
-Yet we still need to define all those parameters, the ports and the paths and address spaces. 
+Yet we still need to define all those parameters, the ports and the paths and address spaces.
 
 This happens in the configuration file, e.g.
 

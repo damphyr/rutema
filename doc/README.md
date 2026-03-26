@@ -8,7 +8,7 @@ This becomes the rutema specification and it can be parsed and executed by a pro
 
 This consistency gives us reproducible results that help us localize errors faster.
 
-When viewed over time, it helps us identify incosistencies in the system under test (things like race conditions) by eliminating the inconsistencies in the test environment.
+When viewed over time, it helps us identify inconsistencies in the system under test (things like race conditions) by eliminating the inconsistencies in the test environment.
 
 The next logical step is to remove "administrative" tasks (like collecting test output, logs and creating reports) from the responsibility of the tester, automate them within rutema and let the tester concentrate on the semantics of the test.
 
@@ -16,13 +16,13 @@ The next logical step is to remove "administrative" tasks (like collecting test 
 
 In any software development project there is a wide variety of testing tools available, depending on programming language and technology (desktop, web, mobile, embedded etc.).
 
-rutema aims to provide a way to coordinate and combine existing tools, not to replace them. 
+rutema aims to provide a way to coordinate and combine existing tools, not to replace them.
 
 The rutema specification combines semantic information (the description, the title) conveying the purpose of a test, with management information (an ID, tracking information for requirements) and the implementation in one logical entity.
 
-To be of any use the format of the specification must be machine readable but also human readable. Inadvertendly the choice leads to a text-based format. 
+To be of any use the format of the specification must be machine readable but also human readable. Inadvertently the choice leads to a text-based format. 
 
-The core implementation presents a simple XML format that can be extended easily. XML in this case fullfills a role very close to it's original: annotate and structure text.
+The core implementation presents a simple XML format that can be extended easily. XML in this case fulfills a role very close to it's original: annotate and structure text.
 
 It should be noted that over the years there have been several different rutema specification formats in use (YAML, JSON, a DIY text format etc.) but the XML format offered in the core has been by far the easiest to manage and extend.
 
