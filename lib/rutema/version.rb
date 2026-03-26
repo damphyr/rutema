@@ -16,7 +16,7 @@ module Rutema
     MINOR = 0
     ##
     # The tiny version of the rutema gem
-    TINY = 1
+    TINY = 2
     ##
     # The version information of the rutema gem as a string
     STRING = [MAJOR, MINOR, TINY].join(".")

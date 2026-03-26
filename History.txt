@@ -1,3 +1,5 @@
+== 2.0.2/ 2026-03-26
+ * Modernize the code base. Code style updated, gem versions updated, ruby 3.x and 4.x deprecations handled
 == 2.0.1/ 2026-03-02
  * Release the 10 year old changes that fix handling of execution context within steps
 == 2.0.0/ 2017-09-23
