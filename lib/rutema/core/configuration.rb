@@ -1,9 +1,9 @@
 #  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
 
-  require 'ostruct'
-  require_relative 'parser'
-  require_relative 'reporter'
-  module Rutema
+require "ostruct"
+require_relative "parser"
+require_relative "reporter"
+module Rutema
   ##
   # Mix-in module defining all configuration directives available for rutema
   #
@@ -16,12 +16,12 @@
   # the language including _require_ directives.
   #
   #     require "rake/file_list"
-  #     
+  #
   #     configure do |cfg|
   #       cfg.parser = { :class => Rutema::Parsers::XML }
   #       cfg.tests = FileList['all/of/the/tests/**/*.*']
   #     end
-    module ConfigurationDirectives
+  module ConfigurationDirectives
     ##
     # Hash of context data which may be utilized throughout test runs
     #
@@ -99,10 +99,11 @@
     # The path to NUnit can be accessed the following way:
     #
     #     @configuration.tools["nunit"][:path]
-      def tool= definition
-        raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
-        @tools[definition[:name]]=definition
-      end
+    def tool=(definition)
+      raise ConfigurationException, "required key :name is missing from #{definition}" unless definition[:name]
+
+      @tools[definition[:name]] = definition
+    end
 
     ##
     # Add a path indexed by a representative name to the paths attribute
@@ -118,11 +119,12 @@
     #     configure do |cfg|
     #       cfg.path = { :name => "doc", :path => "/usr/local/share/doc" }
     #     end
-      def path= definition
-        raise ConfigurationException,"required key :name is missing from #{definition}" unless definition[:name]
-        raise ConfigurationException,"required key :path is missing from #{definition}" unless definition[:path]
-        @paths[definition[:name]]=definition[:path]
-      end
+    def path=(definition)
+      raise ConfigurationException, "required key :name is missing from #{definition}" unless definition[:name]
+      raise ConfigurationException, "required key :path is missing from #{definition}" unless definition[:path]
+
+      @paths[definition[:name]] = definition[:path]
+    end
 
     ##
     # Path to a setup specification (optional)
@@ -130,9 +132,9 @@
     # This setup specification will be run before every test specification.
     #
     # Later calls override earlier ones.
-      def setup= path
-        @setup=check_path(path)
-      end
+    def setup=(path)
+      @setup = check_path(path)
+    end
 
     ##
     # Path to a teardown specification (optional)
@@ -140,9 +142,9 @@
     # This teardown specification will be run after every test specification.
     #
     # Later calls override earlier ones.
-      def teardown= path
-        @teardown=check_path(path)
-      end
+    def teardown=(path)
+      @teardown = check_path(path)
+    end
 
     ##
     # Path to a suite setup specification (optional)
@@ -154,12 +156,12 @@
     # This is aliased as #check= for backwards compatibility.
     #
     # Later calls override earlier ones.
-      def suite_setup= path
-        @suite_setup=check_path(path)
-      end
+    def suite_setup=(path)
+      @suite_setup = check_path(path)
+    end
 
-      alias_method :check,:suite_setup
-      alias_method :check=,:suite_setup=
+    alias check suite_setup
+    alias check= suite_setup=
 
     ##
     # Path to a suite teardown specification (optional)
@@ -168,9 +170,9 @@
     # specifications have been executed.
     #
     # Later calls override earlier ones.
-      def suite_teardown= path
-        @suite_teardown=check_path(path)
-      end
+    def suite_teardown=(path)
+      @suite_teardown = check_path(path)
+    end
 
     ##
     # Context information which shall be accessible during test execution
@@ -180,20 +182,21 @@
     #
     # This could be used e.g. to pass data as tester names, version numbers,
     # etc. to the reporters.
-      def context= definition
-        @context||=Hash.new
-        raise ConfigurationException,"Only accepting hash values as context_data" unless definition.kind_of?(Hash)
-        @context.merge!(definition)
-      end
+    def context=(definition)
+      @context ||= {}
+      raise ConfigurationException, "Only accepting hash values as context_data" unless definition.is_a?(Hash)
+
+      @context.merge!(definition)
+    end
 
     ##
     # Add an array of (paths of) test specifications to be executed
     #
     # Usually an array of file paths would be given. Generally the passed array
     # can contain anything intelligible for the parser.
-      def tests= array_of_identifiers
-        @tests+=array_of_identifiers.map{|f| full_path(f)}
-      end
+    def tests=(array_of_identifiers)
+      @tests += array_of_identifiers.map { |f| full_path(f) }
+    end
 
     ##
     # Set the parser class which shall be used to parse test specifications
@@ -208,10 +211,11 @@
     #     configure do |cfg|
     #      cfg.parser = { :class => Rutema::Parsers::XML }
     #     end
-      def parser= definition
-        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-        @parser=definition
-      end
+    def parser=(definition)
+      raise ConfigurationException, "required key :class is missing from #{definition}" unless definition[:class]
+
+      @parser = definition
+    end
 
     ##
     # Set the runner which shall be used to execute the tests
@@ -229,10 +233,11 @@
     #     configure do |cfg|
     #      cfg.runner = { :class => Rutema::Runners::Default }
     #     end
-      def runner= definition
-        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-        @runner=definition
-      end
+    def runner=(definition)
+      raise ConfigurationException, "required key :class is missing from #{definition}" unless definition[:class]
+
+      @runner = definition
+    end
 
     ##
     # Add a reporter for the test execution
@@ -248,47 +253,50 @@
     #      cfg.reporters = { :class => Rutema::Reporters::Console }
     #      cfg.reporters = { :class => Rutema::Reporters::JUnit }
     #     end
-      def reporter= definition
-        raise ConfigurationException,"required key :class is missing from #{definition}" unless definition[:class]
-        @reporters[definition[:class]]=definition
-      end
+    def reporter=(definition)
+      raise ConfigurationException, "required key :class is missing from #{definition}" unless definition[:class]
+
+      @reporters[definition[:class]] = definition
+    end
 
     ##
     # Initialize member variables which are needed to process a configuration
-      def init
-        @reporters={}
-        @context={}
-        @tests=[]
-        @tools=OpenStruct.new
-        @paths=OpenStruct.new
-      end
+    def init
+      @reporters = {}
+      @context = {}
+      @tests = []
+      @tools = OpenStruct.new
+      @paths = OpenStruct.new
+    end
 
-      private
+    private
 
     ##
     # Check if the given path exists and raise a ConfigurationException if not
-      def check_path path
-        path=File.expand_path(path)
-        raise ConfigurationException,"#{path} does not exist" unless File.exist?(path)
-        return path
-      end
+    def check_path(path)
+      path = File.expand_path(path)
+      raise ConfigurationException, "#{path} does not exist" unless File.exist?(path)
+
+      return path
+    end
 
     ##
     # Return a string in the form of "key=value,key=value" for a given hash
-      def definition_string definition
-        msg=Array.new
-        definition.each{|k,v| msg<<"#{k}=#{v}"}
-        return msg.join(",")
-      end
+    def definition_string(definition)
+      msg = definition.map { |k, v| "#{k}=#{v}" }
+      # definition.each { |k, v| msg << "#{k}=#{v}" }
+      return msg.join(",")
+    end
 
     ##
     # Convert the given filename to an absolute path if the file exists or
     # otherwise return the passed filename as is
-      def full_path filename
-        return File.expand_path(filename) if File.exist?(filename)
-        return filename
-      end
+    def full_path(filename)
+      return File.expand_path(filename) if File.exist?(filename)
+
+      return filename
     end
+  end
 
   ##
   # Exception which is being raised upon errors concerning configurations passed
@@ -299,8 +307,8 @@
   # * a file or path could not be found/does not exist
   # * passed hash arguments being of an unexpected/unhandled type
   # * passed hash arguments missing required keys
-    class ConfigurationException<RuntimeError
-    end
+  class ConfigurationException < RuntimeError
+  end
 
   ##
   # Class for reading, parsing and representing the configuration for a rutema
@@ -310,24 +318,24 @@
   # component which tests to execute how.
   #
   # Rutema::ConfigurationDirectives defines all relevant methods and attributes.
-    class Configuration
-      include ConfigurationDirectives
+  class Configuration
+    include ConfigurationDirectives
 
     ##
     # The filename of the root configuration file from which the Configuration
     # instance was built
-      attr_reader :filename
+    attr_reader :filename
 
     ##
     # Create a new instance by parsing the given configuration file
     #
     # * +config_file+ - the configuration file which shall be parsed on
     #   initializing the new instance
-      def initialize config_file
-        @filename=config_file
-        init
-        load_configuration(@filename)
-      end
+    def initialize(config_file)
+      @filename = config_file
+      init
+      load_configuration(@filename)
+    end
 
     ##
     # Yield the instance itself if a block is given
@@ -335,11 +343,11 @@
     # This can be used e.g. in configuration files to execute a block on the
     # Configuration instance itself (e.g. to modify it through the setter
     # methods of the ConfigurationDirectives module).
-      def configure
-        if block_given?
-          yield self
-        end
-      end
+    def configure
+      return unless block_given?
+
+      yield self
+    end
 
     ##
     # Load and import the configuration from a file
@@ -353,42 +361,40 @@
     # the specialized configurations can import the "main.rutema" as follows:
     #
     #     import("main.rutema")
-      def import filename
-        fnm = File.expand_path(filename)
-        if File.exist?(fnm)          
-          load_configuration(fnm)
-        else
-          raise ConfigurationException, "Import error: Can't find #{fnm}"
-        end
-      end
+    def import(filename)
+      fnm = File.expand_path(filename)
+      raise ConfigurationException, "Import error: Can't find #{fnm}" unless File.exist?(fnm)
 
-      private
+      load_configuration(fnm)
+    end
+
+    private
 
     ##
     # Load the configuration from the file given by +filename+
     #
     # On many common parsing errors a ConfigurationException is being raised.
-      def load_configuration filename
-        begin 
-          cfg_txt=File.read(filename)
-          cwd=File.expand_path(File.dirname(filename))
-          # WORKAROUND for ruby 2.3.1
-          fname=File.basename(filename)
-          # evaluate in the working directory to enable relative paths in
-          # configuration
-          Dir.chdir(cwd){eval(cfg_txt,binding(),fname,__LINE__)}
-        rescue ConfigurationException
-          # pass it on, do not wrap again
-          raise
-        rescue SyntaxError
-          # just wrap the exception so we can differentiate
-          raise ConfigurationException.new,"Syntax error in the configuration file '#{filename}':\n#{$!.message}"
-        rescue NoMethodError
-          raise ConfigurationException.new,"Encountered an unknown directive in configuration file '#{filename}':\n#{$!.message}"
-        rescue 
-          # just wrap the exception so we can differentiate
-          raise ConfigurationException.new,"#{$!.message}"
-        end
-      end
+    def load_configuration(filename)
+      cfg_txt = File.read(filename)
+      cwd = File.expand_path(File.dirname(filename))
+      # WORKAROUND for ruby 2.3.1
+      fname = File.basename(filename)
+      # evaluate in the working directory to enable relative paths in
+      # configuration
+      # rubocop:disable  Security/Eval
+      Dir.chdir(cwd) { eval(cfg_txt, binding, fname, __LINE__) }
+      # rubocop:enable  Security/Eval
+    rescue ConfigurationException
+      # pass it on, do not wrap again
+      raise
+    rescue SyntaxError
+      # just wrap the exception so we can differentiate
+      raise ConfigurationException.new, "Syntax error in the configuration file '#{filename}':\n#{$!.message}"
+    rescue NoMethodError
+      raise ConfigurationException.new, "Encountered an unknown directive in configuration file '#{filename}':\n#{$!.message}"
+    rescue StandardError
+      # just wrap the exception so we can differentiate
+      raise ConfigurationException.new, $!.message
     end
   end
+end

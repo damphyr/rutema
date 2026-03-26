@@ -24,13 +24,13 @@ module Rutema
       #
       # * +configuration+ - the Configuration instance of the test run
       # * +dispatcher+ - unused
-      def initialize configuration,dispatcher
-        @configuration=configuration
+      def initialize(configuration, _dispatcher)
+        @configuration = configuration
       end
 
       ##
       #
-      def report specifications,states,errors
+      def report(specifications, states, errors)
       end
     end
 
@@ -38,18 +38,18 @@ module Rutema
     # Event reporters receive and process information continually during a test
     # run
     class EventReporter
-      def initialize configuration,dispatcher
-        @configuration=configuration
-        @queue=dispatcher.subscribe(self.object_id)
+      def initialize(configuration, dispatcher)
+        @configuration = configuration
+        @queue = dispatcher.subscribe(object_id)
       end
 
       def run!
-        @thread=Thread.new do
-          while true do
-            data=@queue.pop
+        @thread = Thread.new do
+          loop do
+            data = @queue.pop
             begin
               update(data) if data
-            rescue
+            rescue StandardError
               puts "#{self.class} failed with #{$!.message}"
               raise
             end
@@ -57,104 +57,114 @@ module Rutema
         end
       end
 
-      def update data
+      def update(data)
       end
 
       def exit
         puts "Exiting #{self.class}" if $DEBUG
-        if @thread
-          puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
-          while @queue.size>0 && @thread.alive? do
-            sleep 0.1
-          end
-          Thread.kill(@thread)
-        end
+        return unless @thread
+
+        puts "Reporter died with #{@queue.size} messages in the queue" unless @thread.alive?
+        sleep 0.1 while !@queue.empty? && @thread.alive?
+        Thread.kill(@thread)
       end
     end
-    #This reporter is always instantiated and collects all messages fired by the rutema engine
+
+    # This reporter is always instantiated and collects all messages fired by the rutema engine
     #
-    #The collections of errors and states are then at the end of a run fed to the block reporters
-    class Collector<EventReporter
-      attr_reader :errors,:states
-      def initialize params,dispatcher
-        super(params,dispatcher)
-        @errors=[]
-        @states={}
+    # The collections of errors and states are then at the end of a run fed to the block reporters
+    class Collector < EventReporter
+      attr_reader :errors, :states
+
+      def initialize(params, dispatcher)
+        super
+        @errors = []
+        @states = {}
       end
 
-      def update message
+      def update(message)
         case message
         when RunnerMessage
-          test_state=@states[message.test]
+          test_state = @states[message.test]
           if test_state
-            test_state<<message
+            test_state << message
           else
-            test_state=Rutema::ReportState.new(message)
+            test_state = Rutema::ReportState.new(message)
           end
-          @states[message.test]=test_state
+          @states[message.test] = test_state
         when ErrorMessage
-          @errors<<message
-        end
-      end
-    end
-    #A very simple event reporter that outputs to the console
-    #
-    #It has three settings: off, normal and verbose.
-    #
-    #Example configuration:
-    # cfg.reporter={:class=>Rutema::Reporters::Console, "mode"=>"verbose"}
-    class Console<EventReporter
-      def initialize configuration,dispatcher
-        super(configuration,dispatcher)
-        @mode=configuration.reporters.fetch(self.class,{})["mode"]
-      end
-      def update message
-        unless @mode=="off"
-          case message
-          when RunnerMessage
-            if message.status == :error
-              puts "FATAL|#{message.to_s}"
-            elsif message.status == :warning
-              puts "WARNING|#{message.to_s}"
-            else
-              puts "#{message.to_s} #{message.status}." if @mode=="verbose"
-            end
-          when ErrorMessage
-            puts message.to_s 
-          when Message
-            puts message.to_s if @mode=="verbose"
-          end
+          @errors << message
         end
       end
     end
 
-    class Summary<BlockReporter
-      def initialize configuration,dispatcher
-        super(configuration,dispatcher)
-        @silent=configuration.reporters.fetch(self.class,{})["silent"]
+    # A very simple event reporter that outputs to the console
+    #
+    # It has three settings: off, normal and verbose.
+    #
+    # Example configuration:
+    # cfg.reporter={:class=>Rutema::Reporters::Console, "mode"=>"verbose"}
+    class Console < EventReporter
+      def initialize(configuration, dispatcher)
+        super
+        @mode = configuration.reporters.fetch(self.class, {})["mode"]
       end
-      def report specs,states,errors
-        failures=[]
-        states.each{|k,v| failures<<v.test if v.status==:error}
+
+      # rubocop:disable Metrics/CyclomaticComplexity
+      def update(message)
+        return if @mode == "off"
+
+        case message
+        when RunnerMessage
+          if message.status == :error
+            puts "FATAL|#{message}"
+          elsif message.status == :warning
+            puts "WARNING|#{message}"
+          elsif @mode == "verbose"
+            puts "#{message} #{message.status}."
+          end
+        when ErrorMessage
+          puts message
+        when Message
+          puts message if @mode == "verbose"
+        end
+      end
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+
+    # Produces a summary of the test run returning aggregate numbers for tests and failures
+    class Summary < BlockReporter
+      def initialize(configuration, dispatcher)
+        super
+        @silent = configuration.reporters.fetch(self.class, {})["silent"]
+      end
+
+      # rubocop:disable Metrics/CyclomaticComplexity
+      def report(specs, states, errors)
+        failures = []
+        states.each_value { |v| failures << v.test if v.status == :error }
 
         unless @silent
-          count_tests_run = states.select { |name, state| !state.is_special }.count
+          count_tests_run = states.reject { |_name, state| state.is_special }.count
           puts "#{errors.size} errors. #{count_tests_run} test cases executed. #{failures.size} failed"
           unless failures.empty?
             puts "Failures:"
-            puts specs.map{|spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name)}.compact.join("\n")
+            puts specs.map { |spec| "  #{spec.name} - #{spec.filename}" if failures.include?(spec.name) }.compact.join("\n")
           end
         end
-        return failures.size+errors.size
+        return failures.size + errors.size
       end
+      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 
+  # rubocop:disable Style/Documentation
   module Utilities
     require "fileutils"
-    def self.write_file filename,content
-      FileUtils.mkdir_p(File.dirname(filename),:verbose=>false)
-      File.open(filename, 'wb') {|f| f.write(content) }
-    end  
+    def self.write_file(filename, content)
+      FileUtils.mkdir_p(File.dirname(filename), :verbose => false)
+      File.binwrite(filename, content)
+    end
   end
+  # rubocop:enable Style/Documentation
 end

@@ -1,10 +1,9 @@
 #  Copyright (c) 2007-2021 Vassilis Rizopoulos. All rights reserved.
 
-require 'thread'
-require_relative 'parser'
-require_relative 'reporter'
-require_relative 'runner'
-require_relative '../version'
+require_relative "parser"
+require_relative "reporter"
+require_relative "runner"
+require_relative "../version"
 
 module Rutema
   ##
@@ -29,21 +28,21 @@ module Rutema
     #
     # * +configuration+ - a Configuration instance according to which Engine,
     #   its components and the test run shall be set up
-    def initialize configuration
-      @queue=Queue.new
-      @parser=instantiate_class(configuration.parser,configuration) if configuration.parser
+    def initialize(configuration)
+      @queue = Queue.new
+      @parser = instantiate_class(configuration.parser, configuration) if configuration.parser
       if configuration.runner
-        if configuration.runner[:class]
-         @runner=configuration.runner[:class].new(configuration.context,@queue)
-        else
-          raise RutemaError,"Runner settting overriden, but missing :class"
-        end
+        raise RutemaError, "Runner settting overriden, but missing :class" unless configuration.runner[:class]
+
+        @runner = configuration.runner[:class].new(configuration.context, @queue)
+
       else
-        @runner=Rutema::Runners::Default.new(configuration.context,@queue)
+        @runner = Rutema::Runners::Default.new(configuration.context, @queue)
       end
-      raise RutemaError,"Could not instantiate parser" unless @parser
-      @dispatcher=Dispatcher.new(@queue,configuration)
-      @configuration=configuration
+      raise RutemaError, "Could not instantiate parser" unless @parser
+
+      @dispatcher = Dispatcher.new(@queue, configuration)
+      @configuration = configuration
     end
 
     ##
@@ -52,18 +51,18 @@ module Rutema
     # * +test_identifier+ - an optional identifier of a single test case to be
     #   executed, this cannot be an arbitrary one but must still be contained
     #   in the configured test specification identifiers
-    def run test_identifier=nil
+    def run(test_identifier = nil)
       @dispatcher.run!
       # start
       message("start")
-      suite_setup,suite_teardown,setup,teardown,tests=*parse(test_identifier)
-      if tests.empty?  
+      suite_setup, suite_teardown, setup, teardown, tests = *parse(test_identifier)
+      if tests.empty?
         @dispatcher.exit
-        raise RutemaError,"No tests to run!"
+        raise RutemaError, "No tests to run!"
       else
         # running - at this point all checks are done and the tests are active
         message("running")
-        run_scenarios(tests,suite_setup,suite_teardown,setup,teardown)
+        run_scenarios(tests, suite_setup, suite_teardown, setup, teardown)
       end
       message("end")
       @dispatcher.exit
@@ -77,23 +76,23 @@ module Rutema
     # * +test_identifier+ - an optional identifier of a single test case to be
     #   executed, this cannot be an arbitrary one but must still be contained
     #   in the configured test specification identifiers
-    def parse test_identifier=nil
-      specs=[]
-      #so, while we are parsing, we have a list of tests
-      #we're either parsing all of the tests, or just one
-      #make sure the one test is on the list
+    def parse(test_identifier = nil)
+      specs = []
+      # so, while we are parsing, we have a list of tests
+      # we're either parsing all of the tests, or just one
+      # make sure the one test is on the list
       if test_identifier
         if is_spec_included?(test_identifier)
-          specs<<parse_specification(File.expand_path(test_identifier))
+          specs << parse_specification(File.expand_path(test_identifier))
         else
-          error(File.expand_path(test_identifier),"does not exist in the configuration")  
+          error(File.expand_path(test_identifier), "does not exist in the configuration")
         end
       else
-        specs=parse_specifications(@configuration.tests)
+        specs = parse_specifications(@configuration.tests)
       end
       specs.compact!
-      suite_setup,suite_teardown,setup,teardown=parse_specials(@configuration)
-      return [suite_setup,suite_teardown,setup,teardown,specs]
+      suite_setup, suite_teardown, setup, teardown = parse_specials(@configuration)
+      return [suite_setup, suite_teardown, setup, teardown, specs]
     end
 
     private
@@ -103,8 +102,8 @@ module Rutema
     #
     # * +tests+ - an array containing paths to test specification files or the
     #   test specifications' texts themselves
-    def parse_specifications tests
-      tests.map do |t| 
+    def parse_specifications(tests)
+      tests.map do |t|
         parse_specification(t)
       end.compact
     end
@@ -116,13 +115,11 @@ module Rutema
     #   actual test specification text itself
     #
     # A ParserError is raised upon failure.
-    def parse_specification spec_identifier
-      begin
-        @parser.parse_specification(spec_identifier)
-      rescue Rutema::ParserError
-        error(spec_identifier,$!.message)
-        raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}" 
-      end
+    def parse_specification(spec_identifier)
+      @parser.parse_specification(spec_identifier)
+    rescue Rutema::ParserError
+      error(spec_identifier, $!.message)
+      raise Rutema::ParserError, "In #{spec_identifier}: #{$!.message}"
     end
 
     ##
@@ -133,24 +130,16 @@ module Rutema
     # * test suite teardown
     # * test setup
     # * test teardown
-    def parse_specials configuration
-      suite_setup=nil
-      suite_teardown=nil
-      setup=nil
-      teardown=nil
-      if configuration.suite_setup
-        suite_setup=parse_specification(configuration.suite_setup)
-      end
-      if configuration.suite_teardown
-        suite_teardown=parse_specification(configuration.suite_teardown)
-      end
-      if configuration.setup
-        setup=parse_specification(configuration.setup)
-      end
-      if configuration.teardown
-        teardown=parse_specification(configuration.teardown)
-      end
-      return suite_setup,suite_teardown,setup,teardown
+    def parse_specials(configuration)
+      suite_setup = nil
+      suite_teardown = nil
+      setup = nil
+      teardown = nil
+      suite_setup = parse_specification(configuration.suite_setup) if configuration.suite_setup
+      suite_teardown = parse_specification(configuration.suite_teardown) if configuration.suite_teardown
+      setup = parse_specification(configuration.setup) if configuration.setup
+      teardown = parse_specification(configuration.teardown) if configuration.teardown
+      return suite_setup, suite_teardown, setup, teardown
     end
 
     ##
@@ -162,7 +151,7 @@ module Rutema
     # * +suite_teardown+ - a test suite teardown Specification instance
     def run_scenarios(specs, suite_setup, suite_teardown, setup, teardown)
       if specs.empty?
-        error(nil,"No tests to run")
+        error(nil, "No tests to run")
       else
         @runner.setup = nil
         @runner.teardown = nil
@@ -170,7 +159,7 @@ module Rutema
         if !suite_setup || (run_test(suite_setup, true) == :success)
           @runner.setup = setup
           @runner.teardown = teardown
-          specs.each{|spec| run_test(spec)}
+          specs.each { |spec| run_test(spec) }
         else
           error(nil, "Suite setup test failed")
         end
@@ -182,17 +171,18 @@ module Rutema
       end
     end
 
-    ##
+    # rubocop:disable  Style/OptionalBooleanParameter
     #
     def run_test(specification, is_special = false)
       if specification.scenario
         status = @runner.run(specification, is_special)["status"]
       else
-        status=:not_executed
-        message(:test=>specification.name,:text=>"No scenario", :status=>status)
+        status = :not_executed
+        message(:test => specification.name, :text => "No scenario", :status => status)
       end
       return status
     end
+    # rubocop:enable  Style/OptionalBooleanParameter
 
     ##
     # Instantiate a new class of a given type passing it a given configuration
@@ -201,22 +191,23 @@ module Rutema
     # * +definition+ - class of which a new instance shall be instantiated
     # * +configuration+ - Configuration instance which shall be passed to the
     #   initializer of the to be created instance
-    def instantiate_class definition,configuration
+    def instantiate_class(definition, configuration)
       if definition[:class]
-        klass=definition[:class]
+        klass = definition[:class]
         return klass.new(configuration)
       end
       return nil
     end
 
+    # rubocop:disable Naming/PredicatePrefix
     ##
     # Check if the given test identifier belongs to the normal test cases or to
     # one of the special ones (the test (suite) setups and teardowns)
     #
     # * +test_identifier+ - the test identifier to check against membership in
     #   the normal or special test case identifier sets
-    def is_spec_included? test_identifier
-      full_path=File.expand_path(test_identifier)
+    def is_spec_included?(test_identifier)
+      full_path = File.expand_path(test_identifier)
       return @configuration.tests.include?(full_path) || is_special?(test_identifier)
     end
 
@@ -228,23 +219,24 @@ module Rutema
     #
     # * +test_identifier+ - the test identifier which shall be checked for being
     #   a special one
-    def is_special? test_identifier
-      full_path=File.expand_path(test_identifier)
-      return full_path==@configuration.suite_setup ||
-      full_path==@configuration.suite_teardown ||
-      full_path==@configuration.setup ||
-      full_path==@configuration.teardown
+    def is_special?(test_identifier)
+      full_path = File.expand_path(test_identifier)
+      return full_path == @configuration.suite_setup ||
+             full_path == @configuration.suite_teardown ||
+             full_path == @configuration.setup ||
+             full_path == @configuration.teardown
     end
   end
 
+  # rubocop:enable Naming/PredicatePrefix
   ##
-  # Class functioning as a demultiplexer between the Engine and the various
+  # Class functioning as a de-multiplexer between the Engine and the various
   # Reporters instances
   #
   # In stream mode the incoming queue is popped periodically and the messages
   # are distributed to the queues of any subscribed event reporters. By default
   # this includes Reporters::Collector which is then used at the end of a run to
-  # provide the collected data to all registered block mode reporters 
+  # provide the collected data to all registered block mode reporters
   class Dispatcher
     ##
     # The interval between queue operations
@@ -257,19 +249,19 @@ module Rutema
     # * +queue+ - the queue which will be shared between the Engine instance and
     #   the Reporter instances
     # * +configuration+ - the Configuration instance of the rutema run
-    def initialize queue,configuration
+    def initialize(queue, configuration)
       @queue = queue
       @queues = {}
-      @streaming_reporters=[]
-      @block_reporters=[]
-      @collector=Rutema::Reporters::Collector.new(nil,self)
+      @streaming_reporters = []
+      @block_reporters = []
+      @collector = Rutema::Reporters::Collector.new(nil, self)
       if configuration.reporters
-        instances=configuration.reporters.values.map{|v| instantiate_reporter(v,configuration) if v[:class] != Reporters::Summary}.compact
-        @streaming_reporters,_=instances.partition{|rep| rep.respond_to?(:update)}
-        @block_reporters,_=instances.partition{|rep| rep.respond_to?(:report)}
+        instances = configuration.reporters.values.map { |v| instantiate_reporter(v, configuration) if v[:class] != Reporters::Summary }.compact
+        @streaming_reporters, = instances.partition { |rep| rep.respond_to?(:update) }
+        @block_reporters, = instances.partition { |rep| rep.respond_to?(:report) }
       end
-      @streaming_reporters<<@collector
-      @configuration=configuration
+      @streaming_reporters << @collector
+      @configuration = configuration
     end
 
     ##
@@ -281,8 +273,8 @@ module Rutema
     #
     # * +identifier+ - a unique identifier for the queue. If two identifiers
     #   collide the new subscriber will replace the earlier one
-    def subscribe identifier
-      @queues[identifier]=Queue.new
+    def subscribe(identifier)
+      @queues[identifier] = Queue.new
       return @queues[identifier]
     end
 
@@ -292,10 +284,10 @@ module Rutema
     # incoming queue
     def run!
       puts "Running #{@streaming_reporters.size} streaming reporters" if $DEBUG
-      @streaming_reporters.each {|r| r.run!}
-      @thread=Thread.new do
-        while true do
-          dispatch()
+      @streaming_reporters.each(&:run!)
+      @thread = Thread.new do
+        loop do
+          dispatch
           sleep INTERVAL
         end
       end
@@ -303,11 +295,11 @@ module Rutema
 
     ##
     # Call all block reporters' BlockReporter#report method
-    def report specs
+    def report(specs)
       @block_reporters.each do |r|
-        r.report(specs,@collector.states,@collector.errors)
+        r.report(specs, @collector.states, @collector.errors)
       end
-      Reporters::Summary.new(@configuration,self).report(specs,@collector.states,@collector.errors)
+      Reporters::Summary.new(@configuration, self).report(specs, @collector.states, @collector.errors)
     end
 
     ##
@@ -316,11 +308,11 @@ module Rutema
     # dispatch thread
     def exit
       puts "Exiting main dispatcher" if $DEBUG
-      if @thread
-        flush
-        @streaming_reporters.each {|r| r.exit}
-        Thread.kill(@thread)
-      end
+      return unless @thread
+
+      flush
+      @streaming_reporters.each(&:exit)
+      Thread.kill(@thread)
     end
 
     private
@@ -330,11 +322,11 @@ module Rutema
     # incoming queue is empty
     def flush
       puts "Flushing queues" if $DEBUG
-      if @thread
-        while @queue.size>0 do
-          dispatch()
-          sleep INTERVAL
-        end
+      return unless @thread
+
+      until @queue.empty?
+        dispatch
+        sleep INTERVAL
       end
     end
 
@@ -349,10 +341,10 @@ module Rutema
     #
     # This either returns the new class instance or _nil_ if the passed hash
     # did not contain a key +:class+
-    def instantiate_reporter definition,configuration
+    def instantiate_reporter(definition, configuration)
       if definition[:class]
-        klass=definition[:class]
-        return klass.new(configuration,self)
+        klass = definition[:class]
+        return klass.new(configuration, self)
       end
       return nil
     end
@@ -362,10 +354,10 @@ module Rutema
     # empty) and distribute it to all subscribed Reporters::EventReporter
     # instances
     def dispatch
-      if @queue.size>0
-        data=@queue.pop
-        @queues.each{ |i,q| q.push(data) } if data
-      end
+      return if @queue.empty?
+
+      data = @queue.pop
+      @queues.each_value { |q| q.push(data) } if data
     end
   end
 end

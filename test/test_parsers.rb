@@ -1,15 +1,15 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
-require 'test/unit'
-require 'ostruct'
+require "test/unit"
+require "ostruct"
 require "mocha/test_unit"
-require_relative '../lib/rutema/parsers/xml'
+require_relative "../lib/rutema/parsers/xml"
 
-
-#$DEBUG=true
+# $DEBUG=true
 module TestRutema
   module Samples
-    SAMPLE_SPEC=<<-EOT
+    # rubocop:disable Style/MutableConstant
+    SAMPLE_SPEC = <<-SCNR
     <specification name="sample">
     <title>Title</title>
     <description>Description</description>
@@ -18,18 +18,18 @@ module TestRutema
     <another_step script="script"/>
     </scenario>
     </specification>
-    EOT
-    INCLUDE_SPEC=<<-EOT
+    SCNR
+    INCLUDE_SPEC = <<-SCNR
     <specification name="include">
     <title>Title</title>
     <description>Description</description>
     <scenario>
     <step/>
-    <include_scenario file="#{File.expand_path(File.dirname(__FILE__))}/data/include.scenario"/>
+    <include_scenario file="#{__dir__}/data/include.scenario"/>
     </scenario>
     </specification>
-    EOT
-    BAD_INCLUDE_SPEC=<<-EOT
+    SCNR
+    BAD_INCLUDE_SPEC = <<-SCNR
     <specification name="bad_include">
     <title>Title</title>
     <description>Description</description>
@@ -37,8 +37,8 @@ module TestRutema
     <include_scenario file="unknown.scenario"/>
     </scenario>
     </specification>
-    EOT
-    MISSING_INCLUDE_SPEC=<<-EOT
+    SCNR
+    MISSING_INCLUDE_SPEC = <<-SCNR
     <specification name="bad_include">
     <title>Title</title>
     <description>Description</description>
@@ -46,8 +46,8 @@ module TestRutema
     <include_scenario/>
     </scenario>
     </specification>
-    EOT
-    MINIMAL_SPEC=<<-EOT
+    SCNR
+    MINIMAL_SPEC = <<-SCNR
     <specification name="sample">
     <title>Title</title>
     <description>Description</description>
@@ -56,31 +56,34 @@ module TestRutema
     <command cmd="l"/>
     </scenario>
     </specification>
-    EOT
-    INCLUDE_SCENARIO=<<-EOT
+    SCNR
+    INCLUDE_SCENARIO = <<-SCNR
     <?xml version="1.0" encoding="UTF-8"?>
     <scenario>
       <echo>This is a step from an included scenario</echo>
       <echo>And another step from the included scenario</echo>
     </scenario>
-    EOT
+    SCNR
+    # rubocop:enable Style/MutableConstant
   end
-  class TestSpecificationParser<Test::Unit::TestCase
+
+  class TestSpecificationParser < Test::Unit::TestCase
     def test_specification_parser
-      parser=nil
-      assert_nothing_raised() { parser=Rutema::Parsers::SpecificationParser.new({}) }
+      parser = nil
+      assert_nothing_raised { parser = Rutema::Parsers::SpecificationParser.new({}) }
       assert_not_nil(parser)
-      assert(parser.configuration.empty?,"Configuration is not empty")
+      assert(parser.configuration.empty?, "Configuration is not empty")
       assert_raise(Rutema::ParserError) { parser.parse_specification("foo") }
     end
   end
-  class TestXMLParser<Test::Unit::TestCase
-    def test_parse_specification
-      config=stub()
+
+  class TestXMLParser < Test::Unit::TestCase
+    def test_parse_specification # rubocop:disable Metrics/AbcSize
+      config = stub
       config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
-      specification=parser.parse_specification(Samples::SAMPLE_SPEC)
-      assert_equal("sample",specification.name)
+      parser = Rutema::Parsers::XML.new(config)
+      specification = parser.parse_specification(Samples::SAMPLE_SPEC)
+      assert_equal("sample", specification.name)
       assert_equal("Description", specification.description)
       assert_equal("Title", specification.title)
       assert(specification.scenario)
@@ -92,23 +95,24 @@ module TestRutema
       assert_raise(Rutema::ParserError) { parser.parse_specification("") }
       assert_raise(Rutema::ParserError) { parser.parse_specification("missing.spec") }
     end
+
     def test_include
-      config=stub()
+      config = stub
       config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
-      specification=parser.parse_specification(Samples::INCLUDE_SPEC)
+      parser = Rutema::Parsers::XML.new(config)
+      specification = parser.parse_specification(Samples::INCLUDE_SPEC)
       assert_equal(3, specification.scenario.steps.size)
       assert(specification.scenario.steps[2].has_included_in?)
       assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
       assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
     end
+
     def test_parse_error
-      config=stub()
+      config = stub
       config.stubs(:parser).returns({})
-      parser=Rutema::Parsers::XML.new(config)
+      parser = Rutema::Parsers::XML.new(config)
       assert_not_nil(parser.configuration)
-      specification=nil
-      assert_raise(Rutema::ParserError) { specification=parser.parse_specification("<") }
+      assert_raise(Rutema::ParserError) { parser.parse_specification("<") }
     end
   end
 end

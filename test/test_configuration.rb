@@ -1,46 +1,49 @@
 #  Copyright (c) 2021 Vassilis Rizopoulos. All rights reserved.
 
-require_relative '../lib/rutema/core/configuration'
-#$DEBUG=true
-require 'test/unit'
+require_relative "../lib/rutema/core/configuration"
+# $DEBUG=true
+require "test/unit"
 require "mocha/test_unit"
 
-FULL_CONFIG=<<-EOT
-configure do |cfg|
- cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
- cfg.reporter={:class=>Rutema::Reporters::BlockReporter}
- cfg.tests=["T001.spec"]
- cfg.tool={:name=>"test",:path=>".",:configuration=>{:key=>"value"}}
- cfg.path={:name=>"test",:path=>"."}
- cfg.context={:key=>"value"}
- cfg.check="check.spec"
- cfg.teardown="teardown.spec"
- cfg.setup="setup.spec" 
-end
-EOT
+# rubocop:disable Style/MutableConstant
+FULL_CONFIG = <<~CFG
+  configure do |cfg|
+   cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
+   cfg.reporter={:class=>Rutema::Reporters::BlockReporter}
+   cfg.tests=["T001.spec"]
+   cfg.tool={:name=>"test",:path=>".",:configuration=>{:key=>"value"}}
+   cfg.path={:name=>"test",:path=>"."}
+   cfg.context={:key=>"value"}
+   cfg.check="check.spec"
+   cfg.teardown="teardown.spec"
+   cfg.setup="setup.spec"#{' '}
+  end
+CFG
 
-IDENTIFIERS=<<-EOT
-configure do |cfg|
-  cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
-  cfg.tests=[
-  "../examples/specs/T001.spec",
-  "22345",
-  "../examples/specs/T003.spec",
-  ]
-end
-EOT
+IDENTIFIERS = <<~CFG
+  configure do |cfg|
+    cfg.parser={:class=>Rutema::Parsers::SpecificationParser}
+    cfg.tests=[
+    "../examples/specs/T001.spec",
+    "22345",
+    "../examples/specs/T003.spec",
+    ]
+  end
+CFG
+# rubocop:enable Style/MutableConstant
 
 module TestRutema
-  class TestRutemaConfiguration<Test::Unit::TestCase
+  class TestRutemaConfiguration < Test::Unit::TestCase
+    # rubocop:disable  Metrics/AbcSize
     def test_rutema_configuration
-      cfg="foo.cfg"
+      cfg = "foo.cfg"
       File.expects(:read).with("full.rutema").returns(FULL_CONFIG)
       File.expects(:exist?).with(File.expand_path("check.spec")).returns(true)
       File.expects(:exist?).with(File.expand_path("teardown.spec")).returns(true)
       File.expects(:exist?).with(File.expand_path("setup.spec")).returns(true)
       File.expects(:exist?).with("T001.spec").returns(false)
-      #load the valid configuration
-      assert_nothing_raised() { cfg=Rutema::Configuration.new("full.rutema")}
+      # load the valid configuration
+      assert_nothing_raised { cfg = Rutema::Configuration.new("full.rutema") }
       assert_not_nil(cfg.parser)
       assert_not_nil(cfg.reporters)
       assert_equal(1, cfg.reporters.size)
@@ -54,12 +57,13 @@ module TestRutema
       assert_not_nil(cfg.context)
     end
 
+    # rubocop:enable  Metrics/AbcSize
     def test_specification_paths
       File.expects(:read).with("test_identifiers.rutema").returns(IDENTIFIERS)
-      cfg=Rutema::Configuration.new("test_identifiers.rutema")
+      cfg = Rutema::Configuration.new("test_identifiers.rutema")
       assert_not_nil(cfg.tests)
       assert_equal(3, cfg.tests.size)
-      assert(cfg.tests.include?('22345'))
+      assert(cfg.tests.include?("22345"))
     end
   end
 end

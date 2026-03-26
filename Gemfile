@@ -1,16 +1,20 @@
 source "https://rubygems.org"
 
 gem "highline", "~>2.0.3", :require => false
-gem "patir", "~>0.8", :require => false
-gem "rexml", "~>3.3.9", :require => false
+gem "patir", "~>0.9", :require => false
+gem "rexml", "~>3.4", :require => false
+gem "observer", "~>0.1", :require => false
+gem "abbrev", "~>0.1", :require => false
+gem "ostruct", "~>0.6", :require => false
 
 group :development do
-  gem "coveralls", "~>0.8.23", :require => false
-  gem "hoe", "~>4.6.1", :require => false
-  gem "mocha", "~>1.13.0", :require => false
-  gem "pry", "~>0.16.0", :require => false
+  gem "coveralls_reborn", :require => false
+  gem "hoe", "~>4.6", :require => false
+  gem "minitest", "~>6.0", :require => false
+  gem "mocha", "~>2.1", :require => false
+  gem "panolint", "~>0.1", :require => false
+  gem "rake", "~>13.0", :require => false
   gem "rdoc", "~>7.2.0", :require => false
-  gem "rubocop", "~>1.85.0", :require => false
-  gem "minitest", "~>6.0.2", :require => false
-  gem "test-unit", "~>3.7.7", :require => false
+  gem "rubocop-rake", "~>0.7", :require => false
+  gem "test-unit", "~>3.7", :require => false
 end
