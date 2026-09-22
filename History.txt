@@ -1,8 +1,8 @@
-== 2.0.2/ 2026-03-26
+== 2.0.2 /2026-03-26
  * Modernize the code base. Code style updated, gem versions updated, ruby 3.x and 4.x deprecations handled
-== 2.0.1/ 2026-03-02
+== 2.0.1 /2026-03-02
  * Release the 10 year old changes that fix handling of execution context within steps
-== 2.0.0/ 2017-09-23
+== 2.0.0 /2017-09-23
  * Parsing behaviour has changed, parsing errors are not accepted and the run fails immediately
 == 2.0.0.pre15 /2017-02-08
  * Update gem dependencies
