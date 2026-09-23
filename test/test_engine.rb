@@ -11,8 +11,7 @@ module TestRutema
   class MockRunner
     attr_accessor :setup, :teardown
 
-    def initialize(config)
-    end
+    def initialize(config); end
 
     def run(_name, _scenario)
       return
@@ -44,6 +43,7 @@ module TestRutema
       assert_raise(Rutema::RutemaError) { Rutema::Engine.new(conf) }
     end
 
+    # rubocop:disable-next Metrics/AbcSize
     def test_run
       conf = OpenStruct.new(:parser => { :class => Rutema::Parsers::XML },
                             :reporters => { MockReporter => { :class => MockReporter } },

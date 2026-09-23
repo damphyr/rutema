@@ -381,9 +381,8 @@ module Rutema
       fname = File.basename(filename)
       # evaluate in the working directory to enable relative paths in
       # configuration
-      # rubocop:disable  Security/Eval
+      # rubocop:disable-next  Security/Eval
       Dir.chdir(cwd) { eval(cfg_txt, binding, fname, __LINE__) }
-      # rubocop:enable  Security/Eval
     rescue ConfigurationException
       # pass it on, do not wrap again
       raise

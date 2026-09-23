@@ -1,5 +1,13 @@
 #  Copyright (c) 2007-2017 Vassilis Rizopoulos. All rights reserved.
-# -*- ruby -*-
+
+if ENV.key?("BUNDLER_ORIG_PATH")
+  # running under bundler already
+  Rake.application.options.suppress_backtrace_pattern = %r{\.gem|\.rubies|/opt/hostedtoolcache|vendor/bundle/ruby/}
+else
+  # restart with bundle exec if not already running under bundler...
+  exec("bundle", "exec", "rake", *ARGV)
+end
+
 $LOAD_PATH.unshift File.join(File.dirname(__FILE__), "lib")
 require "hoe"
 require "rutema/version"
@@ -16,7 +24,7 @@ Hoe.spec "rutema" do |prj|
   prj.local_rdoc_dir = "doc/rdoc"
   prj.readme_file = "README.md"
   prj.extra_deps << ["patir", "~>0.9"]
-  prj.extra_deps << ["highline", "~>2.0"]
+  prj.extra_deps << ["highline", "~>3.1"]
   prj.spec_extras = { :executables => ["rutema"] }
 end
 

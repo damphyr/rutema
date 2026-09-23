@@ -30,8 +30,7 @@ module Rutema
 
       ##
       #
-      def report(specifications, states, errors)
-      end
+      def report(specifications, states, errors); end
     end
 
     ##
@@ -57,8 +56,7 @@ module Rutema
         end
       end
 
-      def update(data)
-      end
+      def update(data); end
 
       def exit
         puts "Exiting #{self.class}" if $DEBUG
@@ -139,7 +137,7 @@ module Rutema
         @silent = configuration.reporters.fetch(self.class, {})["silent"]
       end
 
-      # rubocop:disable Metrics/CyclomaticComplexity
+      # rubocop:disable-next Metrics/CyclomaticComplexity
       def report(specs, states, errors)
         failures = []
         states.each_value { |v| failures << v.test if v.status == :error }
@@ -154,11 +152,10 @@ module Rutema
         end
         return failures.size + errors.size
       end
-      # rubocop:enable Metrics/CyclomaticComplexity
     end
   end
 
-  # rubocop:disable Style/Documentation
+  # rubocop:disable-next Style/Documentation
   module Utilities
     require "fileutils"
     def self.write_file(filename, content)
@@ -166,5 +163,4 @@ module Rutema
       File.binwrite(filename, content)
     end
   end
-  # rubocop:enable Style/Documentation
 end

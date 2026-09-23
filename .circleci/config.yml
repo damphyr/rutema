@@ -9,6 +9,17 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  r3-3:
+    docker:
+      - image: cimg/ruby:3.3.8
+    steps:
+      - checkout
+      - run:
+          name: Bundle
+          command: bundle install
+      - run:
+          name: Run tests
+          command: bundle exec rake
   r3-4:
     docker:
       - image: cimg/ruby:3.4.9
@@ -38,5 +49,6 @@ workflows:
   gaudi: # This is the name of the workflow, feel free to change it to better match your workflow.
     # Inside the workflow, you define the jobs you want to run.
     jobs:
+      - r3-3
       - r3-4
       - r4-0

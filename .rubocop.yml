@@ -1,7 +1,7 @@
 Gemspec/DevelopmentDependencies:
   Enabled: true
 Metrics/AbcSize:
-  Max: 30
+  Max: 25
 Metrics/ClassLength:
   Max: 250
 Metrics/BlockLength:
@@ -119,9 +119,9 @@ Style/EmptyHeredoc:
 Style/EndlessMethod:
   Enabled: true
 Style/EnvHome:
-  Enabled: false
+  Enabled: true
 Style/FetchEnvVar:
-  Enabled: false
+  Enabled: true
 Style/FileRead:
   Enabled: true
 Style/FileWrite:
@@ -180,24 +180,18 @@ Style/ComparableClamp:
   Enabled: true
 Style/ConcatArrayLiterals:
   Enabled: true
-Style/EmptyMethod:
-    Enabled: false
-Style/NumericPredicate:
-    Enabled: false
 Style/SpecialGlobalVars:
-  Enabled: false
-Style/OptionalBooleanParameter:
   Enabled: false
 AllCops:
   NewCops: enable
   SuggestExtensions: false
   Exclude:
+    - "~/.gem/**"
+    - "examples/**/*"
+    - "pkg/**/*"
     - "out/**/*"
+    - "test/data/**/*"
     - "tools/build/lib/gaudi.rb"
     - "tools/build/lib/gaudi/**/*"
     - "tools/build/lib/z-core/**/*"
-    - "~/.gem/**"
     - "vendor/**/*"
-    - "pkg/**/*"
-    - "test/**/*.spec"
-    - "examples/**/*.spec"
