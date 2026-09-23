@@ -103,8 +103,8 @@ module TestRutema
       specification = parser.parse_specification(Samples::INCLUDE_SPEC)
       assert_equal(3, specification.scenario.steps.size)
       assert(specification.scenario.steps[2].has_included_in?)
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
-      assert_raise(Rutema::ParserError) {  parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
+      assert_raise(Rutema::ParserError) { parser.parse_specification(Samples::BAD_INCLUDE_SPEC) }
+      assert_raise(Rutema::ParserError) { parser.parse_specification(Samples::MISSING_INCLUDE_SPEC) }
     end
 
     def test_parse_error

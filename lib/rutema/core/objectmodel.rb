@@ -280,16 +280,22 @@ module Rutema
   end
 end
 
-class Patir::ShellCommand
-  # :nodoc:
-  def to_s
-    return @command
+# rubocop:disable-next Style/OneClassPerFile
+# Class functionality extensions - ye old good monkey patch
+module Patir
+  # Decorates the class with a to_s
+  class ShellCommand
+    # :nodoc:
+    def to_s
+      return @command
+    end
   end
-end
 
-class Patir::RubyCommand
-  # :nodoc:
-  def to_s
-    return @name
+  # Decorates the class with a to_s
+  class RubyCommand
+    # :nodoc:
+    def to_s
+      return @name
+    end
   end
 end

@@ -106,6 +106,7 @@ module Rutema
         raise Rutema::ParserError, "missing #{ELEM_TITLE} element in #{xmldoc}" unless xmldoc.elements[ELEM_TITLE]
       end
 
+      # rubocop:disable-next Metrics/AbcSize
       # Parses the 'scenario' XML element and returns the Rutema::Scenario instance
       def parse_scenario(xmltxt)
         scenario = Rutema::Scenario.new([])

@@ -171,6 +171,7 @@ module Rutema
       end
     end
 
+    # rubocop:disable-next Style/OptionalBooleanParameter
     def run_test(specification, is_special = false)
       if specification.scenario
         status = @runner.run(specification, is_special)["status"]

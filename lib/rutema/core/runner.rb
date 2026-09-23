@@ -20,6 +20,8 @@ module Rutema
         @cleanup_blocks = []
       end
 
+      # rubocop:disable-next Metrics/AbcSize
+      # rubocop:disable-next Style/OptionalBooleanParameter
       def run(spec, is_special = false)
         @context["spec_name"] = spec.name
         steps = []
@@ -82,7 +84,9 @@ module Rutema
         @cleanup_blocks = []
       end
 
-      # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/CyclomaticComplexity
+      # rubocop:disable-next Metrics/PerceivedComplexity
+      # rubocop:disable-next Metrics/AbcSize
       def run_scenario(name, scenario, meta, is_special)
         executed_steps = []
         status = :skipped
@@ -109,7 +113,6 @@ module Rutema
         end
         return executed_steps, status
       end
-      # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
       def next_step(step_spec, test_name, meta, test_is_special)
         message(
@@ -120,11 +123,10 @@ module Rutema
         begin
           cache_cleanup(step_spec)
           executed_step = run_step(step_spec, meta)
-          # rubocop:disable Lint/RescueException
+          # rubocop:disable-next Lint/RescueException
         rescue Exception => e
           throw e unless step_spec.continue?
           step_spec.status = :error
-          # rubocop:enable Lint/RescueException
         end
         message(
           :test => test_name, :text => step_spec.to_s, "number" => step_spec.number,

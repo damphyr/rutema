@@ -59,8 +59,7 @@ module Rutema
       # internally
       #
       # To avoid validating the configuration in element_* methods repeatedly, do all configuration validation here
-      def validate_configuration
-      end
+      def validate_configuration; end
     end
   end
 end
