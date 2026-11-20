@@ -21,7 +21,6 @@ module Rutema
       end
 
       # rubocop:disable-next Metrics/AbcSize
-      # rubocop:disable-next Style/OptionalBooleanParameter
       def run(spec, is_special = false)
         @context["spec_name"] = spec.name
         steps = []
