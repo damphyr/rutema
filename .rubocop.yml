@@ -13,7 +13,7 @@ Metrics/MethodLength:
 Style/AsciiComments:
   Enabled: false
 Style/ClassAndModuleChildren:
-  Enabled: false
+  EnforcedStyle: nested
 Style/FrozenStringLiteralComment:
   Enabled: false
 Style/GlobalVars:
@@ -180,18 +180,22 @@ Style/ComparableClamp:
   Enabled: true
 Style/ConcatArrayLiterals:
   Enabled: true
+Style/OptionalBooleanParameter:
+  Enabled: false
 Style/SpecialGlobalVars:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Naming/FileName:
+  Enabled: false
+Naming/HeredocDelimiterNaming:
   Enabled: false
 AllCops:
   NewCops: enable
   SuggestExtensions: false
   Exclude:
     - "~/.gem/**"
-    - "examples/**/*"
-    - "pkg/**/*"
     - "out/**/*"
-    - "test/data/**/*"
-    - "tools/build/lib/gaudi.rb"
-    - "tools/build/lib/gaudi/**/*"
-    - "tools/build/lib/z-core/**/*"
     - "vendor/**/*"
+    - "test/**/*.spec"
+    - "examples/**/*.spec"
