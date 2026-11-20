@@ -1,3 +1,6 @@
+== 2.0.4 /2026-11-20
+ * Updated development gem dependencies (activesupport, rack, json, uri)
+ * Lint cleanup with updated rubocop rules
 == 2.0.3 /2026-09-23
  * Updated gem dependencies (highline -> ~3.1)
  * New rubocop version adds lint warnings - cleaned update
